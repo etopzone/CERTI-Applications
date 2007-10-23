@@ -1,0 +1,19 @@
+
+This is an HLA tutorial using CERTI
+(http://savannah.nongnu.org/projects/certi)
+
+blah blah
+
+0) Building the tutorial (under unix)
+
+   0.a) check your CERTI installation or install it
+   0.b) setup CERTI_HOME env var to point to certi PREFIX installation
+        you may do it easilly by sourcing
+        /path/to/certi_install/share/scripts/myCERTI_env.sh
+   0.a) tar zxvf CERTI_TUTORIAL-x.y.z-Source.tar.gz
+   0.b) mkdir build_CERTI_TUTORIAL; cd build_CERTI_TUTORIAL 
+   0.c) cmake ../CERTI_TUTORIAL-x.y.z
+   0.d) make
+
+1) Running the tutorial
+   ....
