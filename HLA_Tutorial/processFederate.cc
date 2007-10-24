@@ -4,7 +4,7 @@
  * @brief This federate simulates a low pass process of first order.
  *
  * The federate serves as a HLA RunTime Infrastructure API 1.3 tutorial based
- * on CERTI. 
+ * on CERTI.
  *
  * The HLA API is seperated in so called RTI ambassador services and federate
  * ambassador services. The RTI ambassador services are provided by an
@@ -14,31 +14,33 @@
  *
  * In this federate the usage of nessessary RTI ambassador method invocations
  * and their correct calling order are shown for the management areas
- * Federation Management, Declaration Management and Object Management. The 
+ * Federation Management, Declaration Management and Object Management. The
  * needed federate ambassador services are implemented in a separate class.
- * 
+ *
  * The process federate computes the output variable y(t) on basis of
  * its input variable. The input value consists of the regulating variable u(t)
  * provided by the control federate.
  */
 
 /*
- * <RTI.hh> 
- * This header is the necessary include for using HLA RunTime Infrastructure 
+ * <RTI.hh>
+ * This header is the necessary include for using HLA RunTime Infrastructure
  * API.
  */
 #include <RTI.hh>
 
 /*
- * <NullFederateAmbassador.hh> 
- * The header provides virtual methods of the abstract basis class 
- * FederateAmbassador included by <RTI.hh>. When using the 
+ * <NullFederateAmbassador.hh>
+ * The header provides virtual methods of the abstract basis class
+ * FederateAmbassador included by <RTI.hh>. When using the
  * NullFederateAmbassador only required federate services have to be
  * implemented.
  */
 #include <NullFederateAmbassador.hh>
 
 #include <iostream>
+
+#include "DisplayServiceExplanation.hh"
 
 using std::string;
 using std::cout;
@@ -47,9 +49,9 @@ using std::endl;
 using std::auto_ptr;
 
 /**
- * The class ProcessFedAmb realizes the implementation of required 
+ * The class ProcessFedAmb realizes the implementation of required
  * federate ambassador services. It holds the data of incoming callbacks too.
- * Flags are defined additionally. So the occurrence of special federate 
+ * Flags are defined additionally. So the occurrence of special federate
  * services can be determined in main().
  */
 class ProcessFedAmb : public NullFederateAmbassador {
@@ -80,13 +82,13 @@ public:
 
     /**
      * @defgroup DataEncapsulation Data Encapsulation
-     * Methods in this group set and get private variables. 
+     * Methods in this group set and get private variables.
      */
 
     /**
      * Get value of private variable u.
      * @ingroup DataEncapsulation
-     * @param[out] double value
+     * @return the u value
      */
     double
     getU() {
@@ -94,11 +96,11 @@ public:
     }
 
     /**
-     * Get value of private variable discovU which serves as 
-     * flag for the occurrence of the federate service 
+     * Get value of private variable discovU which serves as
+     * flag for the occurrence of the federate service
      * discoverObjectInstance(...).
      * @ingroup DataEncapsulation
-     * @param[out] bool value
+     * @return true if u was discovered false otherwise
      */
     bool
     getDiscoverU() {
@@ -107,10 +109,10 @@ public:
 
     /**
      * Get value of private variable newU which serves as flag
-     * for the occurrence of the federate service 
+     * for the occurrence of the federate service
      * reflectAttributeValues(...).
      * @ingroup DataEncapsulation
-     * @param[out] bool value
+     * @return the newU value
      */
     bool
     getNewU() {
@@ -118,11 +120,11 @@ public:
     }
 
     /**
-     * Set value of private variable discovU which serves as 
-     * flag for the occurrence of the federate service 
+     * Set value of private variable discovU which serves as
+     * flag for the occurrence of the federate service
      * discoverObjectInstance(...).
      * @ingroup DataEncapsulation
-     * @param[in] bool value 
+     * @return true if u was discovered false otherwise
      */
     void
     setDiscoverU (bool val) {
@@ -130,11 +132,11 @@ public:
     }
 
     /**
-     * Set value of private variable newU which serves as 
-     * flag for the occurrence of the federate service 
+     * Set value of private variable newU which serves as
+     * flag for the occurrence of the federate service
      * reflectAttributeValues(...).
      * @ingroup DataEncapsulation
-     * @param[in] bool value 
+     * @return true if new u arrived false otherwise
      */
     void
     setNewU (bool val) {
@@ -143,13 +145,13 @@ public:
 
     /**
      * @defgroup RequiredFederateServices Required Federate Services
-     * The method of this group MUST be implemented by the federate 
+     * The method of this group MUST be implemented by the federate
      * and will be invoked by the RTI.
      */
 
     /**
      * Discover object instance. This callback informs the federate of the
-     * existence of an object instance in the federation that is relevant
+     * existence of an object instance in the federation according 
      * to the federate's current subscription interests.
      * @ingroup RequiredFederateServices
      * @param[in] theObject,
@@ -174,15 +176,15 @@ public:
 
     /**
      * Reflect Attribute Values. This callback informs the federate of a state
-     * update for a set of instance-attributes relevant to the federate's 
-     * current subscription interests.
+     * update for a set of instance-attributes according to its current
+     * subscription interests.
      * @ingroup RequiredFederateServices
      * @param[in] theObject,
-     * @param[in] theAttributes, 
-     * @param[in] 
+     * @param[in] theAttributes,
+     * @param[in]
      */
     void
-    reflectAttributeValues( RTI::ObjectHandle,
+    reflectAttributeValues( RTI::ObjectHandle theObject,
                             const RTI::AttributeHandleValuePairSet&
                             theAttributes,
                             const RTI::FedTime& theTime,
@@ -240,7 +242,7 @@ int main() {
     } catch ( RTI::Exception &e ) {
         cerr << "RTI exception: " << e._name << " ["
         << (e._reason ? e._reason : "undefined") << "]." << endl;
-    } catch ( ... )  {
+    } catch ( ... ) {
         cerr << "Error: unknown non-RTI exception." << endl;
     }
 
@@ -255,7 +257,7 @@ int main() {
     } catch ( RTI::Exception &e ) {
         cerr << "RTI exception: " << e._name << " ["
         << (e._reason ? e._reason : "undefined") << "]." << endl;
-    } catch ( ... )  {
+    } catch ( ... ) {
         cerr << "Error: unknown non-RTI exception." << endl;
     }
 
@@ -272,7 +274,7 @@ int main() {
     } catch ( RTI::Exception &e ) {
         cerr << "RTI exception: " << e._name << " ["
         << (e._reason ? e._reason : "undefined") << "]." << endl;
-    } catch ( ... )  {
+    } catch ( ... ) {
         cerr << "Error: unknown non-RTI exception." << endl;
     }
 
@@ -281,7 +283,7 @@ int main() {
     } catch ( RTI::Exception &e ) {
         cerr << "RTI exception: " << e._name << " ["
         << (e._reason ? e._reason : "undefined") << "]." << endl;
-    } catch ( ... )  {
+    } catch ( ... ) {
         cerr << "Error: unknown non-RTI exception." << endl;
     }
 
@@ -290,7 +292,7 @@ int main() {
     } catch ( RTI::Exception &e ) {
         cerr << "RTI exception: " << e._name << " ["
         << (e._reason ? e._reason : "undefined") << "]." << endl;
-    } catch ( ... )  {
+    } catch ( ... ) {
         cerr << "Error: unknown non-RTI exception." << endl;
     }
 
@@ -308,7 +310,7 @@ int main() {
     } catch ( RTI::Exception &e ) {
         cerr << "RTI exception: " << e._name << " ["
         << (e._reason ? e._reason : "undefined") << "]." << endl;
-    } catch ( ... )  {
+    } catch ( ... ) {
         cerr << "Error: unknown non-RTI exception." << endl;
     }
 
@@ -332,7 +334,7 @@ int main() {
     } catch ( RTI::Exception &e ) {
         cerr << "RTI exception: " << e._name << " ["
         << (e._reason ? e._reason : "undefined") << "]." << endl;
-    } catch ( ... )  {
+    } catch ( ... ) {
         cerr << "Error: unknown non-RTI exception." << endl;
     }
 
@@ -344,7 +346,7 @@ int main() {
         } catch ( RTI::Exception &e ) {
             cerr << "RTI exception: " << e._name << " ["
             << (e._reason ? e._reason : "undefined") << "]." << endl;
-        } catch ( ... )  {
+        } catch ( ... ) {
             cerr << "Error: unknown non-RTI exception." << endl;
         }
 
@@ -397,7 +399,7 @@ int main() {
         } catch ( RTI::Exception &e ) {
             cerr << "RTI exception: " << e._name << " ["
             << (e._reason ? e._reason : "undefined") << "]." << endl;
-        } catch ( ... )  {
+        } catch ( ... ) {
             cerr << "Error: unknown non-RTI exception." << endl;
         }
 
@@ -413,7 +415,7 @@ int main() {
     } catch ( RTI::Exception &e ) {
         cerr << "RTI exception: " << e._name << " ["
         << (e._reason ? e._reason : "undefined") << "]." << endl;
-    } catch ( ... )  {
+    } catch ( ... ) {
         cerr << "Error: unknown non-RTI exception." << endl;
     }
 
@@ -422,7 +424,7 @@ int main() {
     } catch ( RTI::Exception &e ) {
         cerr << "RTI exception: " << e._name << " ["
         << (e._reason ? e._reason : "undefined") << "]." << endl;
-    } catch ( ... )  {
+    } catch ( ... ) {
         cerr << "Error: unknown non-RTI exception." << endl;
     }
 
@@ -438,7 +440,7 @@ int main() {
     } catch ( RTI::Exception &e ) {
         cerr << "RTI exception: " << e._name << " ["
         << (e._reason ? e._reason : "undefined") << "]." << endl;
-    } catch ( ... )  {
+    } catch ( ... ) {
         cerr << "Error: unknown non-RTI exception." << endl;
     }
 
@@ -452,7 +454,7 @@ int main() {
     } catch ( RTI::Exception &e ) {
         cerr << "RTI exception: " << e._name << " ["
         << (e._reason ? e._reason : "undefined") << "]." << endl;
-    } catch ( ... )  {
+    } catch ( ... ) {
         cerr << "Error: unknown non-RTI exception." << endl;
     }
 

@@ -80,7 +80,7 @@ INCLUDE(CPack)
 #   the source list
 ###################################
 SET(EXE_NAME controllerFederate)
-SET(SRC_LIST controllerFederate.cc)
+SET(SRC_LIST controllerFederate.cc DisplayServiceExplanation.cc)
 
 ###################################
 # Generic CMake executable target
@@ -96,7 +96,7 @@ INSTALL(TARGETS ${EXE_NAME}
 #   the source list
 ###################################
 SET(EXE_NAME processFederate)
-SET(SRC_LIST processFederate.cc)
+SET(SRC_LIST processFederate.cc DisplayServiceExplanation.cc)
 
 ###################################
 # Generic CMake executable target

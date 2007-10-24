@@ -42,6 +42,8 @@
 
 #include <iostream>
 
+#include "DisplayServiceExplanation.hh"
+
 using std::string;
 using std::cout;
 using std::cerr;
@@ -58,17 +60,17 @@ class ControlFedAmb : public NullFederateAmbassador {
 
 private:
 
-    /**
+    /*
+     * private variables:
+     *
      * output variable y provided by the process federate
-     */
-    double y;
-    /**
      * flag discovY to determine federate service discoverObjectInstance(...)
-     */
-    bool discovY;
-    /**
      * flag newY to determine federate service reflectAttributeValues(...)
      */
+
+    double y;
+
+    bool discovY;
     bool newY;
 
 public:
@@ -124,7 +126,7 @@ public:
      * flag for the occurrence of the federate service
      * discoverObjectInstance(...).
      * @ingroup DataEncapsulation
-     * @param[in] bool value
+     * @return true if y was discovered false otherwise
      */
     void
     setDiscoverY (bool val) {
@@ -136,7 +138,7 @@ public:
      * flag for the occurrence of the federate service
      * reflectAttributeValues(...).
      * @ingroup DataEncapsulation
-     * @param[in] bool value
+     * @return true if new y arrived false otherwise
      */
     void
     setNewY (bool val) {
@@ -151,7 +153,7 @@ public:
 
     /**
      * Discover object instance. This callback informs the federate of the
-     * existence of an object instance in the federation that is relevant
+     * existence of an object instance in the federation according 
      * to the federate's current subscription interests.
      * @ingroup RequiredFederateServices
      * @param[in] theObject,
@@ -176,8 +178,8 @@ public:
 
     /**
      * Reflect Attribute Values. This callback informs the federate of a state
-     * update for a set of instance-attributes relevant to the federate's
-     * current subscription interests.
+     * update for a set of instance-attributes according to its current
+     * subscription interests.
      * @ingroup RequiredFederateServices
      * @param[in] theObject,
      * @param[in] theAttributes,
@@ -226,13 +228,18 @@ int main() {
     RTI::RTIambassador   rtiAmb;
     ControlFedAmb        myFedAmb;
 
+    DisplayServiceExplanation dispSE;
+
     string federationName = "TwoLevelController";
     string federateName   = "controlFed";
     string fedFile        = "TwoLevelController.fed";
 
-    /* Federation Management */
+    dispSE.dispTutorialIntroduction();
 
-    cout << "Create Federation execution " << federationName << "." << endl;
+    /* Federation Management */
+    dispSE.dispFederationManagement();
+
+    dispSE.dispCreateFederationExecution();
 
     /* create federation execution */
     try {
@@ -245,9 +252,6 @@ int main() {
     } catch ( ... ) {
         cerr << "Error: unknown non-RTI exception." << endl;
     }
-
-    cout << "Federate " << federateName << " joins federation execution "
-    << federationName << "." << endl;
 
     /* join federation execution */
     try {
