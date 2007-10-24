@@ -433,7 +433,7 @@ int main() {
     cout << "Federate " << federateName << " resigns federation execution "
     << federationName << "." << endl;
 
-    /* resign federation exection */
+    /* resign federation execution */
     try {
         rtiAmb.resignFederationExecution(
             RTI::DELETE_OBJECTS_AND_RELEASE_ATTRIBUTES);

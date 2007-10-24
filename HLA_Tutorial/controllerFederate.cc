@@ -1,5 +1,5 @@
 /**
- * @file controlllerFederate.cc
+ * @file controllerFederate.cc
  *
  * @brief This federate simulates a two level controller.
  *
@@ -243,15 +243,19 @@ int main() {
 
     /* create federation execution */
     try {
-        rtiAmb.createFederationExecution(federationName.c_str(), fedFile.c_str());
+        rtiAmb.createFederationExecution(federationName.c_str(), 
+					 fedFile.c_str());
     } catch ( RTI::FederationExecutionAlreadyExists ) {
-        cout << "Federation already created by another federate." << endl;
+        cout << "Federation already created by another federate." 
+	<< endl;
     } catch ( RTI::Exception &e ) {
         cerr << "RTI exception: " << e._name << " ["
         << (e._reason ? e._reason : "undefined") << "]." << endl;
     } catch ( ... ) {
         cerr << "Error: unknown non-RTI exception." << endl;
     }
+
+    dispSE.dispJoinFederationExecution();
 
     /* join federation execution */
     try {
@@ -268,8 +272,6 @@ int main() {
     /* Declaration Management */
 
     /* get handles */
-    cout << "Get handles from fedFile " << fedFile.c_str() << "." << endl;
-
     RTI::ObjectClassHandle twoLevelContrID;
     RTI::AttributeHandle uID, yID;
 
@@ -434,10 +436,9 @@ int main() {
 
     /* Federation Management */
 
-    cout << "Federate " << federateName << " resigns federation execution "
-    << federationName << "." << endl;
+    dispSE.dispResignFederationExecution();
 
-    /* resign federation exection */
+    /* resign federation execution */
     try {
         rtiAmb.resignFederationExecution(
             RTI::DELETE_OBJECTS_AND_RELEASE_ATTRIBUTES);
@@ -448,7 +449,7 @@ int main() {
         cerr << "Error: unknown non-RTI exception." << endl;
     }
 
-    cout << "Destroy Federation execution " << federationName << "." << endl;
+    dispSE.dispDestroyFederationExecution();
 
     /* destroy federation execution */
     try {
@@ -461,8 +462,6 @@ int main() {
     } catch ( ... ) {
         cerr << "Error: unknown non-RTI exception." << endl;
     }
-
-    cout << "Successful termination." << endl;
 
     return 0;
 }
