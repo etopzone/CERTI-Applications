@@ -106,6 +106,8 @@ TARGET_LINK_LIBRARIES (${EXE_NAME} ${CERTI_LIBRARIES})
 INSTALL(TARGETS ${EXE_NAME} 
         RUNTIME DESTINATION bin)
 
-INSTALL_FILES(share/federations TwoLevelController.fed)
+INSTALL(FILES 
+	TwoLevelController.fed
+        DESTINATION share/federations)
 
 MESSAGE(STATUS "*** ${CMAKE_PROJECT_NAME} has been successfully configured ***")
