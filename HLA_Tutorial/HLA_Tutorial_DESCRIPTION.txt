@@ -1,19 +1,59 @@
+// $Id:
+This is an HLA tutorial using CERTI (http://savannah.nongnu.org/projects/certi)
 
-This is an HLA tutorial using CERTI
-(http://savannah.nongnu.org/projects/certi)
+                   INSTRUCTIONS FOR UNIX like system.
+                   =================================
 
-blah blah
+1. HOW TO USE THESE INSTRUCTIONS
+================================
+Better is to make a copy of this file into a new file like this :
+         cp HLA_Tutorial_DESCRIPTION.txt MYHLATD.txt
+and now modify this new file (MYHLATD.txt) by replacing all :
 
-0) Building the tutorial (under unix)
+TPHLADIR =============> where you find all TP_HLA applications
+                        (you will find applications directory) 
+RUNCERTIDIR ==========> where you find install directory of CERTI
+                        (you will find /bin /include /lib /share)
+HOSTRIG ==============> name of the host running rtig
 
-   0.a) check your CERTI installation or install it
-   0.b) setup CERTI_HOME env var to point to certi PREFIX installation
-        you may do it easilly by sourcing
-        /path/to/certi_install/share/scripts/myCERTI_env.sh
-   0.a) tar zxvf CERTI_TUTORIAL-x.y.z-Source.tar.gz
-   0.b) mkdir build_CERTI_TUTORIAL; cd build_CERTI_TUTORIAL 
-   0.c) cmake ../CERTI_TUTORIAL-x.y.z
-   0.d) make
+2. CERTI VERIFICATION. 
+======================
+   2.1. check your CERTI installation or install it in RUNCERTIDIR
+        At this point <ls RUNCERTIDIR> will give :
+                      bin/  include/  lib/  share/
 
-1) Running the tutorial
-   ....
+   2.2. setup all environment variables to point to CERTI installation.
+       If you use shell like (as bash)         do :
+       source RUNCERTIDIR/share/scripts/myCERTI_env.sh  HOSTRTIG
+
+       If you use cshell like (as csh or tcsh) do :
+       source RUNCERTIDIR/share/scripts/myCERTI_env.csh HOSTRTIG
+
+       At this point <which rtig> will find rtig in correct place
+
+3. BUILDING TUTORIAL
+====================
+   3.1. If you read this file you have got the TUTORIAL in TPHLADIR isn'it ?
+   3.2. cd TPHLADIR/applications/HLA_Tutorial
+   3.3  mkdir build_CERTI_TUTORIAL
+   3.4. cd build_CERTI_TUTORIAL
+   3.5. cmake -DCMAKE_INSTALL_PREFIX=TPHLADIR ../.
+   3.6  make
+   3.7  make install
+
+4. RUNNING TUTORIAL
+===================
+   4.1 Launch rtig on HOSTRIG :
+       cd TPHLADIR/share/federations
+       rtig
+   4.2 Launch controller ( if on host different of HOST don't forget §2.2) :
+       ./TPHLADIR/bin/controllerFederate
+       It runs and wait on >> Press any key to resume <<
+   4.3 Launch process    ( if on host different of HOST don't forget §2.2) :
+       ./TPHLADIR/bin/processFederate
+       It runs and says <Wait for second federate>
+   4.4 Return to controller launch window and press any key and return
+       and you see what happens step by step, 
+       don't forget to press any key and return when required.
+
+Use without moderation....and don't forget to stop rtig before go home.
