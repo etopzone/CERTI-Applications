@@ -1,4 +1,4 @@
-// $Id: HLA_Tutorial_DESCRIPTION.txt,v 1.3 2007/10/26 08:28:05 rousse Exp $
+// $Id: HLA_Tutorial_DESCRIPTION.txt,v 1.4 2007/10/29 12:51:17 erk Exp $
 This is an HLA tutorial using CERTI (http://savannah.nongnu.org/projects/certi)
 
                    INSTRUCTIONS FOR UNIX like system.
@@ -23,17 +23,17 @@ HOSTRTIG ==============> name of the host running rtig
                       bin/  include/  lib/  share/
 
    2.2. setup all environment variables to point to CERTI installation.
-       If you use shell like (as bash)         do :
+       If you use bourne shell (as bash)         do :
        source RUNCERTIDIR/share/scripts/myCERTI_env.sh  HOSTRTIG
 
-       If you use cshell like (as csh or tcsh) do :
+       If you use C-Shell as csh or tcsh) do :
        source RUNCERTIDIR/share/scripts/myCERTI_env.csh HOSTRTIG
 
        At this point <which rtig> will find rtig in correct place
 
 3. BUILDING TUTORIAL
 ====================
-   3.1. If you read this file you have got the TUTORIAL in TPHLADIR isn'it ?
+   3.1. If you read this file you have got the TUTORIAL in TPHLADIR isn't it ?
    3.2. cd TPHLADIR/applications/HLA_Tutorial
    3.3  mkdir build_CERTI_TUTORIAL
    3.4. cd build_CERTI_TUTORIAL
@@ -46,14 +46,14 @@ HOSTRTIG ==============> name of the host running rtig
    4.1 Launch rtig on HOSTRTIG :
        cd TPHLADIR/share/federations
        rtig
-   4.2 Launch controller ( if on host different of HOSTRTIG don't forget §2.2) :
+   4.2 Launch controller ( if on host different of HOSTRTIG don't forget section 2.2) :
        ./TPHLADIR/bin/controllerFederate
        It runs and wait on >> Press any key to resume <<
-   4.3 Launch process    ( if on host different of HOSTRTIG don't forget §2.2) :
+   4.3 Launch process    ( if on host different of HOSTRTIG don't forget section 2.2) :
        ./TPHLADIR/bin/processFederate
        It runs and says <Wait for second federate>
    4.4 Return to controller launch window and press any key and return
        and you see what happens step by step, 
        don't forget to press any key and return when required.
 
-Use without moderation....and don't forget to stop rtig before go home.
+Use without moderation....and don't forget to stop rtig before going home.
