@@ -1,3 +1,6 @@
+#ifndef DISPLAY_SERVICE_EXPLANATION_H
+#define DISPLAY_SERVICE_EXPLANATION_H
+
 #include <iostream>
 
 class DisplayServiceExplanation {
@@ -35,3 +38,5 @@ public:
     void
     dispDestroyFederationExecution(void);
 };
+
+#endif /* DISPLAY_SERVICE_EXPLANATION_H */
