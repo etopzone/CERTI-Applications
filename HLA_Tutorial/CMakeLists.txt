@@ -41,7 +41,7 @@ SET(CMAKE_BUILD_TYPE "Debug")
 SET(PACKAGE_NAME      ${CMAKE_PROJECT_NAME})
 SET(PACKAGE_VERSION_MAJOR "0")
 SET(PACKAGE_VERSION_MINOR "1")
-SET(PACKAGE_VERSION_PATCH "2")
+SET(PACKAGE_VERSION_PATCH "3")
 SET(PACKAGE_VERSION   "${PACKAGE_VERSION_MAJOR}.${PACKAGE_VERSION_MINOR}.${PACKAGE_VERSION_PATCH}")
 SET(PACKAGE_BUGREPORT "christianstenzel@gmx.net")
 MESSAGE(STATUS "Configuring ${PACKAGE_NAME} version ${PACKAGE_VERSION}")
@@ -71,7 +71,14 @@ SET(CPACK_PACKAGE_VERSION_PATCH ${PACKAGE_VERSION_PATCH})
 INCLUDE(CPack)
 
 #########################################################################
-# Go to subdirs
+# Here we will generate the DisplayServiceMessages.hh include file
+# from DisplayServiceMessages.hh.in file.
+#########################################################################
+INCLUDE(GenerateMessagesHeader.cmake)
+
+#########################################################################
+# Go to subdirs 
+# (or process library and executable in the current directory) 
 #########################################################################
 
 ###################################
