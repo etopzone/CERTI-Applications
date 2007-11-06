@@ -48,7 +48,9 @@ ambassador implementation. \
 #define DS_MSG_RESIGN_FEDERATION_EXECUTION "\
 Federation Management -> Resign Federation Execution\n\n\
 The RTI ambassador service resignFederationExecution is used by a federate \
-when leaving the federation. \
+when leaving the federation. The required ResignAction parameter resolves ownership of \
+any attributes owned by the federate. Allowed values are: RELEASE_ATTRIBUTES, \
+DELETE_OBJECT, DELETE_OBJECTS_AND_RELEASE_ATTRIBUTES (common practice), NO_ACTION. \
     " 
 
 #define DS_MSG_RESIGN_FEDERATION_EXECUTION_SRC "@DS_MSG_RESIGN_FEDERATION_EXECUTION_SRC@"
@@ -61,6 +63,23 @@ execution. \
     " 
 
 #define DS_MSG_DESTROY_FEDERATION_EXECUTION_SRC "@DS_MSG_DESTROY_FEDERATION_EXECUTION_SRC@"
+
+#define DS_MSG_DECLARATION_MANAGEMENT "\
+Declaration Management\n\n \
+    "
+
+#define DS_MSG_GET_OBJECT_CLASS_HANDLE "\
+Ancillary Service -> Get Object Class Handle\n\n \
+    "
+
+#define DS_MSG_GET_OBJECT_CLASS_HANDLE_SRC "@DS_MSG_GET_OBJECT_CLASS_HANDLE_SRC@"
+
+#define DS_MSG_GET_ATTRIBUTE_HANDLE "\
+Ancillary Service -> Get Attribute Handle\n\n \
+    "
+
+#define DS_MSG_GET_ATTRIBUTE_HANDLE_SRC "@DS_MSG_GET_ATTRIBUTE_HANDLE_SRC@"
+
 
 #ifdef _WIN32
 #define DS_CLEAR_CONSOLE_COMMAND "cls"

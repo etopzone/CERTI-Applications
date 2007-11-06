@@ -18,10 +18,10 @@ public:
     /* destructor */
     ~DisplayServiceExplanation(void);
 
-    /* Federation Management - RTI services */
-
     void
     dispTutorialIntroduction(void);
+
+    /* Federation Management - RTI services */
 
     void
     dispFederationManagement(void);
@@ -37,6 +37,20 @@ public:
 
     void
     dispDestroyFederationExecution(void);
+
+    /* Declaration Management - RTI services */
+
+    void
+    dispDeclarationManagement(void);
+
+    /* Ancillary Services */
+
+    void
+    dispGetObjectClassHandle(void);
+
+    void
+    dispGetAttributeHandle(void);
+
 };
 
 #endif /* DISPLAY_SERVICE_EXPLANATION_H */

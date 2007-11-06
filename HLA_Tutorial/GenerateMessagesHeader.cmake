@@ -41,10 +41,15 @@ MACRO(GREP_SOURCE SRC_FILE FROM_STRING FOR_NB_LINES VARNAME)
 ENDMACRO(GREP_SOURCE SRC_FILE FROM_STRING FOR_NB_LINES VARNAME)
 
 IF(UNIX)
+    # federation management
     GREP_SOURCE(controllerFederate.cc "create federation execution" 12 DS_MSG_CREATE_FEDERATION_EXECUTION_SRC)
     GREP_SOURCE(controllerFederate.cc "join federation execution" 10 DS_MSG_JOIN_FEDERATION_EXECUTION_SRC)
-    GREP_SOURCE(controllerFederate.cc "resign federation execution" 10 DS_MSG_RESIGN_FEDERATION_EXECUTION_SRC)
+    GREP_SOURCE(controllerFederate.cc "resign federation execution" 9 DS_MSG_RESIGN_FEDERATION_EXECUTION_SRC)
     GREP_SOURCE(controllerFederate.cc "destroy federation execution" 10 DS_MSG_DESTROY_FEDERATION_EXECUTION_SRC)
+    # declaration management
+    # ancillary services
+    GREP_SOURCE(controllerFederate.cc "get object class handle" 10 DS_MSG_GET_OBJECT_CLASS_HANDLE_SRC)
+    GREP_SOURCE(controllerFederate.cc "get attribute handle" 9 DS_MSG_GET_ATTRIBUTE_HANDLE_SRC)
     # Then we generate the header using var value replacement 
     CONFIGURE_FILE(DisplayServiceMessages.hh.in ${CMAKE_CURRENT_SOURCE_DIR}/DisplayServiceMessages.hh)    
 ENDIF(UNIX)

@@ -268,9 +268,14 @@ int main() {
 
     /* Declaration Management */
 
+    dispSE.dispDeclarationManagement();
+
     /* get handles */
+
+    dispSE.dispGetObjectClassHandle();
+
+    /* get object class handle */
     RTI::ObjectClassHandle twoLevelContrID;
-    RTI::AttributeHandle uID, yID;
 
     try {
         twoLevelContrID = rtiAmb.getObjectClassHandle("TwoLevelControllerClass");
@@ -281,6 +286,10 @@ int main() {
         cerr << "Error: unknown non-RTI exception." << endl;
     }
 
+    dispSE.dispGetAttributeHandle();
+
+    /* get attribute handle */
+    RTI::AttributeHandle uID, yID;
     try {
         uID = rtiAmb.getAttributeHandle("U", twoLevelContrID);
     } catch ( RTI::Exception &e ) {
