@@ -183,19 +183,16 @@ public:
      * @ingroup RequiredFederateServices
      * @param[in] theObject,
      * @param[in] theAttributes,
-     * @param[in]
+     * @param[in] theTag
      */
     void
     reflectAttributeValues( RTI::ObjectHandle theObject,
                             const RTI::AttributeHandleValuePairSet&
                             theAttributes,
-                            const RTI::FedTime& theTime,
-                            const char *theTag,
-                            RTI::EventRetractionHandle theHandle)
+                            const char *theTag)
     throw ( RTI::ObjectNotKnown,
             RTI::AttributeNotKnown,
             RTI::FederateOwnsAttributes,
-            RTI::InvalidFederationTime,
             RTI::FederateInternalError) {
         RTI::ULong length;
         char *attrValue;
