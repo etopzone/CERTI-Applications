@@ -350,6 +350,16 @@ int main() {
         cerr << "Error: unknown non-RTI exception." << endl;
     }
 
+    /* Time Management */
+    try {
+    	rtiAmb.enableAsynchronousDelivery();
+    } catch ( RTI::Exception &e ) {
+        cerr << "RTI exception: " << e._name << " ["
+        << (e._reason ? e._reason : "undefined") << "]." << endl;
+    } catch ( ... ) {
+        cerr << "Error: unknown non-RTI exception." << endl;
+    }
+
     cout << "Wait for second federate." << endl;
     while (!myFedAmb.getDiscoverY()) {
 

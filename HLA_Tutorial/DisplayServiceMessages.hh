@@ -77,16 +77,16 @@ any attributes owned by the federate. Allowed values are: RELEASE_ATTRIBUTES, \
 DELETE_OBJECT, DELETE_OBJECTS_AND_RELEASE_ATTRIBUTES (common practice), NO_ACTION. \
     " 
 
-#define DS_MSG_RESIGN_FEDERATION_EXECUTION_SRC "Example from file: controllerFederate.cc\n447:    /* resign federation execution */\n\
-448-    try {\n\
-449-        rtiAmb.resignFederationExecution(\n\
-450-            RTI::DELETE_OBJECTS_AND_RELEASE_ATTRIBUTES);\n\
-451-    } catch ( RTI::Exception &e ) {\n\
-452-        cerr << \"RTI exception: \" << e._name << \" [\"\n\
-453-        << (e._reason ? e._reason : \"undefined\") << \"].\" << endl;\n\
-454-    } catch ( ... ) {\n\
-455-        cerr << \"Error: unknown non-RTI exception.\" << endl;\n\
-456-    }\n\
+#define DS_MSG_RESIGN_FEDERATION_EXECUTION_SRC "Example from file: controllerFederate.cc\n457:    /* resign federation execution */\n\
+458-    try {\n\
+459-        rtiAmb.resignFederationExecution(\n\
+460-            RTI::DELETE_OBJECTS_AND_RELEASE_ATTRIBUTES);\n\
+461-    } catch ( RTI::Exception &e ) {\n\
+462-        cerr << \"RTI exception: \" << e._name << \" [\"\n\
+463-        << (e._reason ? e._reason : \"undefined\") << \"].\" << endl;\n\
+464-    } catch ( ... ) {\n\
+465-        cerr << \"Error: unknown non-RTI exception.\" << endl;\n\
+466-    }\n\
 "
 
 #define DS_MSG_DESTROY_FEDERATION_EXECUTION "\
@@ -96,17 +96,17 @@ by the last federate. This service destroys the current federation \
 execution. \
     " 
 
-#define DS_MSG_DESTROY_FEDERATION_EXECUTION_SRC "Example from file: controllerFederate.cc\n460:    /* destroy federation execution */\n\
-461-    try {\n\
-462-        rtiAmb.destroyFederationExecution(federationName.c_str());\n\
-463-    } catch (RTI::FederatesCurrentlyJoined) {\n\
-464-        cout << \"Federates currently joined.\" << endl;\n\
-465-    } catch ( RTI::Exception &e ) {\n\
-466-        cerr << \"RTI exception: \" << e._name << \" [\"\n\
-467-        << (e._reason ? e._reason : \"undefined\") << \"].\" << endl;\n\
-468-    } catch ( ... ) {\n\
-469-        cerr << \"Error: unknown non-RTI exception.\" << endl;\n\
-470-    }\n\
+#define DS_MSG_DESTROY_FEDERATION_EXECUTION_SRC "Example from file: controllerFederate.cc\n470:    /* destroy federation execution */\n\
+471-    try {\n\
+472-        rtiAmb.destroyFederationExecution(federationName.c_str());\n\
+473-    } catch (RTI::FederatesCurrentlyJoined) {\n\
+474-        cout << \"Federates currently joined.\" << endl;\n\
+475-    } catch ( RTI::Exception &e ) {\n\
+476-        cerr << \"RTI exception: \" << e._name << \" [\"\n\
+477-        << (e._reason ? e._reason : \"undefined\") << \"].\" << endl;\n\
+478-    } catch ( ... ) {\n\
+479-        cerr << \"Error: unknown non-RTI exception.\" << endl;\n\
+480-    }\n\
 "
 
 #define DS_MSG_DECLARATION_MANAGEMENT "\
