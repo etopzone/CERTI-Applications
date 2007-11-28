@@ -41,15 +41,25 @@ MACRO(GREP_SOURCE SRC_FILE FROM_STRING FOR_NB_LINES VARNAME)
 ENDMACRO(GREP_SOURCE SRC_FILE FROM_STRING FOR_NB_LINES VARNAME)
 
 IF(UNIX)
-    # federation management
+    # federation management - rti services
     GREP_SOURCE(controllerFederate.cc "create federation execution" 12 DS_MSG_CREATE_FEDERATION_EXECUTION_SRC)
     GREP_SOURCE(controllerFederate.cc "join federation execution" 10 DS_MSG_JOIN_FEDERATION_EXECUTION_SRC)
     GREP_SOURCE(controllerFederate.cc "resign federation execution" 9 DS_MSG_RESIGN_FEDERATION_EXECUTION_SRC)
     GREP_SOURCE(controllerFederate.cc "destroy federation execution" 10 DS_MSG_DESTROY_FEDERATION_EXECUTION_SRC)
-    # declaration management
+    # declaration management - rti services 
+    GREP_SOURCE(controllerFederate.cc "publish u" 8 DS_MSG_PUBLISH_OBJECT_CLASS_SRC)
+    GREP_SOURCE(controllerFederate.cc "subscribe to y" 8 DS_MSG_SUBSCRIBE_TO_OBJECT_CLASS_SRC)
+    # object management - rti services
+    GREP_SOURCE(controllerFederate.cc "register object" 10 DS_MSG_REGISTER_OBJECT_INSTANCE_SRC)
+    GREP_SOURCE(controllerFederate.cc "update attribute" 10 DS_MSG_UPDATE_ATTRIBUTE_VALUES_SRC)
+    # object management - federate services
+    GREP_SOURCE(controllerFederate.cc "discoverObjectInstance (RTI" 10 DS_MSG_DISCOVER_OBJECT_INSTANCE_SRC)
+    GREP_SOURCE(controllerFederate.cc "reflectAttributeValues (RTI" 29 DS_MSG_REFLECT_ATTRIBUTE_VALUES_SRC)
     # ancillary services
     GREP_SOURCE(controllerFederate.cc "get object class handle" 10 DS_MSG_GET_OBJECT_CLASS_HANDLE_SRC)
     GREP_SOURCE(controllerFederate.cc "get attribute handle" 9 DS_MSG_GET_ATTRIBUTE_HANDLE_SRC)
+    GREP_SOURCE(controllerFederate.cc "add attribute handle" 7 DS_MSG_ADD_TO_ATTRIBUTE_HANDLE_SET_SRC)
+    GREP_SOURCE(controllerFederate.cc "discover y" 15 DS_MSG_TICK_SRC)
     # Then we generate the header using var value replacement 
     CONFIGURE_FILE(DisplayServiceMessages.hh.in ${CMAKE_CURRENT_SOURCE_DIR}/DisplayServiceMessages.hh)    
 ENDIF(UNIX)

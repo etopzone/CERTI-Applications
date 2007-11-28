@@ -43,6 +43,31 @@ public:
     void
     dispDeclarationManagement(void);
 
+    void
+    dispPublishObjectClass(void);
+
+    void
+    dispSubscribeToObjectClass(void);
+
+    /* Object Management - RTI services */
+
+    void
+    dispObjectManagement(void);
+
+    void
+    dispRegisterObjectInstance(void);
+
+    void
+    dispUpdateAttributeValues(void);
+
+    /* Object Management - Federate services */
+
+    void
+    dispDiscoverObjectInstance(void);
+
+    void
+    dispReflectAttributeValues(void);
+
     /* Ancillary Services */
 
     void
@@ -50,6 +75,12 @@ public:
 
     void
     dispGetAttributeHandle(void);
+
+    void
+    dispAddToAttributeHandleSet(void);
+
+    void
+    dispTick(void);
 
 };
 

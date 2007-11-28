@@ -18,6 +18,8 @@ the management areas Federation Management, Declaration Management and \
 Object Management.\
     "
     
+/* Federation Management - RTI services */
+
 #define DS_MSG_FEDERATION_MANAGEMENT "\
 Federation Management\n\n\
 Services of this management area coordinate federation-wide activities \
@@ -48,9 +50,10 @@ ambassador implementation. \
 #define DS_MSG_RESIGN_FEDERATION_EXECUTION "\
 Federation Management -> Resign Federation Execution\n\n\
 The RTI ambassador service resignFederationExecution is used by a federate \
-when leaving the federation. The required ResignAction parameter resolves ownership of \
-any attributes owned by the federate. Allowed values are: RELEASE_ATTRIBUTES, \
-DELETE_OBJECT, DELETE_OBJECTS_AND_RELEASE_ATTRIBUTES (common practice), NO_ACTION. \
+when leaving the federation. The required ResignAction parameter resolves \
+ownership of any attributes owned by the federate. Allowed values are: \
+RELEASE_ATTRIBUTES, DELETE_OBJECT, \
+DELETE_OBJECTS_AND_RELEASE_ATTRIBUTES (common practice), NO_ACTION. \
     " 
 
 #define DS_MSG_RESIGN_FEDERATION_EXECUTION_SRC "@DS_MSG_RESIGN_FEDERATION_EXECUTION_SRC@"
@@ -64,22 +67,112 @@ execution. \
 
 #define DS_MSG_DESTROY_FEDERATION_EXECUTION_SRC "@DS_MSG_DESTROY_FEDERATION_EXECUTION_SRC@"
 
+/* Declaration Management - RTI services */
+
 #define DS_MSG_DECLARATION_MANAGEMENT "\
 Declaration Management\n\n \
+HLA communication relies on an implicit data exchange mechanism. That's why \
+federates have to declare their intention to generate or receive information \
+in their initialization phase according to their FOM resp. their SOM. \
+Declaration Management can also be regarded as interest management. \
     "
+
+#define DS_MSG_PUBLISH_OBJECT_CLASS "\
+Declaration Management -> Publish Object Class\n\n \
+When invoking this service the federate announces that it can produce \
+information for the specified attributes within the AttributeHandleSet class \
+in its future execution. \
+    "
+
+#define DS_MSG_PUBLISH_OBJECT_CLASS_SRC "@DS_MSG_PUBLISH_OBJECT_CLASS_SRC@"
+
+#define DS_MSG_SUBSCRIBE_TO_OBJECT_CLASS "\
+Declaration Management -> Subscribe To Object Class\n\n \
+When invoking this service the federate announces that it is interested in \
+receiving updates for the specified attributes within the AttributeHandleSet \
+class in its future execution. \
+    "
+
+#define DS_MSG_SUBSCRIBE_TO_OBJECT_CLASS_SRC "@DS_MSG_SUBSCRIBE_TO_OBJECT_CLASS_SRC@"
+
+/* Object Management - RTI services */
+
+#define DS_MSG_OBJECT_MANAGEMENT "\
+Object Management\n\n \
+This part of the interface specification deals with deletion, instanciation, \
+modification and registration of object instances. The necessary data exchange \
+mechanisms, especially updating and reflecting attributes and sending and \
+receiving interactions are part of this management area. \
+    "
+
+#define DS_MSG_REGISTER_OBJECT_INSTANCE "\
+Object Management -> Register Object Instance\n\n \
+This service creates a new object instance. Other federates are informed \
+through the federate service discoverObjectInstance. \
+    "
+
+#define DS_MSG_REGISTER_OBJECT_INSTANCE_SRC "@DS_MSG_REGISTER_OBJECT_INSTANCE_SRC@"
+
+#define DS_MSG_UPDATE_ATTRIBUTE_VALUES "\
+Object Management -> Update Attribute Values\n\n \
+The federate informs interested federates about object updates. Interested \
+federates will receive the updates by a reflectAttributeValues callback. \
+    "
+
+#define DS_MSG_UPDATE_ATTRIBUTE_VALUES_SRC "@DS_MSG_UPDATE_ATTRIBUTE_VALUES_SRC@"
+
+/* Object Management - Federate services */
+
+#define DS_MSG_DISCOVER_OBJECT_INSTANCE "\
+Object Management -> Discover Object Instance\n\n \
+This federate service informs the federate of a new object instance. Federates \
+are only informed about new objects if they have specified their interests in \
+a former subscription invocation. In this case, we are informed about a new \
+instance of the output variable y. \
+    "
+
+#define DS_MSG_DISCOVER_OBJECT_INSTANCE_SRC "@DS_MSG_DISCOVER_OBJECT_INSTANCE_SRC@"
+
+#define DS_MSG_REFLECT_ATTRIBUTE_VALUES "\
+Object Management -> Reflect Attribute Values\n\n \
+This federate service informs the federate of new state updates for attributes \
+it is currently interesting in. \
+    "
+
+#define DS_MSG_REFLECT_ATTRIBUTE_VALUES_SRC "@DS_MSG_REFLECT_ATTRIBUTE_VALUES_SRC@"
+
+/* Ancillary Services */
 
 #define DS_MSG_GET_OBJECT_CLASS_HANDLE "\
 Ancillary Service -> Get Object Class Handle\n\n \
+This service returns a numeric handle for the named object class \
+according to the FOM resp. SOM. \
     "
 
 #define DS_MSG_GET_OBJECT_CLASS_HANDLE_SRC "@DS_MSG_GET_OBJECT_CLASS_HANDLE_SRC@"
 
 #define DS_MSG_GET_ATTRIBUTE_HANDLE "\
 Ancillary Service -> Get Attribute Handle\n\n \
+This service returns a numeric handle for the named attribute according to \
+the FOM resp. SOM. \
     "
 
 #define DS_MSG_GET_ATTRIBUTE_HANDLE_SRC "@DS_MSG_GET_ATTRIBUTE_HANDLE_SRC@"
 
+#define DS_MSG_ADD_TO_ATTRIBUTE_HANDLE_SET "\
+Ancillary Service -> Add attribute handles to attribute handle set\n\n \
+The code below shows how to add attributes to the AttributeHandleSet class. \
+    "
+
+#define DS_MSG_ADD_TO_ATTRIBUTE_HANDLE_SET_SRC "@DS_MSG_ADD_TO_ATTRIBUTE_HANDLE_SET_SRC@"
+
+#define DS_MSG_TICK "\
+Ancillary Service -> Tick\n\n \
+Tick is used to provide computation time to the LRC. Here we tick until we \
+get the discoverObjectInstance callback. \
+    "
+
+#define DS_MSG_TICK_SRC "@DS_MSG_TICK_SRC@"
 
 #ifdef _WIN32
 #define DS_CLEAR_CONSOLE_COMMAND "cls"

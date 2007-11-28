@@ -292,7 +292,8 @@ int main() {
     } catch ( ... ) {
         cerr << "Error: unknown non-RTI exception." << endl;
     }
-
+    
+    /* add attribute handle to AttributeHandleSet */	
     auto_ptr<RTI::AttributeHandleSet>
     attrU(RTI::AttributeHandleSetFactory::create(1));
     auto_ptr<RTI::AttributeHandleSet>
@@ -328,16 +329,6 @@ int main() {
 
     try {
         objInstID_y = rtiAmb.registerObjectInstance(twoLevelContrID, "y");
-    } catch ( RTI::Exception &e ) {
-        cerr << "RTI exception: " << e._name << " ["
-        << (e._reason ? e._reason : "undefined") << "]." << endl;
-    } catch ( ... ) {
-        cerr << "Error: unknown non-RTI exception." << endl;
-    }
-
-    /* Time Mangement */
-    try {
-    	rtiAmb.enableAsynchronousDelivery();
     } catch ( RTI::Exception &e ) {
         cerr << "RTI exception: " << e._name << " ["
         << (e._reason ? e._reason : "undefined") << "]." << endl;

@@ -164,9 +164,9 @@ public:
      * @exception RTI::FederateInternalError internal error
      */
     void
-    discoverObjectInstance ( RTI::ObjectHandle theObject,
-                             RTI::ObjectClassHandle theObjectClass,
-                             const char *theObjectName)
+    discoverObjectInstance (RTI::ObjectHandle theObject,
+                            RTI::ObjectClassHandle theObjectClass,
+                            const char *theObjectName)
     throw ( RTI::CouldNotDiscover,
             RTI::ObjectClassNotKnown,
             RTI::FederateInternalError) {
@@ -186,7 +186,7 @@ public:
      * @param[in] theTag
      */
     void
-    reflectAttributeValues( RTI::ObjectHandle theObject,
+    reflectAttributeValues (RTI::ObjectHandle theObject,
                             const RTI::AttributeHandleValuePairSet&
                             theAttributes,
                             const char *theTag)
@@ -308,6 +308,9 @@ int main() {
         cerr << "Error: unknown non-RTI exception." << endl;
     }
 
+    dispSE.dispAddToAttributeHandleSet();
+
+    /* add attribute handle to AttributeHandleSet */
     auto_ptr<RTI::AttributeHandleSet>
     attrU(RTI::AttributeHandleSetFactory::create(1));
     auto_ptr<RTI::AttributeHandleSet>
@@ -315,6 +318,8 @@ int main() {
 
     attrU->add(uID);
     attrY->add(yID);
+
+    dispSE.dispPublishObjectClass();
 
     /* publish u */
     try {
@@ -325,6 +330,8 @@ int main() {
     } catch ( ... ) {
         cerr << "Error: unknown non-RTI exception." << endl;
     }
+
+    dispSE.dispSubscribeToObjectClass();
 
     /* subscribe to y */
     try {
@@ -338,6 +345,10 @@ int main() {
 
     /* Object Management */
 
+    dispSE.dispObjectManagement();
+
+    dispSE.dispRegisterObjectInstance();
+
     /* register object */
     RTI::ObjectHandle objInstID_u;
 
@@ -350,16 +361,10 @@ int main() {
         cerr << "Error: unknown non-RTI exception." << endl;
     }
 
-    /* Time Management */
-    try {
-    	rtiAmb.enableAsynchronousDelivery();
-    } catch ( RTI::Exception &e ) {
-        cerr << "RTI exception: " << e._name << " ["
-        << (e._reason ? e._reason : "undefined") << "]." << endl;
-    } catch ( ... ) {
-        cerr << "Error: unknown non-RTI exception." << endl;
-    }
+    dispSE.dispTick();
+    dispSE.dispDiscoverObjectInstance();
 
+    /* discover y */
     cout << "Wait for second federate." << endl;
     while (!myFedAmb.getDiscoverY()) {
 
@@ -425,6 +430,12 @@ int main() {
 
         }
         myFedAmb.setNewY(false);
+
+	if (tSim==tStart) {
+	    cout << "gaskfgkjh" << endl;
+	    dispSE.dispUpdateAttributeValues();
+	    dispSE.dispReflectAttributeValues();
+	}
 
         cout << "tSim: " << tSim << ", u= " << u << ", y= " << y << endl;
         tSim += h;
