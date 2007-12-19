@@ -31,7 +31,7 @@ operations are also supported. \
 #define DS_MSG_CREATE_FEDERATION_EXECUTION "\
 Federation Management -> Create Federation Execution\n\n\
 The RTI ambassador service createFederationExecution is usally invoked by the \
-first federate. This service creates the federation specifed by a name and a \
+first federate. This service creates the federation specified by a name and a \
 file holding the federation object model (FOM). \
     "
     
@@ -40,7 +40,7 @@ file holding the federation object model (FOM). \
 #define DS_MSG_JOIN_FEDERATION_EXECUTION "\
 Federation Management -> Join Federation Execution\n\n\
 The RTI ambassador service joinFederationExecution is used by a federate to \
-join an existing federation. Input parameters are his own name, the federation \
+join an existing federation. Input parameters are its own name, the federation \
 name of the federation it wants to join and a pointer to its federate \
 ambassador implementation. \
     "
@@ -99,7 +99,7 @@ class in its future execution. \
 
 #define DS_MSG_OBJECT_MANAGEMENT "\
 Object Management\n\n \
-This part of the interface specification deals with deletion, instanciation, \
+This part of the interface specification deals with deletion, instantiation, \
 modification and registration of object instances. The necessary data exchange \
 mechanisms, especially updating and reflecting attributes and sending and \
 receiving interactions are part of this management area. \
@@ -154,7 +154,8 @@ according to the FOM resp. SOM. \
 #define DS_MSG_GET_ATTRIBUTE_HANDLE "\
 Ancillary Service -> Get Attribute Handle\n\n \
 This service returns a numeric handle for the named attribute according to \
-the FOM resp. SOM. \
+the FOM resp. SOM. The numeric handle of the corresponding object class have to\
+be specified as second input parameter. \
     "
 
 #define DS_MSG_GET_ATTRIBUTE_HANDLE_SRC "@DS_MSG_GET_ATTRIBUTE_HANDLE_SRC@"
