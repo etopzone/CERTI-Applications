@@ -291,7 +291,7 @@ according to the FOM resp. SOM. \
 #define DS_MSG_GET_ATTRIBUTE_HANDLE "\
 Ancillary Service -> Get Attribute Handle\n\n \
 This service returns a numeric handle for the named attribute according to \
-the FOM resp. SOM. The numeric handle of the corresponding object class have to\
+the FOM resp. SOM. The numeric handle of the corresponding object class have to \
 be specified as second input parameter. \
     "
 
