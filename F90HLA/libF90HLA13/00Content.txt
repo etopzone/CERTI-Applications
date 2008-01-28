@@ -1,0 +1,27 @@
+directory content
+
+(01)  2008-01-18  00Changes.txt
+(02)  2008-01-18  00Content.txt
+(03)  2008-01-18  AUTHORS
+(04)  2008-01-18  CMakeLists.txt
+(05)  2008-01-18  constantsMod.f90
+(06)  2008-01-18  COPYING
+(07)  2008-01-18  F90HLA13CERTIWrap.cpp
+(08)  2008-01-09  F90_HLA13_CERTI_Wrapper_DESCRIPTION.txt
+(09)  2008-01-18  fedSrvMod.f90
+(10)  2008-01-18  lesser.txt
+(11)  2008-01-18  README
+(12)  2008-01-18  rtiSrvMod.f90
+
+(01)  change log file
+(02)  this file
+(03)  author file
+(04)  cmake file
+(05)  definements of used constants
+(06)  copyright notice
+(07)  wrapper library F90<->CERTI<->F90
+(08)  description of the library
+(09)  federate service module
+(10)  lgpl 
+(11)  install information
+(12)  RTI service module

@@ -1,0 +1,10 @@
+This are demo application for the fortran-HLA13 library. The usage
+of library is demonstrated with short fortran programs.
+
+1. get and install cmake (www.cmake.org)
+2. get and install CERTI (www.cert.fr/CERTI) 
+3. get and install libF90HLA13 (www.mb.hs-wismar.de/~stenzel)  
+4. create build_dir, e.g ~/build_libF90HLA13Demo
+5. cd ~/build_libF90HLA13Demo
+6. cmake source_dir
+7. make && sudo make install

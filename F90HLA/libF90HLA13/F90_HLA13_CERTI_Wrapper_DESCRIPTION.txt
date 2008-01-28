@@ -1,0 +1,18 @@
+Today HLA is the state of the art standard for distributed simulation. 
+
+This library provides engineers an easy way to extent existing 
+Fortran programs to so-called federates. Because HLA do not have an
+Fortran API this library tries to fill the gap.
+
+If you start writing a Fortran application copy the file fedSrvMod.f90
+in your application directory. Extent the function stubs of the federate
+services to your needed functionality and remove unneeded federate 
+services. Obviously, the file fedSrvMod.f90 is part of your application
+code.
+
+For further details have a look at the supplied demo applications.
+
+All software parts are developed by using CERTI (www.cert.fr/CERTI). 
+The usage of this RTI is recommended.
+
+January 2008, Christian Stenzel

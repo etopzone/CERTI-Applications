@@ -1,0 +1,44 @@
+;;  Copyright (C) 2008 Christian Stenzel
+;;
+;;  This file is part of F90HLA13.
+;;
+;;  F90HLA13 is free software: you can redistribute it and/or modify
+;;  it under the terms of the GNU General Public License as published 
+;;  by the Free Software Foundation, either version 3 of the License, 
+;;  or (at your option) any later version.
+;;
+;;  F90HLA13 is distributed in the hope that it will be useful,
+;;  but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;;  GNU General Public License for more details.
+;;
+;;  You should have received a copy of the GNU General Public 
+;;  License along with F90HLA13.  
+;;    
+;;  If not, see <http://www.gnu.org/licenses/>.
+;;
+;; F90TwoLevelController 
+
+(Fed
+  (Federation TwoLevelController)
+  (FedVersion v1.3)
+  (Federate "controlFed" "Public")
+  (Federate "processFed" "Public")
+  (Spaces
+  )
+  (Objects
+    (Class ObjectRoot
+      (Attribute privilegeToDelete reliable timestamp)
+      (Class RTIprivate)
+	(Class TwoLevelControllerClass
+		(Attribute U RELIABLE TIMESTAMP)
+		(Attribute Y RELIABLE TIMESTAMP)
+	)
+    )
+  )
+  (Interactions
+    (Class InteractionRoot BEST_EFFORT RECEIVE
+      (Class RTIprivate BEST_EFFORT RECEIVE)
+    )
+  )
+)
