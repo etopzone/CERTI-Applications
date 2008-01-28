@@ -1,0 +1,243 @@
+;;  Copyright (c) 1998-2000 University of Rostock, Germany,
+;;  Institute of Automatic Control. All rights reserved.
+;;  Author: S. Pawletta
+;;
+;;  This file is part of MatlabHLA13 demo applications.
+;;
+;;  This demo is free software: you can redistribute it and/or
+;;  modify it under the terms of the GNU General Public 
+;;  License as published by the Free Software Foundation, either 
+;;  version 3 of the License, or (at your option) any later version.
+;;
+;;  This demo is distributed in the hope that it will be useful,
+;;  but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;;  GNU General Public License for more details.
+;;
+;;  You should have received a copy of the GNU General Public 
+;;  License along with this demo.  
+;;   
+;;   If not, see <http://www.gnu.org/licenses/>.
+
+;; changed C.Stentel, 14.01.2008, Changed federation name)
+(FED
+  (Federation TrafficDistr1)
+  (FEDversion v1_3)
+  (spaces
+  )
+  (objects
+    (class objectRoot
+      (attribute privilegeToDelete reliable timestamp)
+      (class RTIprivate)
+      (class Manager
+        (class Federate
+          (attribute FederateHandle best_effort receive)
+          (attribute FederateType best_effort receive)
+          (attribute FederateHost best_effort receive)
+          (attribute RTIversion best_effort receive)
+          (attribute FEDid best_effort receive)
+          (attribute TimeConstrained best_effort receive)
+          (attribute TimeRegulating best_effort receive)
+          (attribute AsynchronousDelivery best_effort receive)
+          (attribute FederateState best_effort receive)
+          (attribute TimeManagerState best_effort receive)
+          (attribute FederateTime best_effort receive)
+          (attribute Lookahead best_effort receive)
+          (attribute LBTS best_effort receive)
+          (attribute MinNextEventTime best_effort receive)
+          (attribute ROlength best_effort receive)
+          (attribute TSOlength best_effort receive)
+          (attribute ReflectionsReceived best_effort receive)
+          (attribute UpdatesSent best_effort receive)
+          (attribute InteractionsReceived best_effort receive)
+          (attribute InteractionsSent best_effort receive)
+          (attribute ObjectsOwned best_effort receive)
+          (attribute ObjectsUpdated best_effort receive)
+          (attribute ObjectsReflected best_effort receive) )
+        (class Federation
+          (attribute FederationName best_effort receive)
+          (attribute FederatesInFederation best_effort receive)
+          (attribute RTIversion best_effort receive)
+          (attribute FEDid best_effort receive)
+          (attribute LastSaveName best_effort receive)
+          (attribute LastSaveTime best_effort receive)
+          (attribute NextSaveName best_effort receive)
+          (attribute NextSaveTime best_effort receive) )
+      )
+;; user object classes here
+      (class Car
+          (attribute Pos reliable timestamp)
+      )
+      (class Ped
+          (attribute Pos reliable timestamp)
+      )
+    )
+  )
+  (interactions
+    (class interactionRoot best_effort receive
+      (class RTIprivate best_effort receive)
+      (class Manager best_effort receive
+        (class Federate best_effort receive
+          (parameter Federate)
+          (class Adjust best_effort receive
+            (class SetTiming best_effort receive
+              (parameter ReportPeriod) )
+            (class ModifyAttributeState best_effort receive
+              (parameter ObjectInstance)
+              (parameter Attribute)
+              (parameter AttributeState) )
+            (class SetServiceReporting best_effort receive
+              (parameter ReportingState) )
+            (class SetExceptionLogging best_effort receive
+              (parameter LoggingState) )
+          )
+          (class Request best_effort receive
+            (class RequestPublications best_effort receive)
+            (class RequestSubscriptions best_effort receive)
+            (class RequestObjectsOwned best_effort receive)
+            (class RequestObjectsUpdated best_effort receive)
+            (class RequestObjectsReflected best_effort receive)
+            (class RequestUpdatesSent best_effort receive)
+            (class RequestInteractionsSent best_effort receive)
+            (class RequestReflectionsReceived best_effort receive)
+            (class RequestInteractionsReceived best_effort receive)
+            (class RequestObjectInformation best_effort receive
+              (parameter ObjectInstance) )
+          )
+          (class Report best_effort receive
+            (class ReportObjectPublication best_effort receive
+              (parameter NumberOfClasses)
+              (parameter ObjectClass)
+              (parameter AttributeList) )
+            (class ReportInteractionPublication best_effort receive
+              (parameter InteractionClassList) )
+            (class ReportObjectSubscription best_effort receive
+              (parameter NumberOfClasses)
+              (parameter ObjectClass)
+              (parameter AttributeList)
+              (parameter Active) )
+            (class ReportInteractionSubscription best_effort receive
+              (parameter InteractionClassList) )
+            (class ReportObjectsOwned best_effort receive
+              (parameter ObjectCounts) )
+            (class ReportObjectsUpdated best_effort receive
+              (parameter ObjectCounts) )
+            (class ReportObjectsReflected best_effort receive
+              (parameter ObjectCounts) )
+            (class ReportUpdatesSent best_effort receive
+              (parameter TransportationType)
+              (parameter UpdateCounts) )
+            (class ReportReflectionsReceived best_effort receive
+              (parameter TransportationType)
+              (parameter ReflectCounts) )
+            (class ReportInteractionsSent best_effort receive
+              (parameter TransportationType)
+              (parameter InteractionCounts) )
+            (class ReportInteractionsReceived best_effort receive
+              (parameter TransportationType)
+              (parameter InteractionCounts) )
+            (class ReportObjectInformation best_effort receive
+              (parameter ObjectInstance)
+              (parameter OwnedAttributeList)
+              (parameter RegisteredClass)
+              (parameter KnownClass) )
+            (class Alert best_effort receive
+              (parameter AlertSeverity)
+              (parameter AlertDescription)
+              (parameter AlertID) )
+            (class ReportServiceInvocation best_effort receive
+              (parameter Service)
+              (parameter Initiator)
+              (parameter SuccessIndicator)
+              (parameter SuppliedArgument1)
+              (parameter SuppliedArgument2)
+              (parameter SuppliedArgument3)
+              (parameter SuppliedArgument4)
+              (parameter SuppliedArgument5)
+              (parameter ReturnedArgument)
+              (parameter ExceptionDescription)
+              (parameter ExceptionID) )
+          )
+          (class Service best_effort receive
+            (class ResignFederationExecution best_effort receive
+              (parameter ResignAction) )
+            (class SynchronizationPointAchieved best_effort receive
+              (parameter Label) )
+            (class FederateSaveBegun best_effort receive)
+            (class FederateSaveComplete best_effort receive
+              (parameter SuccessIndicator) )
+            (class FederateRestoreComplete best_effort receive
+              (parameter SuccessIndicator) )
+            (class PublishObjectClass best_effort receive
+              (parameter ObjectClass)
+              (parameter AttributeList) )
+            (class UnpublishObjectClass best_effort receive
+              (parameter ObjectClass) )
+            (class PublishInteractionClass best_effort receive
+              (parameter InteractionClass) )
+            (class UnpublishInteractionClass best_effort receive
+              (parameter InteractionClass) )
+            (class SubscribeObjectClassAttributes best_effort receive
+              (parameter ObjectClass)
+              (parameter AttributeList)
+              (parameter Active) )
+            (class UnsubscribeObjectClass best_effort receive
+              (parameter ObjectClass) )
+            (class SubscribeInteractionClass best_effort receive
+              (parameter InteractionClass)
+              (parameter Active) )
+            (class UnsubscribeInteractionClass best_effort receive
+              (parameter InteractionClass) )
+            (class DeleteObjectInstance best_effort receive
+              (parameter ObjectInstance)
+              (parameter FederationTime)
+              (parameter Tag) )
+            (class LocalDeleteObjectInstance best_effort receive
+              (parameter ObjectInstance) )
+            (class ChangeAttributeTransportationType best_effort receive
+              (parameter ObjectInstance)
+              (parameter AttributeList)
+              (parameter TransportationType) )
+            (class ChangeAttributeOrderType best_effort receive
+              (parameter ObjectInstance)
+              (parameter AttributeList)
+              (parameter OrderingType) )
+            (class ChangeInteractionTransportationType best_effort receive
+              (parameter InteractionClass)
+              (parameter TransportationType) )
+            (class ChangeInteractionOrderType best_effort receive
+              (parameter InteractionClass)
+              (parameter OrderingType) )
+            (class UnconditionalAttributeOwnershipDivestiture best_effort receive 
+              (parameter ObjectInstance)
+              (parameter AttributeList) )
+            (class EnableTimeRegulation best_effort receive
+              (parameter FederationTime)
+              (parameter Lookahead) )
+            (class DisableTimeRegulation best_effort receive)
+            (class EnableTimeConstrained best_effort receive)
+            (class DisableTimeConstrained best_effort receive)
+            (class EnableAsynchronousDelivery best_effort receive)
+            (class DisableAsynchronousDelivery best_effort receive)
+            (class ModifyLookahead best_effort receive
+              (parameter Lookahead) )
+            (class TimeAdvanceRequest best_effort receive
+              (parameter FederationTime) )
+            (class TimeAdvanceRequestAvailable best_effort receive
+              (parameter FederationTime) )
+            (class NextEventRequest best_effort receive
+              (parameter FederationTime) )
+            (class NextEventRequestAvailable best_effort receive
+              (parameter FederationTime) )
+            (class FlushQueueRequest best_effort receive
+              (parameter FederationTime) )
+          )
+        )
+      )
+;;  user interaction classes here
+      (class Trl reliable timestamp
+        (parameter Event)
+      )
+    )
+  )
+)

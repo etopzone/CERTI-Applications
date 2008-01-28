@@ -1,0 +1,28 @@
+#############################
+#   Copyright and license   #
+#############################
+
+Copyright (C) 2008 Christian Stenzel, Sven Pawletta, Thorsten Pawletta
+
+MatlabHLA13 is licenced under the conditions of the LGPL, see lesser.txt
+for additional information.
+
+All demo and test applications are licensed under the conditions of the GPL, 
+see gpl.txt for additional information.
+
+The MatlabHLA13 toolbox was delevoped on top of CERTI (www.cert.fr/CERTI).
+This is the preferred RTI.
+
+#############################
+#  Compiling/Installation   #
+#############################
+
+After installing CERTI do make && make install. After that rti.mexglx is
+compiled and all m-files are copied to the MatlabHLA13 directory.
+
+It is recommended to copy the FED files in the federation directory manually
+to /usr/local/share/federations.
+
+To use the toolbox properly add the MatlabHLA13 directory to your Matlab path.
+
+15.01.2008, C. Stenzel
