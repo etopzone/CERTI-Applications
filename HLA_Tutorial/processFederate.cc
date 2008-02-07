@@ -39,6 +39,8 @@
 #include <NullFederateAmbassador.hh>
 
 #include <iostream>
+#include <string>
+#include <memory>
 
 #include "DisplayServiceExplanation.hh"
 
@@ -348,7 +350,11 @@ int main() {
             cerr << "Error: unknown non-RTI exception." << endl;
         }
 
-        sleep(1);
+	#ifdef _WIN32
+			  Sleep(1000);
+	#else
+			  sleep(1);
+	#endif
     }
     myFedAmb.setDiscoverU(false);
 
@@ -427,7 +433,7 @@ int main() {
     }
 
     /* Federation Management */
-
+  
     cout << "Federate " << federateName << " resigns federation execution "
     << federationName << "." << endl;
 

@@ -41,6 +41,8 @@
 #include <NullFederateAmbassador.hh>
 
 #include <iostream>
+#include <memory>
+#include <string>
 
 #include "DisplayServiceExplanation.hh"
 
@@ -377,7 +379,11 @@ int main() {
             cerr << "Error: unknown non-RTI exception." << endl;
         }
 
+#ifdef _WIN32
+        Sleep(1000);
+#else
         sleep(1);
+#endif
     }
     myFedAmb.setDiscoverY(false);
 
