@@ -23,4 +23,4 @@ function except = requestClassAttrValUp(theClass, theAttributes)
 %    
 %    If not, see <http://www.gnu.org/licenses/>.
 
-except = rti(6160, theClass, theAttributes);
+except = rti(6150, theClass, theAttributes);

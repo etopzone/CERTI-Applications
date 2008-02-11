@@ -24,4 +24,4 @@ function [val, except] = queryFedTime()
 %    
 %    If not, see <http://www.gnu.org/licenses/>.
 
-[val, except] = rti(8480);
+[val, except] = rti(8170);

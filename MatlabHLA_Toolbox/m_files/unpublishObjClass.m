@@ -23,4 +23,4 @@ function except = unpublishObjClass(theClass, attributeList)
 %    
 %    If not, see <http://www.gnu.org/licenses/>.
 
-except = rti(5120, theClass);
+except = rti(5030, theClass);

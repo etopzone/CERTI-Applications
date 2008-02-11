@@ -46,40 +46,40 @@
 %			     names of services have been shortened).
 %
 %   (A.1) Federation Management.
-%   createFedExec		            - Create Federation Execution.
-%   destroyFedExec		            - Destroy Federate Execution.
-%   federateResComplete             - Federate Restore Complete.
-%   federateResNotComplete          - Federate Restore Not Complete.
-%   federateSaveBegun               - Federate Save Begun.
-%   federateSaveComplete            - Federate Save Complete.
-%   federateSaveNotComplete         - Federate Save Not Complete.
-%   joinFedExec			            - Join Federation Execution.
+%   createFedExec		    - Create Federation Execution.
+%   destroyFedExec		    - Destroy Federate Execution.
+%   fedResComplete                  - Federate Restore Complete.
+%   fedResNotComplete               - Federate Restore Not Complete.
+%   fedSaveBegun                    - Federate Save Begun.
+%   fedSaveComplete                 - Federate Save Complete.
+%   fedSaveNotComplete              - Federate Save Not Complete.
+%   joinFedExec			    - Join Federation Execution.
 %   registerFedSyncPoint            - Register Federation Synchronization Point.
 %   requestFedRestore               - Request Federation Restore.
 %   requestFedSave                  - Request Federation Save.
-%   resignFedExec   		        - Resign Federation Execution.
-%   synchronizationPointAchieved    - Synchronization Point Achieved.
+%   resignFedExec   		    - Resign Federation Execution.
+%   syncPointAchieved               - Synchronization Point Achieved.
 %   
 %   (A.2) Declaration Management.
-%   publishInteractClass	        - Publish Interaction Class.
-%   publishObjClass		            - Publish Object Class.
-%   subscribeInteractClass	        - Subscribe Interaction Class.
-%   subscribeObjClassAttr	        - Subscribe Object Class Attributes.
+%   publishInteractClass	    - Publish Interaction Class.
+%   publishObjClass		    - Publish Object Class.
+%   subscribeInteractClass	    - Subscribe Interaction Class.
+%   subscribeObjClassAttr	    - Subscribe Object Class Attributes.
 %   unpublishInteractClass          - Unpublish Interaction Class.
 %   unpublishObjClass               - Unpublish Object Class.
 %   unsubscribeInteractClass        - Unsubscribe Interaction Class.
-%   unsubscribeObjClass 	        - Unsubscribe Object Class.
+%   unsubscribeObjClass 	    - Unsubscribe Object Class.
 %
 %   (A.3) Object Management.
 %   changeAttrTransType             - Change Attribute Transportation Type.
 %   chaneInteractTransType          - Change Interaction Transportation Type.
-%   deleteObjInst		            - Delete Object Instance.
+%   deleteObjInst		    - Delete Object Instance.
 %   localDelObjInst                 - Local Delete Object Instance.
-%   registerObjInst		            - Register Object Instance.
+%   registerObjInst		    - Register Object Instance.
 %   requestClassAttrValUp           - Request Class Attribute Value Update.
 %   requestObjAttrValUp             - Request Object Attribute Value Update.
-%   sendInteract		            - Send Interaction.
-%   updateAttrVal		            - Update Attribute Values.
+%   sendInteract		    - Send Interaction.
+%   updateAttrVal		    - Update Attribute Values.
 %
 %   (A.5) Time Management.
 %   changeAttrOrderType             - Change Attrbute Order Type.
@@ -87,28 +87,28 @@
 %   disableAsyncDeliv               - Disable Asynchronous Delivery.
 %   disableTimeConstr               - Disable Time Constrained.
 %   disableTimeReg                  - Disable Time Regulation.
-%   enableAsyncDeliv		        - Enable Asynchronous Delivery.
-%   enableTimeConstr		        - Enable Time Constrained.
-%   enableTimeReg		            - Enable Time Regulation.
+%   enableAsyncDeliv		    - Enable Asynchronous Delivery.
+%   enableTimeConstr		    - Enable Time Constrained.
+%   enableTimeReg		    - Enable Time Regulation.
 %   flushQueueReq                   - Flush Queue Request.
 %   modifyLookahead                 - Modify Lookahead.
 %   nextEventReq                    - Next Event Request.
 %   nextEventReqAvail               - Next Event Request Available.
 %   queryFedTime                    - Query Federate Time.
 %   queryLBTS                       - Query LBTS.
-%   queryLookahead		            - Query Lookahead.
+%   queryLookahead		    - Query Lookahead.
 %   queryMinMaxEventTime            - Query Min Max Event Time.
 %   retract                         - Retract
-%   timeAdvReq			            - Request advance in logical time of federate.
+%   timeAdvReq			    - Request advance in logical time of federate.
 %   timeAdvReqAvail                 - Time Advance Request Availbale.
 %
 %   (A.7) Ancillary Services.
 %   enableAttrRelAdvisSwitch	    - Enable Attr. Relev. Advisories.
-%   getAttrHdl			            - Get Attribute Handle.
-%   getInteractClassHdl		        - Get Interaction Class Handle.
-%   getObjClassHdl		            - Get Object Class Handle.
-%   getParamHdl			            - Get Parameter Handle.
-%   tick			                - Turn Control Over to RTI.
+%   getAttrHdl			    - Get Attribute Handle.
+%   getInteractClassHdl		    - Get Interaction Class Handle.
+%   getObjClassHdl		    - Get Object Class Handle.
+%   getParamHdl			    - Get Parameter Handle.
+%   tick			    - Turn Control Over to RTI.
 %   getOrderingHdl                  - Get Ordering Handle.
 %   getTransHdl                     - Get Transportation Handle.
 %
@@ -126,32 +126,32 @@
 %   initiateFedRestore              - Initiate Federate Restore.
 %   initiateFedSave                 - Initiate Federate Save.
 %   requestFedResFailed             - Request Federation Restore Failed.
-%   requestFedResSuccess            - Request Federation Restore Succeeded.
+%   requestFedResSucceeded          - Request Federation Restore Succeeded.
 %   syncPointRegFailed              - Synchronization Point Registration Failed.
-%   syncPointRegSuccess             - Synchronization Point Registration Succeeded.
+%   syncPointRegSucceeded           - Synchronization Point Registration Succeeded.
 %
 %   (B.2) Declaration Management.
-%   startRegForObjClass		        - Start Registration For Object Class.
-%   stopRegForObjClass		        - Stop Registration For Object Class.
-%   turnInteractOn		            - Turn Interactions On.
-%   turnInteractOff		            - Turn Interactions Off.
+%   startRegForObjClass	            - Start Registration For Object Class.
+%   stopRegForObjClass	            - Stop Registration For Object Class.
+%   turnInteractOn	            - Turn Interactions On.
+%   turnInteractOff	            - Turn Interactions Off.
 %
 %   (B.3) Object Management.
 %   attrInScope                     - Attributes In Scope.
 %   attrOutOfScope                  - Attributes Out Of Scope.
-%   discoverObjInst		            - Discover Object Instance.
-%   receiveInteract		            - Receive Interactions.
-%   reflectAttrVal		            - Reflect Attribute Values.
-%   removeObjInst		            - Remove Object Instance.
-%   provideAttrValUpdate	        - Provide Attribute Value Update.
+%   discoverObjInst	            - Discover Object Instance.
+%   receiveInteract	            - Receive Interactions.
+%   reflectAttrVal	            - Reflect Attribute Values.
+%   removeObjInst	            - Remove Object Instance.
+%   provideAttrValUpdate	    - Provide Attribute Value Update.
 %   turnUpdatesOffForObjInst        - Turn Updates Off For Object Instance.
-%   turnUpdatesOnForObjInst	        - Turn Updates On For Object Instance.
+%   turnUpdatesOnForObjInst	    - Turn Updates On For Object Instance.
 %
 %   (B.5) Time Management.
 %   requestRetract                  - Request Retraction.
-%   timeAdvGrant		            - Time Advance Grant.
-%   timeConstrEnabled		        - Time Constrained Enabled.
-%   timeRegEnabled		            - Time Regulation Enabled.
+%   timeAdvGrant		    - Time Advance Grant.
+%   timeConstrEnabled		    - Time Constrained Enabled.
+%   timeRegEnabled		    - Time Regulation Enabled.
 %
 %   Wrapper to RTI Classes and Supporting Types (see RTI Prog. Guide App. C).
 %

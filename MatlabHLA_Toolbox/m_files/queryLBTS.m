@@ -23,4 +23,4 @@ function  [val, except] = queryLBTS()
 %    
 %    If not, see <http://www.gnu.org/licenses/>.
 
-[val, except] = rti(8500);
+[val, except] = rti(8160);

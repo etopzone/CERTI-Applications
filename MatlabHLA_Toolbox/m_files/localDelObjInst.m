@@ -23,4 +23,4 @@ function except = localDelObjInst(theObject)
 %    
 %    If not, see <http://www.gnu.org/licenses/>.
 
-except = rti(6140, theObject);
+except = rti(6100, theObject);

@@ -23,4 +23,4 @@ function except = disableTimeReg()
 %    
 %    If not, see <http://www.gnu.org/licenses/>.
 
-except = rti(8380);
+except = rti(8040);

@@ -23,4 +23,4 @@ function except = nextEventReqAvail(theTime)
 %    
 %    If not, see <http://www.gnu.org/licenses/>.
 
-except = rti(8460, theTime);
+except = rti(8110, theTime);

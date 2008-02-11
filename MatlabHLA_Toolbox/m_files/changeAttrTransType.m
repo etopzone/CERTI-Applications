@@ -23,4 +23,4 @@ function except = changeAttrTransType(theObject,theAttr,theType)
 %    
 %    If not, see <http://www.gnu.org/licenses/>.
 
-except = rti(6100, theObject,theAttr,theType);
+except = rti(6110, theObject,theAttr,theType);

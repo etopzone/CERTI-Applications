@@ -23,4 +23,4 @@ function except = requestObjAttrValUp(theObject, theAttributes)
 %    
 %    If not, see <http://www.gnu.org/licenses/>.
 
-except = rti(6180, theObject, theAttributes);
+except = rti(6151, theObject, theAttributes);

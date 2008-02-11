@@ -23,4 +23,4 @@ function except = unpublishInteractClass(theInteraction)
 %    
 %    If not, see <http://www.gnu.org/licenses/>.
 
-except = rti(5100, theInteraction);
+except = rti(5050, theInteraction);

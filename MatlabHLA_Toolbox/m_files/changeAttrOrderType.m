@@ -23,4 +23,4 @@ function except = changeAttrOrderType(theObject, theAttributes, theType)
 %    
 %    If not, see <http://www.gnu.org/licenses/>.
 
-except = rti(8300, theObject, theAttributes, theType);
+except = rti(8230, theObject, theAttributes, theType);

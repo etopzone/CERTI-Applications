@@ -23,4 +23,4 @@ function [val, except] = queryMinNextEventTime()
 %    
 %    If not, see <http://www.gnu.org/licenses/>.
 
-[val, except] = rti(8520);
+[val, except] = rti(8180);

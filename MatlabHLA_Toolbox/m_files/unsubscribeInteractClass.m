@@ -23,4 +23,4 @@ function except = unsubscribeInteractClass(theClass)
 %    
 %    If not, see <http://www.gnu.org/licenses/>.
 
-except = rti(5140, theClass);
+except = rti(5090, theClass);

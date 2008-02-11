@@ -30,11 +30,11 @@ switch nargin
     
     case 1
         
-        except = rti(4080, label);
+        except = rti(4110, label);
         
     case 2
         
-        except = rti(4080, label, theTime);
+        except = rti(4110, label, theTime);
         
     otherwise
         

@@ -2427,7 +2427,7 @@ throw (
 
 	prhs[0] = cstr2mstr(label);
 
-	mexCallMATLAB(0, NULL, 1, prhs, "syncPointRegSuccess");
+	mexCallMATLAB(0, NULL, 1, prhs, "syncPointRegSucceeded");
 
 	mxDestroyArray(prhs[0]);
 
@@ -2536,7 +2536,7 @@ throw (
 
 	prhs[0] = cstr2mstr(label);
 
-	mexCallMATLAB(0, NULL, 1, prhs, "requestFedResSuccess");
+	mexCallMATLAB(0, NULL, 1, prhs, "requestFedResSucceeded");
 
 	mxDestroyArray(prhs[0]);
 
@@ -3402,72 +3402,71 @@ mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 	 *********************/
 
 	/* Federation Management Services */
-	case  4020: m2createFedExec					(nlhs,plhs,nrhs,prhs); break;
-	case  4030: m2destroyFedExec				(nlhs,plhs,nrhs,prhs); break;
-	case  4040: m2joinFedExec					(nlhs,plhs,nrhs,prhs); break;
-	case  4050: m2resignFedExec					(nlhs,plhs,nrhs,prhs); break;
-	case  4060: m2registerFedSyncPoint			(nlhs,plhs,nrhs,prhs); break;  
-	case  4070:	m2synchronizationPointAchieved	(nlhs,plhs,nrhs,prhs); break;  
-	case  4080: m2requestFedSave				(nlhs,plhs,nrhs,prhs); break; 
-	case  4090:	m2federateSaveBegun				(nlhs,plhs,nrhs,prhs); break; 
-	case  4100: m2federateSaveComplete			(nlhs,plhs,nrhs,prhs); break;  
-	case  4110: m2federateSaveNotComplete		(nlhs,plhs,nrhs,prhs); break;  
-	case  4120:	m2requestFedRestore				(nlhs,plhs,nrhs,prhs); break;  
-	case  4130:	m2federateRestoreComplete		(nlhs,plhs,nrhs,prhs); break;  
-	case  4140: m2federateRestoreNotComplete	(nlhs,plhs,nrhs,prhs); break;  
+	case  4020: m2createFedExec(nlhs,plhs,nrhs,prhs); break;
+	case  4030: m2destroyFedExec(nlhs,plhs,nrhs,prhs); break;
+	case  4040: m2joinFedExec(nlhs,plhs,nrhs,prhs); break;
+	case  4050: m2resignFedExec(nlhs,plhs,nrhs,prhs); break;
+	case  4060: m2registerFedSyncPoint(nlhs,plhs,nrhs,prhs); break;  
+	case  4090: m2synchronizationPointAchieved(nlhs,plhs,nrhs,prhs); break;  	case  4110: m2requestFedSave(nlhs,plhs,nrhs,prhs); break; 
+	case  4130: m2federateSaveBegun(nlhs,plhs,nrhs,prhs); break; 
+	case  4140: m2federateSaveComplete(nlhs,plhs,nrhs,prhs); break;  
+	case  4141: m2federateSaveNotComplete(nlhs,plhs,nrhs,prhs); break;  
+	case  4160: m2requestFedRestore(nlhs,plhs,nrhs,prhs); break;  
+	case  4200: m2federateRestoreComplete(nlhs,plhs,nrhs,prhs); break;  
+	case  4201: m2federateRestoreNotComplete(nlhs,plhs,nrhs,prhs); break;  
 
 
 	/* Declaration Management Services */
-	case  5020: m2publishObjClass				(nlhs,plhs,nrhs,prhs); break;
-	case  5040: m2publishInteractClass			(nlhs,plhs,nrhs,prhs); break;
-	case  5060: m2subscribeObjClassAttr			(nlhs,plhs,nrhs,prhs); break;
-	case  5080: m2subscribeInteractClass		(nlhs,plhs,nrhs,prhs); break;
-	case  5100:	m2unpublishInteractClass		(nlhs,plhs,nrhs,prhs); break;
-	case  5120:	m2unpublishObjClass				(nlhs,plhs,nrhs,prhs); break;
-	case  5140:	m2unsubscribeInteractClass		(nlhs,plhs,nrhs,prhs); break;
-	case  5160:	m2unsubscribeObjClass			(nlhs,plhs,nrhs,prhs); break;
+	case  5020: m2publishObjClass(nlhs,plhs,nrhs,prhs); break;
+	case  5030: m2unpublishObjClass(nlhs,plhs,nrhs,prhs); break;
+	case  5040: m2publishInteractClass(nlhs,plhs,nrhs,prhs); break;
+	case  5050: m2unpublishInteractClass(nlhs,plhs,nrhs,prhs); break;
+	case  5060: m2subscribeObjClassAttr(nlhs,plhs,nrhs,prhs); break;
+	case  5070: m2unsubscribeObjClass(nlhs,plhs,nrhs,prhs); break;
+	case  5080: m2subscribeInteractClass(nlhs,plhs,nrhs,prhs); break;
+	case  5090: m2unsubscribeInteractClass(nlhs,plhs,nrhs,prhs); break;
 
 	/* Object Management Services */
-	case  6020: m2registerObjInst				(nlhs,plhs,nrhs,prhs); break;
-	case  6040: m2updateAttrVal					(nlhs,plhs,nrhs,prhs); break;
-	case  6060: m2sendInteract					(nlhs,plhs,nrhs,prhs); break;
-	case  6080: m2deleteObjInst					(nlhs,plhs,nrhs,prhs); break;
-	case  6100:	m2changeAttrTransType			(nlhs,plhs,nrhs,prhs); break;
-	case  6120:	m2changeInteractTransType		(nlhs,plhs,nrhs,prhs); break;
-	case  6140:	m2localDelObjInst				(nlhs,plhs,nrhs,prhs); break;
-	case  6160: m2requestClassAttrValUp			(nlhs,plhs,nrhs,prhs); break;
-	case  6180: m2requestObjAttrValUp			(nlhs,plhs,nrhs,prhs); break;
+	case  6020: m2registerObjInst(nlhs,plhs,nrhs,prhs); break;
+	case  6040: m2updateAttrVal(nlhs,plhs,nrhs,prhs); break;
+	case  6060: m2sendInteract(nlhs,plhs,nrhs,prhs); break;
+	case  6080: m2deleteObjInst(nlhs,plhs,nrhs,prhs); break;
+	case  6100: m2localDelObjInst(nlhs,plhs,nrhs,prhs); break;
+	case  6110: m2changeAttrTransType(nlhs,plhs,nrhs,prhs); break;
+	case  6120: m2changeInteractTransType(nlhs,plhs,nrhs,prhs); break;
+	case  6150: m2requestClassAttrValUp(nlhs,plhs,nrhs,prhs); break;
+	case  6151: m2requestObjAttrValUp(nlhs,plhs,nrhs,prhs); break;
 
 	/* Time Management Services */
-	case  8020: m2enableTimeReg					(nlhs,plhs,nrhs,prhs); break;
-	case  8050: m2enableTimeConstr				(nlhs,plhs,nrhs,prhs); break;
-	case  8080: m2timeAdvReq					(nlhs,plhs,nrhs,prhs); break;
-	case  8140: m2enableAsyncDeliv				(nlhs,plhs,nrhs,prhs); break;
-	case  8200: m2queryLookahead				(nlhs,plhs,nrhs,prhs); break;
-	case  8300:	m2changeAttrOrderType			(nlhs,plhs,nrhs,prhs); break;
-	case  8320:	m2changeInteractOrderType		(nlhs,plhs,nrhs,prhs); break;
-	case  8340:	m2disableAsyncDeliv				(nlhs,plhs,nrhs,prhs); break;
-	case  8360:	m2disableTimeConstr				(nlhs,plhs,nrhs,prhs); break;
-	case  8380:	m2disableTimeReg				(nlhs,plhs,nrhs,prhs); break;
-	case  8400:	m2flushQueueReq					(nlhs,plhs,nrhs,prhs); break;
-	case  8420:	m2modifyLookahead				(nlhs,plhs,nrhs,prhs); break;
-	case  8440:	m2nextEventReq					(nlhs,plhs,nrhs,prhs); break;
-	case  8460:	m2nextEventReqAvail				(nlhs,plhs,nrhs,prhs); break;
-	case  8480:	m2queryFedTime					(nlhs,plhs,nrhs,prhs); break;
-	case  8500:	m2queryLBTS						(nlhs,plhs,nrhs,prhs); break;
-	case  8520: m2queryMinNextEventTime			(nlhs,plhs,nrhs,prhs); break;
-	case  8540:	m2retract						(nlhs,plhs,nrhs,prhs); break;
-	case  8560:	m2timeAdvReqAvail				(nlhs,plhs,nrhs,prhs); break;
+	case  8020: m2enableTimeReg(nlhs,plhs,nrhs,prhs); break;
+	case  8040: m2disableTimeReg(nlhs,plhs,nrhs,prhs); break;
+	case  8050: m2enableTimeConstr(nlhs,plhs,nrhs,prhs); break;
+	case  8070: m2disableTimeConstr(nlhs,plhs,nrhs,prhs); break;
+	case  8080: m2timeAdvReq(nlhs,plhs,nrhs,prhs); break;
+	case  8090: m2timeAdvReqAvail(nlhs,plhs,nrhs,prhs); break;
+	case  8100: m2nextEventReq(nlhs,plhs,nrhs,prhs); break;
+	case  8110: m2nextEventReqAvail(nlhs,plhs,nrhs,prhs); break;
+	case  8120: m2flushQueueReq(nlhs,plhs,nrhs,prhs); break;
+	case  8140: m2enableAsyncDeliv(nlhs,plhs,nrhs,prhs); break;
+	case  8150: m2disableAsyncDeliv(nlhs,plhs,nrhs,prhs); break;
+	case  8160: m2queryLBTS(nlhs,plhs,nrhs,prhs); break;
+	case  8170: m2queryFedTime(nlhs,plhs,nrhs,prhs); break;
+	case  8180: m2queryMinNextEventTime(nlhs,plhs,nrhs,prhs); break;
+	case  8190: m2modifyLookahead(nlhs,plhs,nrhs,prhs); break;
+	case  8200: m2queryLookahead(nlhs,plhs,nrhs,prhs); break;
+	case  8210: m2retract(nlhs,plhs,nrhs,prhs); break;
+	case  8230: m2changeAttrOrderType(nlhs,plhs,nrhs,prhs); break;
+	case  8240: m2changeInteractOrderType(nlhs,plhs,nrhs,prhs); break;
 
 	/* Ancillary Services */
-	case 10020: m2getObjClassHdl				(nlhs,plhs,nrhs,prhs); break;
-	case 10040: m2getAttrHdl					(nlhs,plhs,nrhs,prhs); break;
-	case 10060: m2getInteractClassHdl			(nlhs,plhs,nrhs,prhs); break;
-	case 10080: m2getParamHdl					(nlhs,plhs,nrhs,prhs); break;
-	case 10100: m2getTransHdl					(nlhs,plhs,nrhs,prhs); break;
-	case 10120:	m2getOrderingHdl				(nlhs,plhs,nrhs,prhs); break;
-	case 10250: m2enableAttrRelAdvisSwitch		(nlhs,plhs,nrhs,prhs); break;
-	case 10310: m2tick							(nlhs,plhs,nrhs,prhs); break;
+	case 10020: m2getObjClassHdl(nlhs,plhs,nrhs,prhs); break;
+	case 10040: m2getAttrHdl(nlhs,plhs,nrhs,prhs); break;
+	case 10060: m2getInteractClassHdl(nlhs,plhs,nrhs,prhs); break;
+	case 10080: m2getParamHdl(nlhs,plhs,nrhs,prhs); break;
+	case 10190: m2getTransHdl(nlhs,plhs,nrhs,prhs); break;
+	case 10210: m2getOrderingHdl(nlhs,plhs,nrhs,prhs); break;
+	case 10250: m2enableAttrRelAdvisSwitch(nlhs,plhs,nrhs,prhs); break;
+	case 10310: m2tick(nlhs,plhs,nrhs,prhs); break;
 	
 
 	/************************************
@@ -3475,7 +3474,7 @@ mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 	 ************************************/
 
 	/* FedTime */
-	case 100110: getEpsilon 		(nlhs,plhs,nrhs,prhs); break;
+	case 100110: getEpsilon(nlhs,plhs,nrhs,prhs); break;
 
 	
 	default: mexErrMsgTxt("Function not implemented on this "

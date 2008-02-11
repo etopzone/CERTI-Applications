@@ -23,4 +23,4 @@ function except = disableAsyncDeliv()
 %    
 %    If not, see <http://www.gnu.org/licenses/>.
 
-except = rti(8340);
+except = rti(8150);

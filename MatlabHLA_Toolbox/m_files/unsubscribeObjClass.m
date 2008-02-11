@@ -23,4 +23,4 @@ function except = unsubscribeObjClass(theClass)
 %    
 %    If not, see <http://www.gnu.org/licenses/>.
 
-except = rti(5160, theClass);
+except = rti(5070, theClass);

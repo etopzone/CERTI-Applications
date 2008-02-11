@@ -25,4 +25,4 @@ function except = modifyLookahead(theLookahead)
 %    If not, see <http://www.gnu.org/licenses/>.
 
 
-except = rti(8420, theLookahead);
+except = rti(8190, theLookahead);

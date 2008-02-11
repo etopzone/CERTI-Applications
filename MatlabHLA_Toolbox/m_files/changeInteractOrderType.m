@@ -23,4 +23,4 @@ function except = changeInteractOrderType(theClass, theType)
 %    
 %    If not, see <http://www.gnu.org/licenses/>.
 
-except = rti(8320, theClass, theType);
+except = rti(8240, theClass, theType);
