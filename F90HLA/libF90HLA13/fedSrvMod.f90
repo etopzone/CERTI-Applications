@@ -203,9 +203,9 @@ contains
   end subroutine fedResBegun
 !
 ! 4.19
-  subroutine initiateFedRes(label, lenLabel, &
-                            fedHdl, &
-                            err)
+  subroutine initiateFedRestore(label, lenLabel, &
+                                 fedHdl, &
+                                 err)
 
     implicit none
 
@@ -214,11 +214,11 @@ contains
     integer, intent(in) :: fedHdl 
     integer, intent(inout) :: err
 
-    write(*,*) "initiateFedRes not implemented"
+    write(*,*) "initiateFedRestore not implemented"
     write(*,*) label
 
     err = 0
-  end subroutine initiateFedRes
+  end subroutine initiateFedRestore
 !
 ! 4.21
   subroutine fedRestored(err)

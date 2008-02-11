@@ -55,7 +55,7 @@
 #define _F90requestFedResSucceeded fedsrvmod_mp_requestfedressucceeded_
 #define _F90requestFedResFailed fedsrvmod_mp_requestfedresfailed_
 #define _F90fedResBegun fedsrvmod_mp_fedresbegun_
-#define _F90initiateFedRes fedsrvmod_mp_initiatefedres_
+#define _F90initiateFedRestore fedsrvmod_mp_initiatefedrestore_
 #define _F90fedRestored fedsrvmod_mp_fedrestored_
 #define _F90fedNotRestored fedsrvmod_mp_fednotrestored_
 
@@ -102,7 +102,7 @@
 #define _F90requestFedResSucceeded __fedsrvmod__requestfedressucceeded
 #define _F90requestFedResFailed __fedsrvmod__requestfedresfailed
 #define _F90fedResBegun __fedsrvmod__fedresbegun
-#define _F90initiateFedRes __fedsrvmod__initiatefedres
+#define _F90initiateFedRestore __fedsrvmod__initiatefedrestore
 #define _F90fedRestored __fedsrvmod__fedrestored
 #define _F90fedNotRestored __fedsrvmod__fednotrestored
 
@@ -460,9 +460,9 @@ extern "C" {
 
     // 4.19
     extern void
-        _F90initiateFedRes(const char*, const int*, // label
-                       const int*,              // fedHdl
-                       int*);                   // error
+        _F90initiateFedRestore(const char*, const int*, // label
+                       	       const int*,              // fedHdl
+                       	       int*);                   // error
 
     // 4.21
     extern void
@@ -876,9 +876,9 @@ public:
         int lenLabel = theLabel.size();
 	int fedHdl = fedHdl2Int(handle);
 
-	_F90initiateFedRes(theLabel.c_str(), &lenLabel,
-		           &fedHdl,
-		           &err);
+	_F90initiateFedRestore(theLabel.c_str(), &lenLabel,
+		               &fedHdl,
+		               &err);
 
 	switch (err) {
 	case 0 :
