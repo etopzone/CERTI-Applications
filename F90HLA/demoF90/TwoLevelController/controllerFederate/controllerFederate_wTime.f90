@@ -88,7 +88,7 @@ do
 
   t = t + h
 
-  call updateAttrVals(objID_u, uID, (/ u /), "u", t)
+  call updateAttrVal(objID_u, uID, (/ u /), "u", t)
 
   call timeAdvReq(t)
 

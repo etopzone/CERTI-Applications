@@ -81,7 +81,7 @@ do
     u = 0;
   end if
 
-  call updateAttrVals(objID_u, uID, (/ u /), "u")
+  call updateAttrVal(objID_u, uID, (/ u /), "u")
 
   do 
     if (REFLATTRVAL_.eqv..true.) then

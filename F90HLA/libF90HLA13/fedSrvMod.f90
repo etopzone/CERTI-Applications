@@ -103,7 +103,7 @@ contains
   end subroutine announceSyncPoint
 !
 ! 4.10
-  subroutine fedSynchronized(label, lenLabel, err)
+  subroutine fedSync(label, lenLabel, err)
 
     implicit none
 
@@ -111,14 +111,14 @@ contains
     character (len=lenLabel), intent(in) :: label
     integer, intent(inout) :: err
 
-    write(*,*) "fedSynchronized not implemented"
+    write(*,*) "fedSync not implemented"
     write(*,*) label
 
     err = 0
-  end subroutine fedSynchronized
+  end subroutine fedSync
 !
 ! 4.12
-  subroutine initFedSave(label, lenLabel, err)
+  subroutine initiateFedSave(label, lenLabel, err)
 
     implicit none
 
@@ -126,11 +126,11 @@ contains
     character (len=lenLabel), intent(in) :: label
     integer, intent(inout) :: err
 
-    write(*,*) "initFedSave not implemented"
+    write(*,*) "initiateFedSave not implemented"
     write(*,*) label
 
     err = 0
-  end subroutine initFedSave
+  end subroutine initiateFedSave
 !
 ! 4.15
   subroutine fedSaved(err)
@@ -203,9 +203,9 @@ contains
   end subroutine fedResBegun
 !
 ! 4.19
-  subroutine initFedRes(label, lenLabel, &
-                        fedHdl, &
-                        err)
+  subroutine initiateFedRes(label, lenLabel, &
+                            fedHdl, &
+                            err)
 
     implicit none
 
@@ -214,11 +214,11 @@ contains
     integer, intent(in) :: fedHdl 
     integer, intent(inout) :: err
 
-    write(*,*) "initFedRes not implemented"
+    write(*,*) "initiateFedRes not implemented"
     write(*,*) label
 
     err = 0
-  end subroutine initFedRes
+  end subroutine initiateFedRes
 !
 ! 4.21
   subroutine fedRestored(err)
@@ -266,13 +266,13 @@ contains
   end subroutine discoverObjInst
 !
 ! 6.7
-  subroutine reflectAttrVals(objHdl, &
-                             attrHdl, attrVals, lenAttrVals, &
-                             logTime, &
-                             tag, lenTag, &
-                             eventRetrHdlSerial, &
-                             eventRetrHdlSendingFed, &
-                             err)
+  subroutine reflectAttrVal(objHdl, &
+                            attrHdl, attrVals, lenAttrVals, &
+                            logTime, &
+                            tag, lenTag, &
+                            eventRetrHdlSerial, &
+                            eventRetrHdlSendingFed, &
+                            err)
 
     implicit none
 
@@ -287,7 +287,7 @@ contains
     integer, intent(in), optional :: eventRetrHdlSendingFed
     integer, intent(inout) :: err
 
-    write(*,*) "reflectAttrVals not implemented"
+    write(*,*) "reflectAttrVal not implemented"
     write(*,*) objHdl
     write(*,*) attrHdl
     write(*,*) attrVals(:)
@@ -295,7 +295,7 @@ contains
 
     err = 0
 
-  end subroutine reflectAttrVals
+  end subroutine reflectAttrVal
 !
 ! time management
 !

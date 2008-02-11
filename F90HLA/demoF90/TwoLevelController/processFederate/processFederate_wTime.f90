@@ -88,7 +88,7 @@ do
   y = y + h*ydot 
 
   t = t + h
-  call updateAttrVals(objID_u, yID, (/ y /), "y", t)
+  call updateAttrVal(objID_u, yID, (/ y /), "y", t)
   
   call timeAdvReq(t)
   

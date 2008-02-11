@@ -353,14 +353,14 @@ contains
 !
 !
 ! 4.20
-  subroutine fedRestoreComplete(err)
+  subroutine fedResComplete(err)
     implicit none
 
     integer, intent(out), optional :: err
 
     integer :: wrapErr = 0
 
-    call fedRestoreComplete1(wrapErr)
+    call fedResComplete1(wrapErr)
     
     if (present(err)) then
       err = wrapErr
@@ -371,11 +371,11 @@ contains
       end if
     end if
 
-  end subroutine fedRestoreComplete
+  end subroutine fedResComplete
 !
 !
 ! 4.20
-  subroutine fedRestoreNotComplete(err)
+  subroutine fedResNotComplete(err)
 
     implicit none
 
@@ -383,7 +383,7 @@ contains
 
     integer :: wrapErr = 0
 
-    call fedRestoreNotComplete1(wrapErr)
+    call fedResNotComplete1(wrapErr)
     
     if (present(err)) then
       err = wrapErr
@@ -394,7 +394,7 @@ contains
       end if
     end if
 
-  end subroutine fedRestoreNotComplete
+  end subroutine fedResNotComplete
 !
 !
 ! 5. Declaration Management
@@ -484,8 +484,8 @@ contains
 !
 !
 ! 6.6
-  subroutine updateAttrVals(objHdl, attrHdl, attrVals, tag, &
-                            logTime, ret1, ret2, err) 
+  subroutine updateAttrVal(objHdl, attrHdl, attrVals, tag, &
+                           logTime, ret1, ret2, err) 
     
     implicit none
 
@@ -509,11 +509,11 @@ contains
 !    write(*,*) logTime 
 
     if (present(logTime)) then
-      call updateAttrVals10(objHdl, attrHdl, attrVals, size(attrVals), &
+      call updateAttrVal10(objHdl, attrHdl, attrVals, size(attrVals), &
                             tag, len(tag), logTime, &
                             wrapRet1, wrapRet2, wrapErr) 
     else
-      call updateAttrVals7(objHdl, attrHdl, attrVals, size(attrVals), &
+      call updateAttrVal7(objHdl, attrHdl, attrVals, size(attrVals), &
                            tag, len(tag), wrapErr) 
     end if
 
@@ -534,7 +534,7 @@ contains
       end if
     end if
 
-  end subroutine updateAttrVals
+  end subroutine updateAttrVal
 !
 !
 ! 8. Time Management

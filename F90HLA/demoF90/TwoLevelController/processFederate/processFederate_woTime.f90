@@ -87,7 +87,7 @@ do
   ydot = (-y + u*k) / T1
   y = y + h*ydot 
 
-  call updateAttrVals(objID_u, yID, (/ y /), "y")
+  call updateAttrVal(objID_u, yID, (/ y /), "y")
 
   t = t + h
   write (*, fmt = "(A,F8.3)") "t= ", t

@@ -57,7 +57,7 @@ contains
   end subroutine discoverObjInst
 !
 ! 6.7
-  subroutine reflectAttrVals(objHdl, &
+  subroutine reflectAttrVal(objHdl, &
                              attrHdl, attrVals, lenAttrVals, &
                              logTime, &
                              tag, lenTag, &
@@ -84,7 +84,7 @@ contains
 
     err = 0
 
-  end subroutine reflectAttrVals
+  end subroutine reflectAttrVal
 !
 ! time management
 !

@@ -48,14 +48,14 @@
 #define _F90syncPointRegSucceeded fedsrvmod_mp_syncpointregsucceeded_
 #define _F90syncPointRegFailed fedsrvmod_mp_syncpointregfailed_
 #define _F90announceSyncPoint fedsrvmod_mp_announcesyncpoint_
-#define _F90fedSynchronized fedsrvmod_mp_fedsynchronized_
-#define _F90initFedSave fedsrvmod_mp_initfedsave_
+#define _F90fedSync fedsrvmod_mp_fedsync_
+#define _F90initiateFedSave fedsrvmod_mp_initiatefedsave_
 #define _F90fedSaved fedsrvmod_mp_fedsaved_
 #define _F90fedNotSaved fedsrvmod_mp_fednotsaved_
 #define _F90requestFedResSucceeded fedsrvmod_mp_requestfedressucceeded_
 #define _F90requestFedResFailed fedsrvmod_mp_requestfedresfailed_
 #define _F90fedResBegun fedsrvmod_mp_fedresbegun_
-#define _F90initFedRes fedsrvmod_mp_initfedres_
+#define _F90initiateFedRes fedsrvmod_mp_initiatefedres_
 #define _F90fedRestored fedsrvmod_mp_fedrestored_
 #define _F90fedNotRestored fedsrvmod_mp_fednotrestored_
 
@@ -69,7 +69,7 @@
 // object management
 
 #define _F90discoverObjInst fedsrvmod_mp_discoverobjinst_
-#define _F90reflectAttrVals fedsrvmod_mp_reflectattrvals_
+#define _F90reflectAttrVal fedsrvmod_mp_reflectattrval_
 #define _F90receiveInteract fedsrvmod_mp_receiveinteract_
 #define _F90removeObjInst fedsrvmod_mp_removeobjinst_
 #define _F90attrInScope fedsrvmod_mp_attrinscope_
@@ -95,14 +95,14 @@
 #define _F90syncPointRegSucceeded __fedsrvmod__syncpointregsucceeded
 #define _F90syncPointRegFailed __fedsrvmod__syncpointregfailed
 #define _F90announceSyncPoint __fedsrvmod__announcesyncpoint
-#define _F90fedSynchronized __fedsrvmod__fedsynchronized
-#define _F90initFedSave __fedsrvmod__initfedsave
+#define _F90fedSync __fedsrvmod__fedsync
+#define _F90initiateFedSave __fedsrvmod__initiatefedsave
 #define _F90fedSaved __fedsrvmod__fedsaved
 #define _F90fedNotSaved __fedsrvmod__fednotsaved
 #define _F90requestFedResSucceeded __fedsrvmod__requestfedressucceeded
 #define _F90requestFedResFailed __fedsrvmod__requestfedresfailed
 #define _F90fedResBegun __fedsrvmod__fedresbegun
-#define _F90initFedRes __fedsrvmod__initfedres
+#define _F90initiateFedRes __fedsrvmod__initiatefedres
 #define _F90fedRestored __fedsrvmod__fedrestored
 #define _F90fedNotRestored __fedsrvmod__fednotrestored
 
@@ -118,7 +118,7 @@
 #define _F90objInstNameResSucceeded __fedsrvmod__objinstnameressucceeded
 #define _F90objInstNameResFailed __fedsrvmod__objinstnameresfailed
 #define _F90discoverObjInst __fedsrvmod__discoverobjinst
-#define _F90reflectAttrVals __fedsrvmod__reflectattrvals
+#define _F90reflectAttrVal __fedsrvmod__reflectattrval
 #define _F90receiveInteract __fedsrvmod__receiveinteract
 #define _F90removeObjInst __fedsrvmod__removeobjinst
 #define _F90attrInScope __fedsrvmod__attrinscope
@@ -300,10 +300,10 @@ extern "C" {
 
     // 4.20
     extern void
-        fedrestorecomplete1_(int*);    // error
+        fedrescomplete1_(int*);    // error
 
     extern void
-        fedrestorenotcomplete1_(int*);  // error
+        fedresnotcomplete1_(int*);  // error
     
     /////////////////////////////////////
     // declaration management (5)      //
@@ -340,19 +340,19 @@ extern "C" {
     
     // 6.6
     extern void
-    updateattrvals7_(const int*, 				// ObjInstHdl 
-		     const int*, const double*, const int*,	// AttrValMap 
-		     const char*, const int*, 			// UserSuppliedTag
-		     int*);					// error
+    updateattrval7_(const int*, 				// ObjInstHdl 
+		    const int*, const double*, const int*,	// AttrValMap 
+		    const char*, const int*, 			// UserSuppliedTag
+		    int*);					// error
   
     extern void
-    updateattrvals10_(const int*, 				// ObjInstHdl
-		      const int*, const double*, const int*,	// AttrValMap
-		      const char*, const int*, 			// UserSuppliedTag
-		      const double*, 				// logTime
-		      int*, 					// EventRetrHdl.Serial (retVal)
-		      int*,					// EventRetrHdl.sendingFederate (retVal)
-		      int*);					// error
+    updateattrval10_(const int*, 				// ObjInstHdl
+		     const int*, const double*, const int*,	// AttrValMap
+		     const char*, const int*, 			// UserSuppliedTag
+		     const double*, 				// logTime
+		     int*, 					// EventRetrHdl.Serial (retVal)
+		     int*,					// EventRetrHdl.sendingFederate (retVal)
+		     int*);					// error
     
     /////////////////////////////////////
     // time management (8)             //
@@ -430,13 +430,13 @@ extern "C" {
 
     // 4.10
     extern void
-        _F90fedSynchronized(const char*, const int*, // label
-                            int*);                   // error
+        _F90fedSync(const char*, const int*, // label
+                    int*);                   // error
 
     // 4.12
     extern void
-        _F90initFedSave(const char*, const int*, // label
-                        int*);                   // error
+        _F90initiateFedSave(const char*, const int*, // label
+                            int*);                   // error
 
     // 4.15
     extern void
@@ -460,7 +460,7 @@ extern "C" {
 
     // 4.19
     extern void
-        _F90initFedRes(const char*, const int*, // label
+        _F90initiateFedRes(const char*, const int*, // label
                        const int*,              // fedHdl
                        int*);                   // error
 
@@ -486,13 +486,13 @@ extern "C" {
     
     // 6.7
     extern void
-    _F90reflectAttrVals(const int*,				// ObjHdl
-			const int*, const double*, const int*,	// AttrHdlValPairSet
-			const double*,				// theTime
-			const char*, const int*,		// theTag
-			const int*,				// EventRetrHdl.Serial
-			const int*,				// EventRetrHdl.sendingFederate
-			int*);					// error
+    _F90reflectAttrVal(const int*,				// ObjHdl
+		       const int*, const double*, const int*,	// AttrHdlValPairSet
+		       const double*,				// theTime
+		       const char*, const int*,		// theTag
+		       const int*,				// EventRetrHdl.Serial
+		       const int*,				// EventRetrHdl.sendingFederate
+		       int*);					// error
     
     /////////////////////////////////////
     // time management (8)             //
@@ -685,7 +685,7 @@ public:
         string theLabel(label);
         int lenLabel = theLabel.size();
 
-        _F90fedSynchronized(theLabel.c_str(), &lenLabel, &err);
+        _F90fedSync(theLabel.c_str(), &lenLabel, &err);
 
         switch (err) {
         case 0 :
@@ -713,7 +713,7 @@ public:
         string theLabel(label);
         int lenLabel = theLabel.size();
 
-        _F90initFedSave(theLabel.c_str(), &lenLabel, &err);
+        _F90initiateFedSave(theLabel.c_str(), &lenLabel, &err);
         
 	switch (err) {
         case 0 :
@@ -876,9 +876,9 @@ public:
         int lenLabel = theLabel.size();
 	int fedHdl = fedHdl2Int(handle);
 
-	_F90initFedRes(theLabel.c_str(), &lenLabel,
-		       &fedHdl,
-		       &err);
+	_F90initiateFedRes(theLabel.c_str(), &lenLabel,
+		           &fedHdl,
+		           &err);
 
 	switch (err) {
 	case 0 :
@@ -1050,10 +1050,10 @@ public:
 		}
 
 		int lenAttrValues = lenAttrVals;
-		_F90reflectAttrVals(&objHdl,
-				    &attrHdl, attrVals, &lenAttrValues,
-				    &logTime,
-				    tag.c_str(), &lenTag,
+		_F90reflectAttrVal(&objHdl,
+				   &attrHdl, attrVals, &lenAttrValues,
+				   &logTime,
+				   tag.c_str(), &lenTag,
 				    NULL, 
 				    NULL,
 				    &err);
@@ -1135,13 +1135,13 @@ public:
 		}
 
 		int lenAttrValues = lenAttrVals;
-		_F90reflectAttrVals(&objHdl,
-				    &attrHdl, attrVals, &lenAttrValues,
-				    NULL,
-				    tag.c_str(), &lenTag,
-				    NULL, 
-				    NULL,
-				    &err);
+		_F90reflectAttrVal(&objHdl,
+				   &attrHdl, attrVals, &lenAttrValues,
+				   NULL,
+				   tag.c_str(), &lenTag,
+				   NULL, 
+				   NULL,
+				   &err);
 		
 		delete attrVals;
 
@@ -1680,7 +1680,7 @@ extern void
 
 // 4.20
 extern void
-    fedrestorecomplete1_(int *err) {
+    fedrescomplete1_(int *err) {
 
     try {
         RTIAMB -> federateRestoreComplete();
@@ -1700,7 +1700,7 @@ extern void
 }
 
 extern void
-    fedrestorenotcomplete1_(int *err) {
+    fedresnotcomplete1_(int *err) {
 
     try {
         RTIAMB -> federateRestoreNotComplete();
@@ -1931,10 +1931,10 @@ registerobjinst5_(const int *objClassHdl,
 
 // 6.6
 extern void
-updateattrvals7_(const int *objHdl, 
-		 const int *attrHdl, const double *attrVals, const int *lenAttrVals, 
-                 const char *tag, const int *lenTag,
-		 int *err) {
+updateattrval7_(const int *objHdl, 
+		const int *attrHdl, const double *attrVals, const int *lenAttrVals, 
+                const char *tag, const int *lenTag,
+		int *err) {
 
 	RTI::AttributeHandleValuePairSet *ahvps =  
 		RTI::AttributeSetFactory::create(*lenAttrVals);
@@ -1998,13 +1998,13 @@ updateattrvals7_(const int *objHdl,
 }
 
 extern void
-updateattrvals10_(const int *objHdl, const int *attrHdl, 
-                  const double *attrVals, const int *lenAttrVals, 
-                  const char *tag, const int *lenTag,
-		  const double *time, 
-		  int *ret1,
-		  int *ret2,
-		  int *err) {
+updateattrval10_(const int *objHdl, const int *attrHdl, 
+                 const double *attrVals, const int *lenAttrVals, 
+                 const char *tag, const int *lenTag,
+		 const double *time, 
+		 int *ret1,
+		 int *ret2,
+		 int *err) {
 
 	RTI::AttributeHandleValuePairSet *ahvps =  
 		RTI::AttributeSetFactory::create(*lenAttrVals);
