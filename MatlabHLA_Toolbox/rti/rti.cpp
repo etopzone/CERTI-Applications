@@ -985,7 +985,7 @@ m2registerFedSyncPoint(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[
 }
 
 static void				
-m2synchronizationPointAchieved(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
+m2syncPointAchieved(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 	char		*label;		// supplied C4
 	
 	label=		mstr2cstr	(prhs[0]);
@@ -1044,7 +1044,7 @@ m2requestFedSave(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 }
 
 static void			
-m2federateSaveBegun(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
+m2fedSaveBegun(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 	try {
 			RTIAMB->federateSaveBegun();
 			plhs[0] = cstr2mstr("");
@@ -1059,7 +1059,7 @@ m2federateSaveBegun(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) 
 }
 
 static void				
-m2federateSaveComplete(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
+m2fedSaveComplete(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 	try {
 			RTIAMB->federateSaveComplete();
 			plhs[0] = cstr2mstr("");
@@ -1075,7 +1075,7 @@ m2federateSaveComplete(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[
 }
 
 static void				
-m2federateSaveNotComplete(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
+m2fedSaveNotComplete(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 	try {
 			RTIAMB->federateSaveNotComplete();
 			plhs[0] = cstr2mstr("");
@@ -1112,7 +1112,7 @@ m2requestFedRestore(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) 
 }
 
 static void			
-m2federateRestoreComplete(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
+m2fedRestoreComplete(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 	try {
 			RTIAMB->federateRestoreComplete();
 			plhs[0] = cstr2mstr("");
@@ -1127,7 +1127,7 @@ m2federateRestoreComplete(int nlhs, mxArray *plhs[], int nrhs, const mxArray *pr
 }
 
 static void			
-m2federateRestoreNotComplete(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
+m2fedRestoreNotComplete(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 	try {
 			RTIAMB->federateRestoreNotComplete();
 			plhs[0] = cstr2mstr("");
@@ -3407,13 +3407,14 @@ mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) {
 	case  4040: m2joinFedExec(nlhs,plhs,nrhs,prhs); break;
 	case  4050: m2resignFedExec(nlhs,plhs,nrhs,prhs); break;
 	case  4060: m2registerFedSyncPoint(nlhs,plhs,nrhs,prhs); break;  
-	case  4090: m2synchronizationPointAchieved(nlhs,plhs,nrhs,prhs); break;  	case  4110: m2requestFedSave(nlhs,plhs,nrhs,prhs); break; 
-	case  4130: m2federateSaveBegun(nlhs,plhs,nrhs,prhs); break; 
-	case  4140: m2federateSaveComplete(nlhs,plhs,nrhs,prhs); break;  
-	case  4141: m2federateSaveNotComplete(nlhs,plhs,nrhs,prhs); break;  
+	case  4090: m2syncPointAchieved(nlhs,plhs,nrhs,prhs); break;  	
+	case  4110: m2requestFedSave(nlhs,plhs,nrhs,prhs); break; 
+	case  4130: m2fedSaveBegun(nlhs,plhs,nrhs,prhs); break; 
+	case  4140: m2fedSaveComplete(nlhs,plhs,nrhs,prhs); break;  
+	case  4141: m2fedSaveNotComplete(nlhs,plhs,nrhs,prhs); break;  
 	case  4160: m2requestFedRestore(nlhs,plhs,nrhs,prhs); break;  
-	case  4200: m2federateRestoreComplete(nlhs,plhs,nrhs,prhs); break;  
-	case  4201: m2federateRestoreNotComplete(nlhs,plhs,nrhs,prhs); break;  
+	case  4200: m2fedRestoreComplete(nlhs,plhs,nrhs,prhs); break;  
+	case  4201: m2fedRestoreNotComplete(nlhs,plhs,nrhs,prhs); break;  
 
 
 	/* Declaration Management Services */
