@@ -1,3 +1,6 @@
+For additional information, download and install instructions visit the 
+project homepage at http://www.mb.hs-wismar.de/cea/sw_projects.html.
+
 1. get and install cmake (www.cmake.org)
 2. get and install CERTI (www.cert.fr/CERTI) 
 3. create build_dir, e.g ~/build_libF90HLA13
