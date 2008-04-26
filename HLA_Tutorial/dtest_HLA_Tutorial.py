@@ -211,7 +211,7 @@ dtest.DTester.logger.setLevel(level=logging.WARNING)
 dtest.SSHSessionHandler.logger.setLevel(level=logging.WARNING)
 
 def goTest():
-    myDTestMaster = dtest.DTestMaster()
+    myDTestMaster = dtest.DTestMaster("CERTI HLA Tutorial autotest",description="1 RTIG + 1 process + 1 controller test")
     myDTestMaster.timeout = 200
     myDTestMaster.register(rtig)
     myDTestMaster.register(controllerFederate)
