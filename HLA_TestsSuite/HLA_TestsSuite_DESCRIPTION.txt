@@ -1,0 +1,8 @@
+HLA_TestsSuite is a set of [possibly] small program which may be used to HLA 
+conformance testing.
+The set of test programs are provided by many CERTI developers and contributors
+see https://savannah.nongnu.org/projects.
+
+We are currently far away for full conformance testing suite but with the help 
+of the community we may end-up with a full test suite which may be suitable for 
+CERTI conformance and non-regression tests and may be for any RTI.
