@@ -105,4 +105,18 @@ TARGET_LINK_LIBRARIES(${TESTNAME} ${CERTI_LIBRARIES})
 INSTALL(TARGETS ${TESTNAME} RUNTIME DESTINATION bin)
 INSTALL(FILES ${TESTNAME}.fed DESTINATION share/federations)
 
+#########################################################################
+# ADD TEST CREATE-JOIN-RESIGN-SAVE-RESTORE-PUBLISH.... PROGRAM
+#########################################################################
+#HLATestSuite_ADD_TEST(create_destroy
+#                      FEDFILE create-destroy.fed
+#                      SOURCE_FILES create_destroy.cc create_destroy.hh)
+
+SET(TESTNAME create_destroy)
+ADD_EXECUTABLE(${TESTNAME} ${TESTNAME}.cc)
+TARGET_LINK_LIBRARIES(${TESTNAME} ${CERTI_LIBRARIES})
+INSTALL(TARGETS ${TESTNAME} RUNTIME DESTINATION bin)
+INSTALL(FILES ${TESTNAME}.fed DESTINATION share/federations)
+
+
 MESSAGE(STATUS "*** ${CMAKE_PROJECT_NAME} has been successfully configured ***")
