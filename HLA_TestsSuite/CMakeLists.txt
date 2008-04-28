@@ -95,13 +95,14 @@ INCLUDE(CPack)
 #########################################################################
 # ADD TEST ELEMENTARY PROGRAM
 #########################################################################
-#HLATestSuite_ADD_TEST(test01
-#                      FEDFILE Sample.fed
-#                      SOURCE_FILES test01.cc)
+#HLATestSuite_ADD_TEST(test_CreateJoinResignDestroy
+#                      FEDFILE test_CreateJoinResignDestroy.fed
+#                      SOURCE_FILES test_CreateJoinResignDestroy.cc)
 
-#ADD_EXECUTABLE(test01 test01.cc)
-#TARGET_LINK_LIBRARIES(test01 ${CERTI_LIBRARIES})
-#INSTALL(TARGETS test01 RUNTIME DESTINATION bin)
-#INSTALL(FILES Test01.fed DESTINATION share/federations)
+SET(TESTNAME test_CreateJoinResignDestroy)
+ADD_EXECUTABLE(${TESTNAME} ${TESTNAME}.cc)
+TARGET_LINK_LIBRARIES(${TESTNAME} ${CERTI_LIBRARIES})
+INSTALL(TARGETS ${TESTNAME} RUNTIME DESTINATION bin)
+INSTALL(FILES ${TESTNAME}.fed DESTINATION share/federations)
 
 MESSAGE(STATUS "*** ${CMAKE_PROJECT_NAME} has been successfully configured ***")

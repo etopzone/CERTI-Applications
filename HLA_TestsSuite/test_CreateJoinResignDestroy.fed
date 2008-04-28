@@ -1,0 +1,16 @@
+;; Test01
+(Fed
+  (Federation Test01)
+  (FedVersion v1.3)
+  (Federate "fed" "Public")
+  (Spaces	
+  )
+  (Objects
+    (Class ObjectRoot
+      (Attribute privilegeToDelete reliable timestamp)
+      (Class RTIprivate)	
+    )
+  )
+  (Interactions    
+  )
+)
