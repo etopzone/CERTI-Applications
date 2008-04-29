@@ -214,7 +214,7 @@ if ( answer == 'y' )
             {
             // 2 possibilities : stop or join
             printf("You can stop or join the federation %s \n",Federation_Name);
-            answer = say_Y_N("Do you want to stop ? [y/n] :");
+            answer = say_Y_N("Do you want to stop ? [y/n] :",31);
             if ( answer == 'y' )
                 {
                 std::cout<<"Bye !"<<std::endl;
