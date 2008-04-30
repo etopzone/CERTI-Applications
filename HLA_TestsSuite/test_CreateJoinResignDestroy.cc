@@ -55,7 +55,7 @@ int main(void)
   TestAmbassador test;
   //test.joinAndLeave("Test01", "Test01.fed", "name");
   std::cout << "OK" << std::endl;
-  test.joinAndLeave("Test01", "Test01.fed", "");
+  test.joinAndLeave("test_CreateJoinResignDestroy", "test_CreateJoinResignDestroy.fed", "");
   //test.destroy("Test01");
   std::cout << "OK" << std::endl;
 

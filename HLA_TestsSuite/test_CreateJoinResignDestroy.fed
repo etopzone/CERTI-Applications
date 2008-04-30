@@ -1,6 +1,6 @@
-;; Test01
+;; test_CreateJoinResignDestroy
 (Fed
-  (Federation Test01)
+  (Federation test_CreateJoinResignDestroy)
   (FedVersion v1.3)
   (Federate "fed" "Public")
   (Spaces	
