@@ -22,8 +22,10 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.4.4)
 # You should set CERTI_HOME env var to appropriate value
 # or put here the full path to the directory
 # containing FindCERTI.cmake
-SET(CERTI_HOME $ENV{CERTI_HOME} CACHE PATH "The CERTI install directory")
-SET(CMAKE_MODULE_PATH ${CERTI_HOME}/share/scripts)
+FILE(TO_CMAKE_PATH "$ENV{CERTI_HOME}" CERTI_HOME_TEMP)
+SET(CERTI_HOME ${CERTI_HOME_TEMP} CACHE PATH "The CERTI install directory")
+LIST(APPEND CMAKE_MODULE_PATH "${CERTI_HOME}/share/scripts")
+LIST(APPEND CMAKE_MODULE_PATH "${HLA_TestsSuite_SOURCE_DIR}")
 
 # You should uncomment the following line
 # if you want VERBOSE build
@@ -91,44 +93,34 @@ SET(CPACK_PACKAGE_VERSION_PATCH ${PACKAGE_VERSION_PATCH})
 
 INCLUDE(CPack)
 
-#INCLUDE(HLATestSuiteTools)
+INCLUDE(HLATestsSuiteTools)
+
 #########################################################################
 # ADD TEST ELEMENTARY PROGRAM
 #########################################################################
-#HLATestSuite_ADD_TEST(test_CreateJoinResignDestroy
-#                      FEDFILE test_CreateJoinResignDestroy.fed
-#                      SOURCE_FILES test_CreateJoinResignDestroy.cc)
-
-SET(TESTNAME test_CreateJoinResignDestroy)
-ADD_EXECUTABLE(${TESTNAME} ${TESTNAME}.cc)
-TARGET_LINK_LIBRARIES(${TESTNAME} ${CERTI_LIBRARIES})
-INSTALL(TARGETS ${TESTNAME} RUNTIME DESTINATION bin)
-INSTALL(FILES ${TESTNAME}.fed DESTINATION share/federations)
+HLATestsSuite_ADD_TEST(test_CreateJoinResignDestroy
+                       FED_FILE test_CreateJoinResignDestroy.fed
+                       SOURCE_FILES test_CreateJoinResignDestroy.cc)
 
 #########################################################################
 # ADD TEST CREATE-JOIN-RESIGN-SAVE-RESTORE-PUBLISH.... PROGRAM
 #########################################################################
-#HLATestSuite_ADD_TEST(create_destroy
-#                      FEDFILE create-destroy.fed
-#                      SOURCE_FILES create_destroy.cc create_destroy.hh)
+HLATestsSuite_ADD_TEST(create_destroy
+                       FED_FILE create-destroy.fed
+                       SOURCE_FILES create_destroy.cc create_destroy.hh)
 
-SET(TESTNAME create_destroy)
-ADD_EXECUTABLE(${TESTNAME} ${TESTNAME}.cc)
-TARGET_LINK_LIBRARIES(${TESTNAME} ${CERTI_LIBRARIES})
-INSTALL(TARGETS ${TESTNAME} RUNTIME DESTINATION bin)
-INSTALL(FILES ${TESTNAME}.fed DESTINATION share/federations)
+#########################################################################
+# ADD TEST FedTime PROGRAM
+#########################################################################
+HLATestsSuite_ADD_TEST(test_FedTime
+                       FED_FILE create-destroy.fed
+                       SOURCE_FILES test_FedTime.cc)
 
 #########################################################################
 # ADD TEST HUGE ATTRIBUTE AND PARAMETER VALUES.... PROGRAM
 #########################################################################
-#HLATestSuite_ADD_TEST(test_HugeAVPV
-#                      FEDFILE test_HugeAVPV.fed
-#                      SOURCE_FILES test_HugeAVPV.cc) 
-
-SET(TESTNAME test_HugeAVPV)
-ADD_EXECUTABLE(${TESTNAME} ${TESTNAME}.cc)
-TARGET_LINK_LIBRARIES(${TESTNAME} ${CERTI_LIBRARIES})
-INSTALL(TARGETS ${TESTNAME} RUNTIME DESTINATION bin)
-INSTALL(FILES ${TESTNAME}.fed DESTINATION share/federations)
+HLATestsSuite_ADD_TEST(test_HugeAVPV
+                      FED_FILE test_HugeAVPV.fed
+                      SOURCE_FILES test_HugeAVPV.cc) 
 
 MESSAGE(STATUS "*** ${CMAKE_PROJECT_NAME} has been successfully configured ***")
