@@ -1,0 +1,47 @@
+;; TwoLevelController 
+
+(Fed
+  (Federation HugeAVPVTest)
+  (FedVersion v1.3)
+  (Federate "hugeAVPVFed0" "Public")
+  (Federate "hugeAVPVFed1" "Public")
+  (Federate "hugeAVPVFed2" "Public")
+  (Federate "hugeAVPVFed3" "Public")
+  (Federate "hugeAVPVFed4" "Public")
+  (Federate "hugeAVPVFed5" "Public")
+  (Federate "hugeAVPVFed6" "Public")
+  (Federate "hugeAVPVFed7" "Public")
+  (Federate "hugeAVPVFed8" "Public")
+  (Federate "hugeAVPVFed9" "Public")
+  (Spaces
+  )
+  (Objects
+    (Class ObjectRoot
+      (Attribute privilegeToDelete reliable timestamp)
+      (Class RTIprivate)
+	(Class TestAttribute
+		(Attribute Payload_A_0 RELIABLE RECEIVE)
+ 		(Attribute Payload_A_1 BEST_EFFORT RECEIVE)
+		(Attribute Payload_A_2 RELIABLE TIMESTAMP)
+		(Attribute Payload_A_3 BEST_EFFORT TIMESTAMP)
+	)
+    )
+  )
+  (Interactions
+    (Class InteractionRoot BEST_EFFORT RECEIVE
+      (Class RTIprivate BEST_EFFORT RECEIVE)
+	(Class TestParameter_P_0 RELIABLE RECEIVE
+		(Parameter Payload)
+	)
+	(Class TestParameter_P_1 BEST_EFFORT RECEIVE 
+		(Parameter Payload)
+	)
+	(Class TestParameter_P_2 RELIABLE TIMESTAMP 
+		(Parameter Payload)
+	)
+	(Class TestParameter_P_3 BEST_EFFORT TIMESTAMP 
+		(Parameter Payload)
+	)
+    )
+  )
+)
