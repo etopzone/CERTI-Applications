@@ -129,5 +129,14 @@ HLATestsSuite_ADD_TEST(test_Sync
                       FED_FILE test_Sync.fed
                       SOURCE_FILES test_Sync.cc) 
 
+#########################################################################
+# ADD TEST TIME REGULATION TIME CONSTRAINED CALLBACKS.... PROGRAM
+#########################################################################
+HLATestsSuite_ADD_TEST(test_TRTCCallbacks
+                      FED_FILE test_TRTCCallbacks.fed
+                      SOURCE_FILES test_TRTCCallbacks.cc) 
+
+
+
 
 MESSAGE(STATUS "*** ${CMAKE_PROJECT_NAME} has been successfully configured ***")
