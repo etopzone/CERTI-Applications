@@ -14,7 +14,7 @@ import dtest
 
 def usage():
     print "Usage : "
-    print "%s [--certi_home=<path>]" % sys.argv[0]
+    print "%s [--help] [--certi_home=<path>]" % sys.argv[0]
     print "\t --rtig=<user>@[<host>]:<rtig_path>"
     print "\t --controller=<user>@[<host>]:<controllerFederate_path>"
     print "\t --process=<user>@[<host>]:<processFederate_path>"
@@ -37,19 +37,21 @@ def getUserHostPath(argument):
 
 #------------------------------------------------------------- Getting parameters ----------------------------------    
 try:
-    opts, args = getopt.getopt(sys.argv[1:],"c:r:p:C",["certi_home=","rtig=", "process=","controller="])
+    opts, args = getopt.getopt(sys.argv[1:],"hc:r:p:C",["help","certi_home=","rtig=", "process=","controller="])
 except getopt.GetoptError, err:
     print >> sys.stderr, "opt = %s, msg = %s" % (err.opt,err.msg)
     usage()
     sys.exit(2)
     
-if len(opts) < 3:
-    usage()
-    sys.exit(2)
-
 certi_home_defined=False
+rtig_param   = getUserHostPath("rtig")
+controller_param = getUserHostPath("controllerFederate")
+process_param = getUserHostPath("processFederate")
     
 for o, a in opts:
+    if o in ("--help"):
+        usage()
+        sys.exit(2)
     if o in ("--rtig"):
         rtig_param   = getUserHostPath(a)
     if o in ("--controller"):
