@@ -122,4 +122,12 @@ HLATestsSuite_ADD_TEST(test_HugeAVPV
                       FED_FILE test_HugeAVPV.fed
                       SOURCE_FILES test_HugeAVPV.cc) 
 
+#########################################################################
+# ADD TEST SYNCHRONIZATION POINTS.... PROGRAM
+#########################################################################
+HLATestsSuite_ADD_TEST(test_Sync
+                      FED_FILE test_Sync.fed
+                      SOURCE_FILES test_Sync.cc) 
+
+
 MESSAGE(STATUS "*** ${CMAKE_PROJECT_NAME} has been successfully configured ***")
