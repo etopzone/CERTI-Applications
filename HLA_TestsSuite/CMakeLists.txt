@@ -106,14 +106,13 @@ HLATestsSuite_ADD_TEST(test_CreateJoinResignDestroy
 # ADD TEST CREATE-JOIN-RESIGN-SAVE-RESTORE-PUBLISH.... PROGRAM
 #########################################################################
 HLATestsSuite_ADD_TEST(create_destroy
-                       FED_FILE create-destroy.fed
+                       FED_FILE create_destroy.fed
                        SOURCE_FILES create_destroy.cc create_destroy.hh)
 
 #########################################################################
 # ADD TEST FedTime PROGRAM
 #########################################################################
-HLATestsSuite_ADD_TEST(test_FedTime
-                       FED_FILE create-destroy.fed
+HLATestsSuite_ADD_TEST(test_FedTime                      
                        SOURCE_FILES test_FedTime.cc)
 
 #########################################################################
