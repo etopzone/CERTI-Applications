@@ -107,7 +107,9 @@ HLATestsSuite_ADD_TEST(test_CreateJoinResignDestroy
 #########################################################################
 HLATestsSuite_ADD_TEST(create_destroy
                        FED_FILE create_destroy.fed
-                       SOURCE_FILES create_destroy.cc create_destroy.hh)
+                       SOURCE_FILES create_destroy.cc create_destroy.hh
+                       DTEST_SCRIPT dtest_create_destroy.py
+                       COMMENTS "A nice test from JYR")
 
 #########################################################################
 # ADD TEST FedTime PROGRAM
@@ -135,8 +137,7 @@ HLATestsSuite_ADD_TEST(test_Sync
 HLATestsSuite_ADD_TEST(test_TRTCCallbacks
                       FED_FILE test_TRTCCallbacks.fed
                       SOURCE_FILES test_TRTCCallbacks.cc) 
-
-
+                      
 
 
 MESSAGE(STATUS "*** ${CMAKE_PROJECT_NAME} has been successfully configured ***")
