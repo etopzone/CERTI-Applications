@@ -136,7 +136,7 @@ private:
     void
     enableTimeReg(void) {
         try {
-            rtiamb.enableTimeRegulation(RTIfedTime(0), RTIfedTime(5));
+            rtiamb.enableTimeRegulation(RTIfedTime(10), RTIfedTime(5));
         } catch ( RTI::Exception &e ) {
             cerr << "RTI exception: " << e._name << " ["
             << (e._reason ? e._reason : "undefined") << "]." << endl;
@@ -189,6 +189,7 @@ private:
 	   RTI::EnableTimeRegulationWasNotPending, 
            RTI::FederateInternalError) {
         cout << "Time Regulation Enabled, press ENTER to continue..." << endl;
+	cout << static_cast<RTIfedTime>(theTime).getTime() << endl;
 	TIMEREGENABLED = true;
 	getchar();
     }
@@ -199,6 +200,7 @@ private:
 	   RTI::EnableTimeConstrainedWasNotPending, 
            RTI::FederateInternalError) {
         cout << "Time Constrained Enabled, press ENTER to continue..." << endl;
+	cout << static_cast<RTIfedTime>(theTime).getTime() << endl;
 	TIMECONENABLED = true;
 	getchar();
     }
