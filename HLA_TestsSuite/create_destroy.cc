@@ -24,7 +24,7 @@ private:
     std::cout << std::endl << "     <----- federationSaved ()" <<std::endl; 
  }
 //------------------------- initiateFederateRestore ------------------------------
- void initiateFederateRestore (const char *name) 
+ void initiateFederateRestore (const char *name,RTI::FederateHandle handle) 
 	throw (RTI::FederateInternalError, RTI::SpecifiedSaveLabelDoesNotExist, RTI::CouldNotRestore)
  { 
     std::cout << std::endl << "     <----- initiateFederateRestored ( " << name <<")" <<std::endl; 
@@ -314,14 +314,14 @@ printf("----------------------------------------------------------------\n");
 answer = say_Y_N("Do you want to do save federation step ? [y/n]",5);
 if ( answer == 'y' )
   {
-  answer = say_Y_N("Do you want to save federation ? [y/n]");
+  answer = say_Y_N("Do you want to save federation ? [y/n]",51);
   if ( answer == 'y' )
      {
      myCreate_Destroy->requestFederationSave("TEST");
      std::cout<<"Federation "<<Federation_Name<<" has requested a save under label TEST"<<std::endl;
      }
 // TICK TO GET INITIATE
-  answer = say_Y_N("Do you want to do a tick (needed here) ? [y/n]");
+  answer = say_Y_N("Do you want to do a tick (needed here) ? [y/n]",52);
   if ( answer == 'y' )
      {
      myCreate_Destroy->tick();
@@ -332,7 +332,7 @@ if ( answer == 'y' )
      std::cout << "Bad answer, continuation is impredictible !"<< std::endl;
      }
 // FEDERATE SAVE BEGUN
-  answer = say_Y_N("Do you want to begin save federate (needed here) ? [y/n]");
+  answer = say_Y_N("Do you want to begin save federate (needed here) ? [y/n]",53);
   if ( answer == 'y' )
      {
      myCreate_Destroy->federateSaveBegun();
@@ -347,7 +347,7 @@ if ( answer == 'y' )
      std::cout<<"Federate "<<federate<<" completed the save"<<std::endl;     
      }
 // TICK
-  answer = say_Y_N("Do you want to do a tick (needed here) ? [y/n]");
+  answer = say_Y_N("Do you want to do a tick (needed here) ? [y/n]",54);
   if ( answer == 'y' )
      {
      myCreate_Destroy->tick();
@@ -367,14 +367,14 @@ printf("----------------------------------------------------------------\n");
 answer = say_Y_N("Do you want to do restore federation step ? [y/n]",6);
 if ( answer == 'y' )
   {
-  answer = say_Y_N("Do you want to restore federation ? [y/n]");
+  answer = say_Y_N("Do you want to restore federation ? [y/n]",61);
   if ( answer == 'y' )
      {
      myCreate_Destroy->requestFederationRestore("TEST");
      std::cout<<"Federation "<<Federation_Name<<" has requested a restore under label TEST"<<std::endl;
      }
 // TICK TO GET REQUEST FEDERATION RESTORE SUCCEEDED
-  answer = say_Y_N("Do you want to do a tick (needed here to get request federation restore succeeded) ? [y/n]");
+  answer = say_Y_N("Do you want to do a tick (needed here to get request federation restore succeeded) ? [y/n]",62);
   if ( answer == 'y' )
      {
      myCreate_Destroy->tick();
@@ -386,7 +386,7 @@ if ( answer == 'y' )
 printf("============================================================\n");
 std::cout<<"Request federation has succeeded ......................."<<std::endl;     
 // TICK TO GET FEDERATION RESTORE BEGUN
-  answer = say_Y_N("Do you want to do a tick (needed here to get federation restore begun) ? [y/n]");
+  answer = say_Y_N("Do you want to do a tick (needed here to get federation restore begun) ? [y/n]",63);
   if ( answer == 'y' )
      {
      myCreate_Destroy->tick();
@@ -397,7 +397,7 @@ std::cout<<"Request federation has succeeded ......................."<<std::endl
      }
 std::cout<<"Now federation restore begun................"<<std::endl;
 // TICK TO GET INITIATE FEDERATE RESTORE
-  answer = say_Y_N("Do you want to do a tick (needed here to get initiate federate restore) ? [y/n]");
+  answer = say_Y_N("Do you want to do a tick (needed here to get initiate federate restore) ? [y/n]",64);
   if ( answer == 'y' )
      {
      myCreate_Destroy->tick();
@@ -414,7 +414,7 @@ for ( int i = 1 ; i<=80 ; i++)
 printf("\n") ;
 std::cout<<"Federate has completed restoring successfull"<<std::endl;    
 // FEDERATE RESTORE COMPLETE
-  answer = say_Y_N("Do you want to do a federateRestoreComplete ? [y/n]");
+  answer = say_Y_N("Do you want to do a federateRestoreComplete ? [y/n]",65);
   if ( answer == 'y' )
      {
      myCreate_Destroy->federateRestoreComplete();
@@ -425,7 +425,7 @@ std::cout<<"Federate has completed restoring successfull"<<std::endl;
      }
   std::cout<<"Federate "<<federate<<" has completed the restore"<<std::endl; 
 // TICK TO GET FEDERATION RESTORED
-  answer = say_Y_N("Do you want to do a tick (needed here to get federation restored) ? [y/n]");
+  answer = say_Y_N("Do you want to do a tick (needed here to get federation restored) ? [y/n]",66);
   if ( answer == 'y' )
      {
      myCreate_Destroy->tick();
@@ -468,7 +468,7 @@ printf("----------------------------------------------------------------\n");
      {
      try {
          myCreate_Destroy->resignFederationExecution(RTI::DELETE_OBJECTS_AND_RELEASE_ATTRIBUTES);
-         std::cout << std::endl << "federation quittee" << std::endl;
+         std::cout << std::endl << "federation left" << std::endl;
          }
      catch (RTI::Exception &e)
           { printf("ERROR : Resign not done %s (%s)\n",e._name,e._reason); }
@@ -481,7 +481,9 @@ printf("----------------------------------------------------------------\n");
      {
       try {
           myCreate_Destroy->destroyFederationExecution(Federation_Name);
-          std::cout << std::endl << "federation detruite" << std::endl;
+          // We sleep a little (RTIA ending messages)
+          sleep(3);
+          std::cout << std::endl << "federation destroyed" << std::endl;
           }
       catch (RTI::Exception &e)
           { 
@@ -493,7 +495,7 @@ printf("----------------------------------------------------------------\n");
               if ( answer == 'y' )
                  {
                  myCreate_Destroy->resignFederationExecution(RTI::DELETE_OBJECTS_AND_RELEASE_ATTRIBUTES);
-                 std::cout << std::endl << "federation quittee" << std::endl;
+                 std::cout << std::endl << "federation left" << std::endl;
                  printf("NOW we can destroy federation %s\n",Federation_Name);
                  myCreate_Destroy->destroyFederationExecution(Federation_Name);
                  std::cout << std::endl << "federation destroyed" << std::endl;
@@ -518,27 +520,28 @@ printf("----------------------------------------------------------------\n");
      //delete myCreate_Destroy ;
 //=============================== 7d step  ====================================
 //CREATE -JOIN - RESIGN -DESTROY - CREATE - JOIN - RESIGN - DESTROY
+
   answer = say_Y_N("Do you want to do loop create-join-resign-destroy 2 times ? [y/n]",10);
   if ( answer == 'y' )
      {
-     printf("Pas n°1\n");
+     printf("************************************** LOOP n°1 *************\n");
      myCreate_Destroy = new Create_Destroy();
      is_created = creeFedExec(Federation_Name, FED_file);
-     if ( ! is_created ) printf("Creation 1 ratee\n"); else printf("Creation 1 reussie\n");
+     if ( ! is_created ) printf("Creation 1 aborted\n"); else printf("Creation 1 succeeded\n");
      is_joined = joinFedExec(federate,Federation_Name);
-     if ( ! is_joined ) printf("Join 1 rate\n"); else printf("Join 1 reussi\n");
+     if ( ! is_joined ) printf("Join 1 aborted\n"); else printf("Join 1 succeeded\n");
      myCreate_Destroy->resignFederationExecution(RTI::DELETE_OBJECTS_AND_RELEASE_ATTRIBUTES);
      myCreate_Destroy->destroyFederationExecution(Federation_Name);
-     printf("Pas n°2\n");
+     printf("************************************** LOOP n°2 *************\n");
      delete myCreate_Destroy ;
      myCreate_Destroy = new Create_Destroy();
      is_created = creeFedExec(Federation_Name, FED_file);
-     if ( ! is_created ) printf("Creation 2 ratee\n");else printf("Creation 2 reussie\n");
+     if ( ! is_created ) printf("Creation 2 aborted\n");else printf("Creation 2 succeeded\n");
      is_joined = joinFedExec(federate,Federation_Name);
 
      myCreate_Destroy->resignFederationExecution(RTI::DELETE_OBJECTS_AND_RELEASE_ATTRIBUTES);
      myCreate_Destroy->destroyFederationExecution(Federation_Name);
-     printf("Done...\n");
+     printf("************************************* Done...\n");
      delete myCreate_Destroy ;
      }
 
@@ -668,7 +671,7 @@ if ( answer == 'y' )
     { 
     //------------------ Federation Name ------------------------------------------
     // default federation name may be changed by user (why not ?)
-    answer = say_Y_N("Do you want to change Federation name ? [y/n]");
+    answer = say_Y_N("Do you want to change Federation name ? [y/n]",11);
     if ( answer == 'y' )
       {
       // Changing federation name
@@ -678,7 +681,7 @@ if ( answer == 'y' )
 
     //------------------ FED file Name --------------------------------------------
     // default FED file name may be changed by user
-    answer = say_Y_N("Do you want to change FED file name (and path) ? [y/n]");
+    answer = say_Y_N("Do you want to change FED file name (and path) ? [y/n]",12);
     if ( answer == 'y' )
       {
       // Changing FED file name
