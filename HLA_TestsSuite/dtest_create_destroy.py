@@ -29,24 +29,15 @@ import threading
 import getopt, sys
 import dtest
 
+def conditionalRunShellScript(dtester,c_shell_cmd,bourne_shell_cmd):
+    dtester.addRunStep("runCommand",command="echo $SHELL")        
+    dtester.addRunStep("expectFromCommand",pattern=".*csh",timeout=3)
+    dtester.addRunStep("ifThenElse",dtester.getFutureLastStepStatus)
+    dtester.addRunStep("runCommand",c_shell_cmd)
+    dtester.addRunStep("runCommand",bourne_shell_cmd)    
+
 def usage():
     print "Usage:\n %s [--help] [--certi_home=<path>] --rtig=<user>@[<host>]:<rtig_path> --federate=<user>@[<host>]:<federate_path>" % sys.argv[0]
-
-def getUserHostPath(argument):
-    if argument.find("@") != -1:
-        (user,argument) = argument.split("@",1)
-    else:
-        user = os.environ["USER"]
-    if argument.find(":") != -1:
-        (host,path) = argument.split(":",1)
-    else:
-        host = "localhost"
-        path = argument
-    retval = dict()
-    retval['user'] = user
-    retval['host'] = host
-    retval['path'] = path
-    return retval
 
 try:
     opts, args = getopt.getopt(sys.argv[1:], "hr:f:c:d:", ["help","rtig=", "federate=","certi_home=","display="])
@@ -58,8 +49,8 @@ except getopt.GetoptError, err:
 ## default values
 certi_home_defined=False
 display=":0.0"
-rtig_param = getUserHostPath("rtig")
-federate_param = getUserHostPath("create_destroy")
+rtig_param = dtest.Utils.getUserHostPath("rtig")
+federate_param = dtest.Utils.getUserHostPath("create_destroy")
 federate_param['fom']="create_destroy.fed"
     
 for o, a in opts:
@@ -67,9 +58,9 @@ for o, a in opts:
             usage()
             sys.exit(2)
     if o in ("-r", "--rtig"):
-        rtig_param   = getUserHostPath(a)
+        rtig_param   = dtest.Utils.getUserHostPath(a)
     if o in ("-f", "--federate"):
-        federate_param = getUserHostPath(a)
+        federate_param = dtest.Utils.getUserHostPath(a)
     if o in ("-c", "--certi_home"):
         certi_home = a
         certi_home_defined=True
@@ -98,7 +89,8 @@ rtig.stderr    = file(rtig.name + ".err",'w+')
 
 # describe RTIG run steps
 rtig.addRunStep("ok",True,"HLA test create_destroy Starts.")
-rtig.addRunStep("runCommand",command="source "+certi_home+"/share/scripts/myCERTI_env.csh "+rtig_param['host'])
+conditionalRunShellScript(rtig,c_shell_cmd="source "+certi_home+"/share/scripts/myCERTI_env.csh "+rtig_param['host'],
+                               bourne_shell_cmd="source "+certi_home+"/share/scripts/myCERTI_env.sh "+rtig_param['host'])
 rtig.addRunStep("runCommand",command=rtig_param['path'])
 rtig.addRunStep("expectFromCommand",pattern="CERTI RTIG up and running",timeout=5)
 rtig.addRunStep("barrier","RTIG started")
@@ -113,7 +105,8 @@ firstFederate.stdout  = file(firstFederate.name + ".out",'w+')
 firstFederate.stdin   = file(firstFederate.name + ".in",'w+')
 firstFederate.stderr  = file(firstFederate.name + ".err",'w+')
 firstFederate.addRunStep("barrier","RTIG started")
-firstFederate.addRunStep("runCommand",command="source "+certi_home+"/share/scripts/myCERTI_env.csh "+rtig_param['host'])
+conditionalRunShellScript(firstFederate,c_shell_cmd="source "+certi_home+"/share/scripts/myCERTI_env.csh "+rtig_param['host'],
+                               bourne_shell_cmd="source "+certi_home+"/share/scripts/myCERTI_env.sh "+rtig_param['host'])
 firstFederate.addRunStep("runCommand",command=federate_param['path']+" "+firstFederate.name)
 firstFederate.addRunStep("expectFromCommand",pattern="Do you want to change Federation name or fed file .* \[y/n\]")
 firstFederate.addRunStep("barrier","First Federate started")
@@ -144,11 +137,11 @@ firstFederate.addRunStep("sendToCommand",string="n\n")
 firstFederate.addRunStep("ok",firstFederate.getFutureLastStepStatus,"Dance with objects", skip="not done")
 firstFederate.addRunStep("expectFromCommand",pattern="Do you want to resign federation .* \[y/n\]")
 firstFederate.addRunStep("sendToCommand",string="y\n")
-firstFederate.addRunStep("expectFromCommand",pattern="federation quittee")
+firstFederate.addRunStep("expectFromCommand",pattern="federation left")
 firstFederate.addRunStep("ok",firstFederate.getFutureLastStepStatus,"Resigned from Federation")
 firstFederate.addRunStep("expectFromCommand",pattern="Do you want to destroy federation .* \[y/n\]")
 firstFederate.addRunStep("sendToCommand",string="y\n")
-firstFederate.addRunStep("expectFromCommand",pattern="federation detruite")
+firstFederate.addRunStep("expectFromCommand",pattern="federation destroyed")
 firstFederate.addRunStep("ok",firstFederate.getFutureLastStepStatus,"Federation destroyed")
 firstFederate.addRunStep("expectFromCommand",pattern="Do you want to do loop create-join-resign-destroy 2 times .* \[y/n\]")
 firstFederate.addRunStep("sendToCommand",string="n\n")
