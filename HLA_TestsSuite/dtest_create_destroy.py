@@ -27,20 +27,13 @@ import os
 import time
 import threading
 import getopt, sys
-import dtest
-
-def conditionalRunShellScript(dtester,c_shell_cmd,bourne_shell_cmd):
-    dtester.addRunStep("runCommand",command="echo $SHELL")        
-    dtester.addRunStep("expectFromCommand",pattern=".*csh",timeout=3)
-    dtester.addRunStep("ifThenElse",dtester.getFutureLastStepStatus)
-    dtester.addRunStep("runCommand",c_shell_cmd)
-    dtester.addRunStep("runCommand",bourne_shell_cmd)    
+import dtest  
 
 def usage():
-    print "Usage:\n %s [--help] [--certi_home=<path>] --rtig=<user>@[<host>]:<rtig_path> --federate=<user>@[<host>]:<federate_path>" % sys.argv[0]
+    print "Usage:\n %s [--help] [--certi_home=<path>] --rtig=[[<user>@]<host>]:<rtig_path> --federate=[[<user>@]<host>]:<federate_path>" % sys.argv[0]
 
 try:
-    opts, args = getopt.getopt(sys.argv[1:], "hr:f:c:d:", ["help","rtig=", "federate=","certi_home=","display="])
+    opts, args = getopt.getopt(sys.argv[1:], "hr:f:c:", ["help","rtig=", "federate=","certi_home="])
 except getopt.GetoptError, err:
     print >> sys.stderr, "opt = %s, msg = %s" % (err.opt,err.msg)
     usage()
@@ -48,7 +41,6 @@ except getopt.GetoptError, err:
 
 ## default values
 certi_home_defined=False
-display=":0.0"
 rtig_param = dtest.Utils.getUserHostPath("rtig")
 federate_param = dtest.Utils.getUserHostPath("create_destroy")
 federate_param['fom']="create_destroy.fed"
@@ -64,8 +56,6 @@ for o, a in opts:
     if o in ("-c", "--certi_home"):
         certi_home = a
         certi_home_defined=True
-    if o in ("--display"):
-        display = a;
         
 if not certi_home_defined:
     if os.environ.has_key("CERTI_HOME"):
@@ -89,7 +79,7 @@ rtig.stderr    = file(rtig.name + ".err",'w+')
 
 # describe RTIG run steps
 rtig.addRunStep("ok",True,"HLA test create_destroy Starts.")
-conditionalRunShellScript(rtig,c_shell_cmd="source "+certi_home+"/share/scripts/myCERTI_env.csh "+rtig_param['host'],
+dtest.ReusableSequence.addConditionalRunShellScript(rtig,c_shell_cmd="source "+certi_home+"/share/scripts/myCERTI_env.csh "+rtig_param['host'],
                                bourne_shell_cmd="source "+certi_home+"/share/scripts/myCERTI_env.sh "+rtig_param['host'])
 rtig.addRunStep("runCommand",command=rtig_param['path'])
 rtig.addRunStep("expectFromCommand",pattern="CERTI RTIG up and running",timeout=5)
@@ -105,7 +95,7 @@ firstFederate.stdout  = file(firstFederate.name + ".out",'w+')
 firstFederate.stdin   = file(firstFederate.name + ".in",'w+')
 firstFederate.stderr  = file(firstFederate.name + ".err",'w+')
 firstFederate.addRunStep("barrier","RTIG started")
-conditionalRunShellScript(firstFederate,c_shell_cmd="source "+certi_home+"/share/scripts/myCERTI_env.csh "+rtig_param['host'],
+dtest.ReusableSequence.addConditionalRunShellScript(firstFederate,c_shell_cmd="source "+certi_home+"/share/scripts/myCERTI_env.csh "+rtig_param['host'],
                                bourne_shell_cmd="source "+certi_home+"/share/scripts/myCERTI_env.sh "+rtig_param['host'])
 firstFederate.addRunStep("runCommand",command=federate_param['path']+" "+firstFederate.name)
 firstFederate.addRunStep("expectFromCommand",pattern="Do you want to change Federation name or fed file .* \[y/n\]")
