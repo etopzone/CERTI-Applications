@@ -79,7 +79,7 @@ rtig.stderr    = file(rtig.name + ".err",'w+')
 
 # describe RTIG run steps
 rtig.addRunStep("ok",True,"HLA test create_destroy Starts.")
-dtest.ReusableSequence.addConditionalRunShellScript(rtig,c_shell_cmd="source "+certi_home+"/share/scripts/myCERTI_env.csh "+rtig_param['host'],
+dtest.ReusableSequences.addConditionalRunShellScript(rtig,c_shell_cmd="source "+certi_home+"/share/scripts/myCERTI_env.csh "+rtig_param['host'],
                                bourne_shell_cmd="source "+certi_home+"/share/scripts/myCERTI_env.sh "+rtig_param['host'])
 rtig.addRunStep("runCommand",command=rtig_param['path'])
 rtig.addRunStep("expectFromCommand",pattern="CERTI RTIG up and running",timeout=5)
@@ -95,7 +95,7 @@ firstFederate.stdout  = file(firstFederate.name + ".out",'w+')
 firstFederate.stdin   = file(firstFederate.name + ".in",'w+')
 firstFederate.stderr  = file(firstFederate.name + ".err",'w+')
 firstFederate.addRunStep("barrier","RTIG started")
-dtest.ReusableSequence.addConditionalRunShellScript(firstFederate,c_shell_cmd="source "+certi_home+"/share/scripts/myCERTI_env.csh "+rtig_param['host'],
+dtest.ReusableSequences.addConditionalRunShellScript(firstFederate,c_shell_cmd="source "+certi_home+"/share/scripts/myCERTI_env.csh "+rtig_param['host'],
                                bourne_shell_cmd="source "+certi_home+"/share/scripts/myCERTI_env.sh "+rtig_param['host'])
 firstFederate.addRunStep("runCommand",command=federate_param['path']+" "+firstFederate.name)
 firstFederate.addRunStep("expectFromCommand",pattern="Do you want to change Federation name or fed file .* \[y/n\]")
