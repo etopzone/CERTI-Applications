@@ -714,8 +714,13 @@ Create_Destroy::getHandles(char *class_name,char *attribute_name,char *interacti
                                     return false;}
 
     // Attributs des classes d'Objets
-    AttributeID = myCreate_Destroy->getAttributeHandle(attribute_name, ClassID);
-    printf("Attribute %s from Object Class handle %d has handle = %d\n",attribute_name,ClassID,AttributeID);
+    try
+      {
+      AttributeID = myCreate_Destroy->getAttributeHandle(attribute_name, ClassID);
+      printf("Attribute %s from Object Class handle %d has handle = %d\n",attribute_name,ClassID,AttributeID);
+      }
+    catch (RTI::NameNotFound) { printf("Attribute %s not found\n",attribute_name);
+                                    return false;}
 
     // Interactions
     //InteractClassID = myCreate_Destroy->getInteractionClassHandle(interaction_name);
