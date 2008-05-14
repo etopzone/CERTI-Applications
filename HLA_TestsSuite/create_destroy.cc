@@ -879,7 +879,8 @@ Create_Destroy::publishAndSubscribe(char *class_name,char *attribute_name,char *
     
     // SEND INTERACTION
     // 1 parameter : PositionX value stored in ParameterSet
-    answer = say_Y_N("Do you want to do a sendInteraction ? [y/n]",701);
+//    answer = say_Y_N("Do you want to do a sendInteraction ? [y/n]",701);
+    answer = 'n' ;
     if ( answer == 'y' )
        {
        parameterSet = RTI::ParameterSetFactory::create(1);
