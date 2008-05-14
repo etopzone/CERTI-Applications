@@ -768,7 +768,7 @@ Create_Destroy::publishAndSubscribe(char *class_name,char *attribute_name,char *
     auto_ptr<RTI::AttributeHandleSet> attributes(RTI::AttributeHandleSetFactory::create(1));
     attributes->add(AttributeID);
 
-    answer = say_Y_N("Do you want to publish the object class ? [y/n]");
+    answer = say_Y_N("Do you want to publish the object class ? [y/n]",71);
     if ( answer == 'y' )
        {
        // Publish Object class with attribute set.
@@ -787,7 +787,7 @@ Create_Destroy::publishAndSubscribe(char *class_name,char *attribute_name,char *
        // printf("Made\n");
        }
 
-    answer = say_Y_N("Do you want to subscribe to the object class ? [y/n]");
+    answer = say_Y_N("Do you want to subscribe to the object class ? [y/n]",72);
     if ( answer == 'y' )
        {
        // Subscribe to object class named class_name, which has handle=ClassID and
@@ -800,20 +800,14 @@ Create_Destroy::publishAndSubscribe(char *class_name,char *attribute_name,char *
        // myCreate_Destroy->subscribeInteractionClass(InteractClassID, RTI::RTI_TRUE);
        // printf("Made\n");
        // tick needed here 
-       answer = say_Y_N("Do you want to do a tick to get discover (needed here) ? [y/n]");
+       answer = say_Y_N("Do you want to do a tick to get discover (needed here) ? [y/n]",73);
        if ( answer == 'y' )
            {
            myCreate_Destroy->tick();
-           // Local delete ?
-           answer = say_Y_N("Do you want to local delete object instance ? [y/n]");
-           if ( answer == 'y' )
-               {
-               //myCreate_Destroy->localDeleteObjectInstance(Object_discovered,"LOCAL_DELETE");
-               }
            }
        }
 
-    answer = say_Y_N("Do you want to register an instance of the object class ? [y/n]");
+    answer = say_Y_N("Do you want to register an instance of the object class ? [y/n]",74);
     if ( answer == 'y' )
        {
        // Register an instance of the object class ClassID, we give his name from the federate name (why not ?)
@@ -828,7 +822,7 @@ Create_Destroy::publishAndSubscribe(char *class_name,char *attribute_name,char *
 
 
     // UPDATE
-    answer = say_Y_N("Do you want to do an updateAttributeValues ? [y/n]");
+    answer = say_Y_N("Do you want to do an updateAttributeValues ? [y/n]",75);
     if ( answer == 'y' )
        {
        // 1 attribute AttributeID stored in attributeSet
@@ -841,14 +835,14 @@ Create_Destroy::publishAndSubscribe(char *class_name,char *attribute_name,char *
        std::cout << std::endl << "update attribute values made" << std::endl;
        } 
 
-    answer = say_Y_N("Do you want to do a tick to get reflect attribute values ? [y/n]");
+    answer = say_Y_N("Do you want to do a tick to get reflect attribute values ? [y/n]",76);
     if ( answer == 'y' )
        {  
        myCreate_Destroy->tick(); 
        }
  
 //=================== REQUEST OBJECT ATTRIBUTE TEST ===========================
-     answer = say_Y_N("Do you want to do a request object attribute ? [y/n]");
+     answer = say_Y_N("Do you want to do a request object attribute ? [y/n]",77);
      if ( answer == 'y' )
        {
         printf("Now, I want the values of this attribute.\n");
@@ -857,13 +851,13 @@ Create_Destroy::publishAndSubscribe(char *class_name,char *attribute_name,char *
         myCreate_Destroy->requestObjectAttributeValueUpdate(Object_discovered,*attributes);
         } 
 
-     answer = say_Y_N("Do you want to do a tick to get provide attribute values ? [y/n]");
+     answer = say_Y_N("Do you want to do a tick to get provide attribute values ? [y/n]",78);
      if ( answer == 'y' )
          {  
           myCreate_Destroy->tick(); 
           }
     // UPDATE
-    answer = say_Y_N("Do you want to do an updateAttributeValues ? [y/n]");
+    answer = say_Y_N("Do you want to do an updateAttributeValues ? [y/n]",79);
     if ( answer == 'y' )
        {
        // 1 attribute AttributeID stored in attributeSet
@@ -876,7 +870,7 @@ Create_Destroy::publishAndSubscribe(char *class_name,char *attribute_name,char *
        std::cout << std::endl << "update attribute values made" << std::endl;
        } 
 
-    answer = say_Y_N("Do you want to do a tick to get reflect attribute values ? [y/n]");
+    answer = say_Y_N("Do you want to do a tick to get reflect attribute values ? [y/n]",700);
     if ( answer == 'y' )
        {  
        myCreate_Destroy->tick(); 
@@ -885,7 +879,7 @@ Create_Destroy::publishAndSubscribe(char *class_name,char *attribute_name,char *
     
     // SEND INTERACTION
     // 1 parameter : PositionX value stored in ParameterSet
-    answer = say_Y_N("Do you want to do a sendInteraction ? [y/n]");
+    answer = say_Y_N("Do you want to do a sendInteraction ? [y/n]",701);
     if ( answer == 'y' )
        {
        parameterSet = RTI::ParameterSetFactory::create(1);
