@@ -11,4 +11,7 @@ bool joinFedExec(char *federate,char *federationName);
 void changingNames(char *federationname,char *fedfilename);
 bool creeFedExec(char *federationName, char *fileName);
 
+
 using std::auto_ptr ;
+
+

@@ -6,7 +6,7 @@ public:
   Create_Destroy() throw (RTI::RTIinternalError) {}
   virtual ~Create_Destroy() throw (RTI::FederateInternalError) {}
   virtual bool publishAndSubscribe(char *classe,char *attribut,char *interact,char *param);
-
+  void workOnSynchro() ;
 
 
 private:
@@ -61,6 +61,38 @@ printf("Object name %s with handle = %d and from Object Class Handle = %d ",theO
 printf(" has been discovered\n");
 Object_discovered = theObject;
 
+}
+//---------------------- announceSynchronizationPoint -------------------------
+void
+announceSynchronizationPoint(const char *label, const char *tag)
+    throw (RTI::FederateInternalError)
+{
+    std::cout << std::endl << "<----- announceSynchronizationPoint("<<label<<","<<tag<<")"<<std::endl;
+    if ( strcmp(label, synchroLabel) == 0  && strcmp(tag,synchroTag) == 0 ) {
+        //paused = true ;
+        printf("Synchronization point (%s,%s) announced\n",label,tag);
+    }      
+    else {
+        printf("Unexpected synchronization point (%s,%s)\n",label,tag);
+    }
+}
+
+//-------------------------federation synchronized ----------------------------
+void
+federationSynchronized(const char *label)
+    throw (RTI::FederateInternalError)
+{
+    std::cout << std::endl << "<----- federationSynchronized("<<label<<")"<<std::endl;
+    if (strcmp(label, synchroLabel) == 0) {
+        //paused = false ;
+        printf("federationSynchronized with label %s\n", label);
+    }
+}
+//----------------------- synchronizationPointRegistrationSucceeded -----------
+void synchronizationPointRegistrationSucceeded(const char *label) 
+     throw (RTI::FederateInternalError)
+{
+    std::cout << std::endl << "<----- synchronizationPointRegistrationSucceeded("<<label<<")"<<std::endl; 
 }
 //------------------------- reflectAttributeValues ----------------------------
 void
@@ -117,7 +149,8 @@ protected:
     RTI::AttributeHandle AttributeID ;
     RTI::InteractionClassHandle InteractClassID ;
     RTI::ParameterHandle ParameterID ;
-  RTI::ObjectHandle Object_discovered;
+    RTI::ObjectHandle Object_discovered;
+    char synchroLabel[NBCAR] ,synchroTag[NBCAR] ;
 };
 
 //Ambassador
@@ -461,9 +494,17 @@ printf("----------------------------------------------------------------\n");
          printf("publish and subscribe made\n");;
      }
 
-//=============================== 6d step  ====================================
+//=============================== 7d step  ====================================
+    // REGISTER SYNCHRONIZATION POINT
+    answer = say_Y_N("Do you want to work on Synchronizations ? [y/n]",8);
+    if ( answer == 'y' )
+       {
+       myCreate_Destroy->workOnSynchro() ;
+       }
+
+//=============================== 8d step  ====================================
 //RESIGNING FEDERATION EXECUTION
-  answer = say_Y_N("Do you want to resign federation ? [y/n]",8);
+  answer = say_Y_N("Do you want to resign federation ? [y/n]",9);
   if ( answer == 'y' )
      {
      try {
@@ -474,9 +515,9 @@ printf("----------------------------------------------------------------\n");
           { printf("ERROR : Resign not done %s (%s)\n",e._name,e._reason); }
      }
 
-//=============================== 7d step  ====================================
+//=============================== 9d step  ====================================
 //DESTROYING FEDERATION EXECUTION
-  answer = say_Y_N("Do you want to destroy federation ? [y/n]",9);
+  answer = say_Y_N("Do you want to destroy federation ? [y/n]",10);
   if ( answer == 'y' )
      {
       try {
@@ -518,10 +559,10 @@ printf("----------------------------------------------------------------\n");
           }
      }
      //delete myCreate_Destroy ;
-//=============================== 7d step  ====================================
+//=============================== 10d step  ====================================
 //CREATE -JOIN - RESIGN -DESTROY - CREATE - JOIN - RESIGN - DESTROY
 
-  answer = say_Y_N("Do you want to do loop create-join-resign-destroy 2 times ? [y/n]",10);
+  answer = say_Y_N("Do you want to do loop create-join-resign-destroy 2 times ? [y/n]",11);
   if ( answer == 'y' )
      {
      printf("************************************** LOOP n°1 *************\n");
@@ -692,6 +733,69 @@ if ( answer == 'y' )
     printf("------------------------------------------------------------------------\n");
     }
 }
+//=========================== workOnSynchro ===================================
+// Working on synchronizations
+void
+Create_Destroy::workOnSynchro()
+{
+    char answer ;
+
+    printf("Label ? : ");
+    scanf("%s",synchroLabel);
+    printf("Tag ? : ");
+    scanf("%s",synchroTag);
+
+    // REGISTER SYNCHRONIZATION POINT
+    answer = say_Y_N("Do you want to do a registerFederationSynchronizationPoint ? [y/n]",81);
+    if ( answer == 'y' )
+       {
+       try {
+            myCreate_Destroy->registerFederationSynchronizationPoint(synchroLabel,synchroTag);
+            printf("Synchronization point registered with label %s and tag %s\n",
+                   synchroLabel,synchroTag);
+        }
+        catch (RTI::Exception& e) {
+            printf("Synchronization point registration failed \n");
+            }
+       }
+
+     // TICK
+     answer = say_Y_N("Do you want to do a tick to get synchronization point registration succeeded ? [y/n]",82);
+    if ( answer == 'y' )
+       {  
+       myCreate_Destroy->tick(); 
+       }
+
+     // TICK
+     answer = say_Y_N("Do you want to do a tick to get announce synchronization point ? [y/n]",83);
+    if ( answer == 'y' )
+       {  
+       myCreate_Destroy->tick(); 
+       }
+
+    // SYNCHRONIZATION ACHEIVED
+    answer = say_Y_N("Do you want to do a SynchronizationPointAchieved ? [y/n]",84);
+    if ( answer == 'y' )
+       {
+       printf("Label ? : ");
+       scanf("%s",synchroLabel);
+       try {
+            myCreate_Destroy->synchronizationPointAchieved(synchroLabel);
+            printf("Synchronization point achieved with label %s\n",synchroLabel);
+        }
+        catch (RTI::Exception& e) {
+            printf("Synchronization point achievement failed \n");
+            }
+       }
+      
+     // TICK
+     answer = say_Y_N("Do you want to do a tick to get federation synchronized ? [y/n]",85);
+    if ( answer == 'y' )
+       {  
+       myCreate_Destroy->tick(); 
+       }
+}
+
 // ----------------------------------------------------------------------------
 /** get handles of objet/interaction classes
  */
@@ -741,6 +845,7 @@ Create_Destroy::publishAndSubscribe(char *class_name,char *attribute_name,char *
     RTI::AttributeHandleValuePairSet *attributeSet =NULL ;
     RTI::ObjectHandle object_handle ;
     int dx ,x;
+
 
     // Get all class and attributes handles
     // For class name (like Bille)
@@ -876,10 +981,11 @@ Create_Destroy::publishAndSubscribe(char *class_name,char *attribute_name,char *
        myCreate_Destroy->tick(); 
        }
 
-    
+
+ 
     // SEND INTERACTION
     // 1 parameter : PositionX value stored in ParameterSet
-//    answer = say_Y_N("Do you want to do a sendInteraction ? [y/n]",701);
+//    answer = say_Y_N("Do you want to do a sendInteraction ? [y/n]",706);
     answer = 'n' ;
     if ( answer == 'y' )
        {
