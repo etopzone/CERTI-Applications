@@ -1,0 +1,18 @@
+// $Id: XPlane_DESCRIPTION.txt,v 1.1 2008/05/27 14:05:49 erk Exp $
+This is a "XPlane" Federation using CERTI (http://savannah.nongnu.org/projects/certi)
+
+                   INSTRUCTIONS FOR UNIX like system.
+                   =================================
+
+1. HOW TO USE THESE INSTRUCTIONS
+================================
+
+2. CERTI VERIFICATION. 
+======================
+
+3. BUILDING TUTORIAL
+====================
+4. RUNNING TUTORIAL
+===================
+
+Use without moderation....and don't forget to stop rtig before going home.
