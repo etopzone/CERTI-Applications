@@ -17,11 +17,15 @@ extern	enum	{ leX,leZ,leY, Phi,The,Psi} XPLane;
 void Federe::reflectAttributeValues(RTI::ObjectHandle									oHandle,				//Instance
 												const RTI::AttributeHandleValuePairSet&	theAttributes,		//Attributs list
 												const char											*theTag)				//Tag Name Federate
-								throw (RTI::ObjectNotKnown, RTI::AttributeNotKnown, RTI::FederateInternalError)
+								throw (RTI::ObjectNotKnown, RTI::AttributeNotKnown, RTI::FederateOwnsAttributes,
+										 RTI::InvalidFederationTime, RTI::FederateInternalError)
+
 {
 float					value[NBDATA];
 RTI::ULong			valueLength;
 
+try 
+{
 for (long idT= 0; idT < 6; idT++)
 	{
 	long		idH;											
@@ -42,3 +46,26 @@ for (long idT= 0; idT < 6; idT++)
 printf("\n");
 }
 
+catch (RTI::ObjectNotKnown)
+	{ 
+	fprintf(fLog,"!!Error (reflectAttributeValues): ObjectNotKnown\n");
+	}
+catch (RTI::AttributeNotKnown)
+	{ 
+	fprintf(fLog,"!!Error (reflectAttributeValues): AttributeNotKnown\n");
+	}
+catch (RTI::FederateOwnsAttributes)
+	{ 
+	fprintf(fLog,"!!Error (reflectAttributeValues): FederateOwnsAttributes\n");
+	}
+catch (RTI::InvalidFederationTime)
+	{ 
+	fprintf(fLog,"!!Error (reflectAttributeValues): InvalidFederationTime\n");
+	}
+catch (RTI::FederateInternalError)
+	{ 
+	fprintf(fLog,"!!Error (reflectAttributeValues): FederateInternalError\n");
+	}
+	
+fflush(fLog);
+}
