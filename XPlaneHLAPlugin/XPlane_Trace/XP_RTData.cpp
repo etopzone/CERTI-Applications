@@ -17,9 +17,9 @@ extern	enum	{ leX,leZ,leY, Phi,The,Psi} XPLane;
 void Federe::reflectAttributeValues(RTI::ObjectHandle									oHandle,				//Instance
 												const RTI::AttributeHandleValuePairSet&	theAttributes,		//Attributs list
 												const char											*theTag)				//Tag Name Federate
-								throw (RTI::ObjectNotKnown, RTI::AttributeNotKnown, RTI::FederateOwnsAttributes,
-										 RTI::InvalidFederationTime, RTI::FederateInternalError)
-
+												throw (	RTI::ObjectNotKnown,				RTI::AttributeNotKnown, 
+															RTI::FederateOwnsAttributes,	RTI::InvalidFederationTime, 
+															RTI::FederateInternalError)
 {
 float					value[NBDATA];
 RTI::ULong			valueLength;

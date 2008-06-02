@@ -33,9 +33,12 @@ public:
 	bool		joinFederation		();			//Join fédération
 	void		subscribeAttVal	();			//Subscribe Attributes Value
 
-	void		reflectAttributeValues(RTI::ObjectHandle									theObject, 
-												const RTI::AttributeHandleValuePairSet&	theAttributes,
-												const char											*theTag);
+	void		reflectAttributeValues(	RTI::ObjectHandle									oHandle,				//Instance
+												const RTI::AttributeHandleValuePairSet&	theAttributes,		//Attributs list
+												const char											*theTag)				//Tag Name Federate
+												throw (	RTI::ObjectNotKnown,				RTI::AttributeNotKnown, 
+															RTI::FederateOwnsAttributes,	RTI::InvalidFederationTime, 
+															RTI::FederateInternalError);
 	
 	void		setFederateName(char *nameGen) { strcpy(federateName,nameGen);}
 											
