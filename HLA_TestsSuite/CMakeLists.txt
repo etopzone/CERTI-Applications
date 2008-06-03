@@ -138,6 +138,11 @@ HLATestsSuite_ADD_TEST(test_TRTCCallbacks
                       FED_FILE test_TRTCCallbacks.fed
                       SOURCE_FILES test_TRTCCallbacks.cc) 
                       
-
+#########################################################################
+# ADD TEST INTERACTIVE FEDERATE.... PROGRAM
+#########################################################################                   
+HLATestsSuite_ADD_TEST(Interactive_Federate
+                      FED_FILE Interactive_Federation.fed
+                      SOURCE_FILES Interactive_Federate.cc)
 
 MESSAGE(STATUS "*** ${CMAKE_PROJECT_NAME} has been successfully configured ***")
