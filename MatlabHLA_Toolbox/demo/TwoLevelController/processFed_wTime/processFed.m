@@ -80,12 +80,31 @@ discoverU = false
 global newTimeStep
 newTimeStep = false
 
+global TCE
+TCE = false
+global TRE
+TRE = false
+
 disp('Init time management features.')
 
-e = enableTimeConstr
-e = enableTimeReg(tStart, h)
-
 e = enableAsyncDeliv
+e = enableTimeConstr
+while ~TCE
+	tick();
+	pause(0.1)
+end
+TCE = false;
+disp('time constrained enabled')
+
+e = enableTimeReg(tStart, h)
+while ~TRE
+	tick();
+	pause(0.1)
+end
+TRE = false;
+disp('time regulation enabled')
+
+modifyLookahead(h);
 
 disp('Wait for u')
 while ~discoverU
