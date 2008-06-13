@@ -89,7 +89,7 @@ rtig.addRunStep("terminateCommand")
 rtig.addRunStep("waitCommandTermination")
 rtig.addRunStep("ok",True,"HLA test create_destroy Ends.")
 
-# describe billard run steps
+# describe first federate run steps
 firstFederate.timeout = 20
 firstFederate.stdout  = file(firstFederate.name + ".out",'w+')
 firstFederate.stdin   = file(firstFederate.name + ".in",'w+')
