@@ -129,7 +129,8 @@ HLATestsSuite_ADD_TEST(test_HugeAVPV
 #########################################################################
 HLATestsSuite_ADD_TEST(test_Sync
                       FED_FILE test_Sync.fed
-                      SOURCE_FILES test_Sync.cc) 
+                      SOURCE_FILES test_Sync.cc
+                      DTEST_SCRIPT dtest_test_Sync.py) 
 
 #########################################################################
 # ADD TEST TIME REGULATION TIME CONSTRAINED CALLBACKS.... PROGRAM
