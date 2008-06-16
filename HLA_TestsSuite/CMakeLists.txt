@@ -51,7 +51,7 @@ SET(CMAKE_BUILD_TYPE "Debug")
 #########################################################################
 SET(PACKAGE_NAME      ${CMAKE_PROJECT_NAME})
 SET(PACKAGE_VERSION_MAJOR "0")
-SET(PACKAGE_VERSION_MINOR "1")
+SET(PACKAGE_VERSION_MINOR "2")
 SET(PACKAGE_VERSION_PATCH "0")
 SET(PACKAGE_VERSION   "${PACKAGE_VERSION_MAJOR}.${PACKAGE_VERSION_MINOR}.${PACKAGE_VERSION_PATCH}")
 SET(PACKAGE_BUGREPORT "certi-devel@nongnu.org")
@@ -103,7 +103,7 @@ HLATestsSuite_ADD_TEST(test_CreateJoinResignDestroy
                        SOURCE_FILES test_CreateJoinResignDestroy.cc)
 
 #########################################################################
-# ADD TEST CREATE-JOIN-RESIGN-SAVE-RESTORE-PUBLISH.... PROGRAM
+# ADD TEST CREATE-JOIN-RESIGN-SAVE-RESTORE-PUBLISH
 #########################################################################
 HLATestsSuite_ADD_TEST(create_destroy
                        FED_FILE create_destroy.fed
@@ -118,32 +118,35 @@ HLATestsSuite_ADD_TEST(test_FedTime
                        SOURCE_FILES test_FedTime.cc)
 
 #########################################################################
-# ADD TEST HUGE ATTRIBUTE AND PARAMETER VALUES.... PROGRAM
+# ADD TEST HUGE ATTRIBUTE AND PARAMETER VALUES
 #########################################################################
 HLATestsSuite_ADD_TEST(test_HugeAVPV
                       FED_FILE test_HugeAVPV.fed
                       SOURCE_FILES test_HugeAVPV.cc) 
 
 #########################################################################
-# ADD TEST SYNCHRONIZATION POINTS.... PROGRAM
+# ADD TEST SYNCHRONIZATION POINTS
 #########################################################################
 HLATestsSuite_ADD_TEST(test_Sync
                       FED_FILE test_Sync.fed
                       SOURCE_FILES test_Sync.cc
-                      DTEST_SCRIPT dtest_test_Sync.py) 
+                      DTEST_SCRIPT dtest_test_Sync.py
+                      COMMENTS "Test HLA Synchronization points and Callbacks") 
 
 #########################################################################
-# ADD TEST TIME REGULATION TIME CONSTRAINED CALLBACKS.... PROGRAM
+# ADD TEST TIME REGULATION TIME CONSTRAINED CALLBACKS
 #########################################################################
 HLATestsSuite_ADD_TEST(test_TRTCCallbacks
                       FED_FILE test_TRTCCallbacks.fed
-                      SOURCE_FILES test_TRTCCallbacks.cc) 
+                      SOURCE_FILES test_TRTCCallbacks.cc
+                      COMMENTS "Test HLA TimeRegulating and TimeConstrained Callbacks") 
                       
 #########################################################################
-# ADD TEST INTERACTIVE FEDERATE.... PROGRAM
+# ADD TEST INTERACTIVE FEDERATE
 #########################################################################                   
 HLATestsSuite_ADD_TEST(Interactive_Federate
                       FED_FILE Interactive_Federation.fed
-                      SOURCE_FILES Interactive_Federate.cc)
+                      SOURCE_FILES Interactive_Federate.cc
+                      COMMENTS "A multi-purpose test interactive Federate")
 
 MESSAGE(STATUS "*** ${CMAKE_PROJECT_NAME} has been successfully configured ***")
