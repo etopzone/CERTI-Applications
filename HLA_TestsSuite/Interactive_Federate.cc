@@ -3,6 +3,7 @@
 #include <NullFederateAmbassador.hh>
 
 #include <iostream>
+#include <cstdlib>
 
 RTIfedTime* temps = new RTIfedTime(0.0);
 RTIfedTime* lookahead = new RTIfedTime(1.0);
