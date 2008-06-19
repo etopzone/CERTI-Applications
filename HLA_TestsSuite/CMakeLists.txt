@@ -139,6 +139,7 @@ HLATestsSuite_ADD_TEST(test_Sync
 HLATestsSuite_ADD_TEST(test_TRTCCallbacks
                       FED_FILE test_TRTCCallbacks.fed
                       SOURCE_FILES test_TRTCCallbacks.cc
+                      DTEST_SCRIPT dtest_test_TRTCCallbacks.py
                       COMMENTS "Test HLA TimeRegulating and TimeConstrained Callbacks") 
                       
 #########################################################################

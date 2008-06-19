@@ -70,9 +70,6 @@ rtig = dtest.DTester("RTIG",
 firstFederate = dtest.DTester("test_TRTCCallbacks_First",
                                session=dtest.SSHSessionHandler(federate_param['user'],host=federate_param['host']))
 
-otherFederate = dtest.DTester("test_TRTCCallbacks_Other1",
-                               session=dtest.SSHSessionHandler(federate_param['user'],host=federate_param['host']))
-
 # you may change the default time out value
 rtig.timeout = 40
 # you add want to save the output of your dtester to a file.
@@ -102,57 +99,27 @@ firstFederate.stderr  = file(firstFederate.name + ".err",'w+')
 firstFederate.addRunStep("barrier","RTIG started")
 dtest.ReusableSequences.addConditionalRunShellScript(firstFederate,c_shell_cmd="source "+certi_home+"/share/scripts/myCERTI_env.csh "+rtig_param['host'],
                                bourne_shell_cmd="source "+certi_home+"/share/scripts/myCERTI_env.sh "+rtig_param['host'])
-firstFederate.addRunStep("runCommand",command=federate_param['path']+" 1")
+firstFederate.addRunStep("runCommand",command=federate_param['path'])
 firstFederate.addRunStep("expectFromCommand",pattern="Joined federation.*")
 firstFederate.addRunStep("ok",firstFederate.getFutureLastStepStatus,"First Federate started and has joined federation")
 firstFederate.addRunStep("expectFromCommand",pattern="Press ENTER to start execution")
-firstFederate.addRunStep("barrier","First Federate waiting other(s) before going on")
-firstFederate.addRunStep("barrier","Other Federate started")
+#firstFederate.addRunStep("barrier","First Federate waiting other(s) before going on")
+#firstFederate.addRunStep("barrier","Other Federate started")
 firstFederate.addRunStep("sendToCommand",string="\n")
 
-firstFederate.addRunStep("barrier","Sync Sequence starts...")
+firstFederate.addRunStep("barrier","TRTC Sequence starts...")
 
-firstFederate.addRunStep("expectFromCommand",pattern="syncPointRegSucc: sync[0-9]+")
-firstFederate.addRunStep("ok",firstFederate.getFutureLastStepStatus,"SynchronizationPointRegisterSucceeded received - "+firstFederate.name)
-firstFederate.addRunStep("expectFromCommand",pattern="announceSyncPoint: sync[0-9]+")
-firstFederate.addRunStep("ok",firstFederate.getFutureLastStepStatus,"announceSynchronization received - "+firstFederate.name)
+firstFederate.addRunStep("expectFromCommand",pattern="Time Regulation Enabled, press ENTER to continue")
+firstFederate.addRunStep("ok",firstFederate.getFutureLastStepStatus,"TimeRegulationEnabled received - "+firstFederate.name)
+firstFederate.addRunStep("sendToCommand",string="\n")
 
-for i in range(1,6):
-    firstFederate.addRunStep("expectFromCommand",pattern="fedSync: sync[0-9]+")
-    firstFederate.addRunStep("ok",firstFederate.getFutureLastStepStatus,"federationSynchronized received %d - %s" % (i,firstFederate.name))
+firstFederate.addRunStep("expectFromCommand",pattern="Time Constrained Enabled, press ENTER to continue")
+firstFederate.addRunStep("ok",firstFederate.getFutureLastStepStatus,"TimeConstrainedEnabled received - "+firstFederate.name)
+firstFederate.addRunStep("sendToCommand",string="\n")
 
-firstFederate.addRunStep("barrier","Sync Sequence end.")
+firstFederate.addRunStep("barrier","TRTC Sequence end.")
 firstFederate.addRunStep("terminateCommand")
 firstFederate.addRunStep("barrier","All Federate(s) ended")
-
-# other federate
-otherFederate.timeout = 20
-otherFederate.stdout  = file(otherFederate.name + ".out",'w+')
-otherFederate.stdin   = file(otherFederate.name + ".in",'w+')
-otherFederate.stderr  = file(otherFederate.name + ".err",'w+')
-otherFederate.addRunStep("barrier","RTIG started")
-otherFederate.addRunStep("barrier","First Federate waiting other(s) before going on")
-dtest.ReusableSequences.addConditionalRunShellScript(otherFederate,c_shell_cmd="source "+certi_home+"/share/scripts/myCERTI_env.csh "+rtig_param['host'],
-                               bourne_shell_cmd="source "+certi_home+"/share/scripts/myCERTI_env.sh "+rtig_param['host'])
-otherFederate.addRunStep("runCommand",command=federate_param['path']+" 1")
-otherFederate.addRunStep("expectFromCommand",pattern="Joined federation.*")
-otherFederate.addRunStep("ok",otherFederate.getFutureLastStepStatus,"Other Federate started and has joined federation")
-otherFederate.addRunStep("barrier","Other Federate started")
-
-otherFederate.addRunStep("expectFromCommand",pattern="announceSyncPoint: sync[0-9]?")
-otherFederate.addRunStep("ok",otherFederate.getFutureLastStepStatus,"announceSynchronization received - "+otherFederate.name )
-
-otherFederate.addRunStep("barrier","Sync Sequence starts...")
-for i in range(1,6):
-    otherFederate.addRunStep("expectFromCommand",pattern="Synchronization Point sync[0-9]+ reached")
-    otherFederate.addRunStep("sendToCommand",string="\n")
-    otherFederate.addRunStep("ok",otherFederate.getFutureLastStepStatus,"synchronizationPointAchieved sent %d - %s " % (i,otherFederate.name) )
-    otherFederate.addRunStep("expectFromCommand",pattern="fedSync: sync[0-9]+")
-    otherFederate.addRunStep("ok",otherFederate.getFutureLastStepStatus,"federationSynchronized received %d - %s " % (i,otherFederate.name) )
-
-otherFederate.addRunStep("barrier","Sync Sequence end.")
-otherFederate.addRunStep("terminateCommand")
-otherFederate.addRunStep("barrier","All Federate(s) ended")
 
 def goTest():
     myDTestMaster = dtest.DTestMaster("HLA test test_TRTCCallbacks Starts","Launch RTIG + 1 federate for testing TimeRegulated and TimeConstrained callbacks,...")
