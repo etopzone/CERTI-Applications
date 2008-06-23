@@ -28,15 +28,24 @@ ID_Att[Psi]= getAttributeHandle("Att_Psi",IDClass); attributes->add(ID_Att[Psi])
 
 fprintf(fLog,"Publish attributes of class %d ",IDClass); fflush(fLog);
 publishObjectClass(IDClass, *attributes);
+}
+catch ( RTI::Exception &e) 
+	{
+	fprintf(fLog,"!!Error :publishObjectClass : %s\n",e._reason) ;
+	exit(-1);
+	}
 
+try
+{
+	
 fprintf(fLog,"Register object %s ",federationName); fflush(fLog);
-HObject= registerObjectInstance(IDClass,federationName);
+HObject= registerObjectInstance(IDClass);
 fprintf(fLog,"Made\n"); fflush(fLog);
 }
 
 catch ( RTI::Exception &e) 
 	{
-	fprintf(fLog,"!!Error : Publish Value : %s\n",e._reason) ;
+	fprintf(fLog,"!!Error : registerObjectInstance : %s\n",e._reason) ;
 	exit(-1);
 }	}
 
