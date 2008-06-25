@@ -1,8 +1,35 @@
 HLA_TestsSuite is a set of [possibly] small programs which may be used to HLA 
 conformance testing.
 The set of test programs are provided by many CERTI developers and contributors
-see https://savannah.nongnu.org/projects.
+see https://savannah.nongnu.org/projects/certi.
 
 We are currently far away for full conformance testing suite but with the help 
 of the community we may end-up with a full tests suite which may be suitable for 
 CERTI conformance and non-regression tests and may be for any RTI.
+
+The test suite should be build using CMake.
+The whole test suite may be launched using 
+CTest (http://www.cmake.org/Wiki/CMake_Testing_With_CTest)
+and 
+DTest (http://download.savannah.gnu.org/releases/tsp/dtest/what_is_dtest.pdf)
+
+The method is simple:
+
+1) build HLA_TestsSuite using CMake
+2) install dtest (http://download.savannah.gnu.org/releases/tsp/dtest/)
+3) eventually update your Python PATH if you did 
+   not install dtest globally (or you don't have the right to do so)
+   export PYTHONPATH=/path/to/dtest
+4) make test
+   which should gives something like:
+
+$ make test
+Running tests...
+Start processing tests
+Test project /home/eric/workspace/HLA_TestsSuite/build
+  1/  3 Testing create_destroy                   Passed
+  2/  3 Testing test_Sync                        Passed
+  3/  3 Testing test_TRTCCallbacks               Passed
+
+100% tests passed, 0 tests failed out of 3
+$
