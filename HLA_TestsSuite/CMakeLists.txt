@@ -19,12 +19,22 @@ PROJECT(HLA_TestsSuite CXX)
 CMAKE_MINIMUM_REQUIRED(VERSION 2.4.4)
 
 # Use CERTI specific CMake modules first
-# You should set CERTI_HOME env var to appropriate value
-# or put here the full path to the directory
+
+# Use CERTI_HOME env var if it is defined
+IF ("$ENV{CERTI_HOME}" STRGREATER "")
+    FILE(TO_CMAKE_PATH "$ENV{CERTI_HOME}" CERTI_HOME_TEMP)
+    SET(CERTI_HOME ${CERTI_HOME_TEMP} CACHE PATH "The CERTI install directory")
+    LIST(APPEND CMAKE_MODULE_PATH "${CERTI_HOME}/share/scripts")
+# Or try to use CERTI possible installed at the same INSTALL_PREFIX
+ELSE ("$ENV{CERTI_HOME}" STRGREATER "")
+    LIST(APPEND CMAKE_MODULE_PATH "${CMAKE_INSTALL_PREFIX}/share/scripts")    
+ENDIF ("$ENV{CERTI_HOME}" STRGREATER "")
+
+# Or you can append here the full path to the directory
 # containing FindCERTI.cmake
-FILE(TO_CMAKE_PATH "$ENV{CERTI_HOME}" CERTI_HOME_TEMP)
-SET(CERTI_HOME ${CERTI_HOME_TEMP} CACHE PATH "The CERTI install directory")
-LIST(APPEND CMAKE_MODULE_PATH "${CERTI_HOME}/share/scripts")
+# LIST(APPEND CMAKE_MODULE_PATH "/your/own/path")
+
+# HLA_TestsSuite comes with its own set of CMake macros too
 LIST(APPEND CMAKE_MODULE_PATH "${HLA_TestsSuite_SOURCE_DIR}")
 
 # You should uncomment the following line
