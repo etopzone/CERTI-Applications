@@ -6,6 +6,7 @@
 #include <sstream>
 #include <memory>
 #include <string>
+#include <stdlib.h>
 
 using std::string;
 using std::cout;

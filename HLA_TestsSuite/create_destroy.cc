@@ -1,4 +1,5 @@
 #include "create_destroy.hh"
+#include <stdlib.h>
 
 class Create_Destroy : public RTI::RTIambassador, public NullFederateAmbassador
 {
@@ -683,7 +684,7 @@ while(interaction)
 }
 
 //---------------------------- say_Y_N ----------------------------------------
-char say_Y_N(char *question,int pas)
+char say_Y_N(const char *question,int pas)
 // Write question to user
 // User has to answer y or n which is returned as one char
 {
