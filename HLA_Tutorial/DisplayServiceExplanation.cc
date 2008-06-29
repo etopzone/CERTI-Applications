@@ -1,5 +1,6 @@
 #include "DisplayServiceExplanation.hh"
 #include "DisplayServiceMessages.hh"
+#include <stdlib.h>
 
 /* constructor */
 DisplayServiceExplanation::DisplayServiceExplanation(void) {

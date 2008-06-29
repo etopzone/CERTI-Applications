@@ -44,6 +44,7 @@
 #include <memory>
 #include <string>
 
+#include <string.h>
 #include "DisplayServiceExplanation.hh"
 
 using std::string;

@@ -42,7 +42,9 @@
 #include <string>
 #include <memory>
 
+#include <string.h>
 #include "DisplayServiceExplanation.hh"
+
 
 using std::string;
 using std::cout;
