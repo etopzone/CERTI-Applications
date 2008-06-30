@@ -1,6 +1,13 @@
 #include "create_destroy.hh"
 #include <stdlib.h>
 
+#if defined(_WIN32)	
+    #include <windows.h>
+    #include <algorithm>	
+    #include <process.h>
+    #define	sleep(a)	      Sleep(a * 1000)
+#endif
+
 class Create_Destroy : public RTI::RTIambassador, public NullFederateAmbassador
 {
 public:
