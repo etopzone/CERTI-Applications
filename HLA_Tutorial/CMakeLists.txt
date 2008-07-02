@@ -14,7 +14,9 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.4.4)
 # You should set CERTI_HOME env var to appropriate value
 # or put here the full path to the directory
 # containing FindCERTI.cmake
-SET(CMAKE_MODULE_PATH $ENV{CERTI_HOME}/share/scripts)
+#SET(CMAKE_MODULE_PATH $ENV{CERTI_HOME}/share/scripts)
+SET(CMAKE_MODULE_PATH /home/eric/CERTI/certi-cvs/share/scripts)
+#SET(CMAKE_MODULE_PATH /home/eric/TestArea/certi-3.2.7/share/scripts)
 
 # You should uncomment the following line
 # if you want VERBOSE build
@@ -39,9 +41,9 @@ SET(CMAKE_BUILD_TYPE "Debug")
 # Define your project packaging basics
 #########################################################################
 SET(PACKAGE_NAME      ${CMAKE_PROJECT_NAME})
-SET(PACKAGE_VERSION_MAJOR "0")
-SET(PACKAGE_VERSION_MINOR "1")
-SET(PACKAGE_VERSION_PATCH "3")
+SET(PACKAGE_VERSION_MAJOR "1")
+SET(PACKAGE_VERSION_MINOR "0")
+SET(PACKAGE_VERSION_PATCH "0")
 SET(PACKAGE_VERSION   "${PACKAGE_VERSION_MAJOR}.${PACKAGE_VERSION_MINOR}.${PACKAGE_VERSION_PATCH}")
 SET(PACKAGE_BUGREPORT "christianstenzel@gmx.net")
 MESSAGE(STATUS "Configuring ${PACKAGE_NAME} version ${PACKAGE_VERSION}")
