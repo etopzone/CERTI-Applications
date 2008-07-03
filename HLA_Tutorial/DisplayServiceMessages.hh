@@ -35,19 +35,19 @@ first federate. This service creates the federation specified by a name and a \
 file holding the federation object model (FOM). \
     "
     
-#define DS_MSG_CREATE_FEDERATION_EXECUTION_SRC "Example from file: controllerFederate.cc\n243:    /* create federation execution */\n\
-244-    try {\n\
-245-        rtiAmb.createFederationExecution(federationName.c_str(), \n\
-246-					 fedFile.c_str());\n\
-247-    } catch ( RTI::FederationExecutionAlreadyExists ) {\n\
-248-        cout << \"Federation already created by another federate.\" \n\
-249-	<< endl;\n\
-250-    } catch ( RTI::Exception &e ) {\n\
-251-        cerr << \"RTI exception: \" << e._name << \" [\"\n\
-252-        << (e._reason ? e._reason : \"undefined\") << \"].\" << endl;\n\
-253-    } catch ( ... ) {\n\
-254-        cerr << \"Error: unknown non-RTI exception.\" << endl;\n\
-255-    }\n\
+#define DS_MSG_CREATE_FEDERATION_EXECUTION_SRC "Example from file: controllerFederate.cc\n244:    /* create federation execution */\n\
+245-    try {\n\
+246-        rtiAmb.createFederationExecution(federationName.c_str(), \n\
+247-					 fedFile.c_str());\n\
+248-    } catch ( RTI::FederationExecutionAlreadyExists ) {\n\
+249-        cout << \"Federation already created by another federate.\" \n\
+250-	<< endl;\n\
+251-    } catch ( RTI::Exception &e ) {\n\
+252-        cerr << \"RTI exception: \" << e._name << \" [\"\n\
+253-        << (e._reason ? e._reason : \"undefined\") << \"].\" << endl;\n\
+254-    } catch ( ... ) {\n\
+255-        cerr << \"Error: unknown non-RTI exception.\" << endl;\n\
+256-    }\n\
 "
 
 #define DS_MSG_JOIN_FEDERATION_EXECUTION "\
@@ -58,17 +58,17 @@ name of the federation it wants to join and a pointer to its federate \
 ambassador implementation. \
     "
 
-#define DS_MSG_JOIN_FEDERATION_EXECUTION_SRC "Example from file: controllerFederate.cc\n259:    /* join federation execution */\n\
-260-    try {\n\
-261-        rtiAmb.joinFederationExecution(federateName.c_str(),\n\
-262-                                       federationName.c_str(),\n\
-263-                                       &myFedAmb);\n\
-264-    } catch ( RTI::Exception &e ) {\n\
-265-        cerr << \"RTI exception: \" << e._name << \" [\"\n\
-266-        << (e._reason ? e._reason : \"undefined\") << \"].\" << endl;\n\
-267-    } catch ( ... ) {\n\
-268-        cerr << \"Error: unknown non-RTI exception.\" << endl;\n\
-269-    }\n\
+#define DS_MSG_JOIN_FEDERATION_EXECUTION_SRC "Example from file: controllerFederate.cc\n260:    /* join federation execution */\n\
+261-    try {\n\
+262-        rtiAmb.joinFederationExecution(federateName.c_str(),\n\
+263-                                       federationName.c_str(),\n\
+264-                                       &myFedAmb);\n\
+265-    } catch ( RTI::Exception &e ) {\n\
+266-        cerr << \"RTI exception: \" << e._name << \" [\"\n\
+267-        << (e._reason ? e._reason : \"undefined\") << \"].\" << endl;\n\
+268-    } catch ( ... ) {\n\
+269-        cerr << \"Error: unknown non-RTI exception.\" << endl;\n\
+270-    }\n\
 "
 
 #define DS_MSG_RESIGN_FEDERATION_EXECUTION "\
@@ -80,16 +80,16 @@ RELEASE_ATTRIBUTES, DELETE_OBJECT, \
 DELETE_OBJECTS_AND_RELEASE_ATTRIBUTES (common practice), NO_ACTION. \
     " 
 
-#define DS_MSG_RESIGN_FEDERATION_EXECUTION_SRC "Example from file: controllerFederate.cc\n474:    /* resign federation execution */\n\
-475-    try {\n\
-476-        rtiAmb.resignFederationExecution(\n\
-477-            RTI::DELETE_OBJECTS_AND_RELEASE_ATTRIBUTES);\n\
-478-    } catch ( RTI::Exception &e ) {\n\
-479-        cerr << \"RTI exception: \" << e._name << \" [\"\n\
-480-        << (e._reason ? e._reason : \"undefined\") << \"].\" << endl;\n\
-481-    } catch ( ... ) {\n\
-482-        cerr << \"Error: unknown non-RTI exception.\" << endl;\n\
-483-    }\n\
+#define DS_MSG_RESIGN_FEDERATION_EXECUTION_SRC "Example from file: controllerFederate.cc\n475:    /* resign federation execution */\n\
+476-    try {\n\
+477-        rtiAmb.resignFederationExecution(\n\
+478-            RTI::DELETE_OBJECTS_AND_RELEASE_ATTRIBUTES);\n\
+479-    } catch ( RTI::Exception &e ) {\n\
+480-        cerr << \"RTI exception: \" << e._name << \" [\"\n\
+481-        << (e._reason ? e._reason : \"undefined\") << \"].\" << endl;\n\
+482-    } catch ( ... ) {\n\
+483-        cerr << \"Error: unknown non-RTI exception.\" << endl;\n\
+484-    }\n\
 "
 
 #define DS_MSG_DESTROY_FEDERATION_EXECUTION "\
@@ -99,17 +99,17 @@ by the last federate. This service destroys the current federation \
 execution. \
     " 
 
-#define DS_MSG_DESTROY_FEDERATION_EXECUTION_SRC "Example from file: controllerFederate.cc\n487:    /* destroy federation execution */\n\
-488-    try {\n\
-489-        rtiAmb.destroyFederationExecution(federationName.c_str());\n\
-490-    } catch (RTI::FederatesCurrentlyJoined) {\n\
-491-        cout << \"Federates currently joined.\" << endl;\n\
-492-    } catch ( RTI::Exception &e ) {\n\
-493-        cerr << \"RTI exception: \" << e._name << \" [\"\n\
-494-        << (e._reason ? e._reason : \"undefined\") << \"].\" << endl;\n\
-495-    } catch ( ... ) {\n\
-496-        cerr << \"Error: unknown non-RTI exception.\" << endl;\n\
-497-    }\n\
+#define DS_MSG_DESTROY_FEDERATION_EXECUTION_SRC "Example from file: controllerFederate.cc\n488:    /* destroy federation execution */\n\
+489-    try {\n\
+490-        rtiAmb.destroyFederationExecution(federationName.c_str());\n\
+491-    } catch (RTI::FederatesCurrentlyJoined) {\n\
+492-        cout << \"Federates currently joined.\" << endl;\n\
+493-    } catch ( RTI::Exception &e ) {\n\
+494-        cerr << \"RTI exception: \" << e._name << \" [\"\n\
+495-        << (e._reason ? e._reason : \"undefined\") << \"].\" << endl;\n\
+496-    } catch ( ... ) {\n\
+497-        cerr << \"Error: unknown non-RTI exception.\" << endl;\n\
+498-    }\n\
 "
 
 /* Declaration Management - RTI services */
@@ -129,15 +129,15 @@ information for the specified attributes within the AttributeHandleSet class \
 in its future execution. \
     "
 
-#define DS_MSG_PUBLISH_OBJECT_CLASS_SRC "Example from file: controllerFederate.cc\n326:    /* publish u */\n\
-327-    try {\n\
-328-        rtiAmb.publishObjectClass(twoLevelContrID, *attrU);\n\
-329-    } catch ( RTI::Exception &e ) {\n\
-330-        cerr << \"RTI exception: \" << e._name << \" [\"\n\
-331-        << (e._reason ? e._reason : \"undefined\") << \"].\" << endl;\n\
-332-    } catch ( ... ) {\n\
-333-        cerr << \"Error: unknown non-RTI exception.\" << endl;\n\
-334-    }\n\
+#define DS_MSG_PUBLISH_OBJECT_CLASS_SRC "Example from file: controllerFederate.cc\n327:    /* publish u */\n\
+328-    try {\n\
+329-        rtiAmb.publishObjectClass(twoLevelContrID, *attrU);\n\
+330-    } catch ( RTI::Exception &e ) {\n\
+331-        cerr << \"RTI exception: \" << e._name << \" [\"\n\
+332-        << (e._reason ? e._reason : \"undefined\") << \"].\" << endl;\n\
+333-    } catch ( ... ) {\n\
+334-        cerr << \"Error: unknown non-RTI exception.\" << endl;\n\
+335-    }\n\
 "
 
 #define DS_MSG_SUBSCRIBE_TO_OBJECT_CLASS "\
@@ -147,15 +147,15 @@ receiving updates for the specified attributes within the AttributeHandleSet \
 class in its future execution. \
     "
 
-#define DS_MSG_SUBSCRIBE_TO_OBJECT_CLASS_SRC "Example from file: controllerFederate.cc\n338:    /* subscribe to y */\n\
-339-    try {\n\
-340-        rtiAmb.subscribeObjectClassAttributes(twoLevelContrID, *attrY);\n\
-341-    } catch ( RTI::Exception &e ) {\n\
-342-        cerr << \"RTI exception: \" << e._name << \" [\"\n\
-343-        << (e._reason ? e._reason : \"undefined\") << \"].\" << endl;\n\
-344-    } catch ( ... ) {\n\
-345-        cerr << \"Error: unknown non-RTI exception.\" << endl;\n\
-346-    }\n\
+#define DS_MSG_SUBSCRIBE_TO_OBJECT_CLASS_SRC "Example from file: controllerFederate.cc\n339:    /* subscribe to y */\n\
+340-    try {\n\
+341-        rtiAmb.subscribeObjectClassAttributes(twoLevelContrID, *attrY);\n\
+342-    } catch ( RTI::Exception &e ) {\n\
+343-        cerr << \"RTI exception: \" << e._name << \" [\"\n\
+344-        << (e._reason ? e._reason : \"undefined\") << \"].\" << endl;\n\
+345-    } catch ( ... ) {\n\
+346-        cerr << \"Error: unknown non-RTI exception.\" << endl;\n\
+347-    }\n\
 "
 
 /* Object Management - RTI services */
@@ -174,17 +174,17 @@ This service creates a new object instance. Other federates are informed \
 through the federate service discoverObjectInstance. \
     "
 
-#define DS_MSG_REGISTER_OBJECT_INSTANCE_SRC "Example from file: controllerFederate.cc\n354:    /* register object */\n\
-355-    RTI::ObjectHandle objInstID_u;\n\
-356-\n\
-357-    try {\n\
-358-        objInstID_u = rtiAmb.registerObjectInstance(twoLevelContrID, \"u\");\n\
-359-    } catch ( RTI::Exception &e ) {\n\
-360-        cerr << \"RTI exception: \" << e._name << \" [\"\n\
-361-        << (e._reason ? e._reason : \"undefined\") << \"].\" << endl;\n\
-362-    } catch ( ... ) {\n\
-363-        cerr << \"Error: unknown non-RTI exception.\" << endl;\n\
-364-    }\n\
+#define DS_MSG_REGISTER_OBJECT_INSTANCE_SRC "Example from file: controllerFederate.cc\n355:    /* register object */\n\
+356-    RTI::ObjectHandle objInstID_u;\n\
+357-\n\
+358-    try {\n\
+359-        objInstID_u = rtiAmb.registerObjectInstance(twoLevelContrID, \"u\");\n\
+360-    } catch ( RTI::Exception &e ) {\n\
+361-        cerr << \"RTI exception: \" << e._name << \" [\"\n\
+362-        << (e._reason ? e._reason : \"undefined\") << \"].\" << endl;\n\
+363-    } catch ( ... ) {\n\
+364-        cerr << \"Error: unknown non-RTI exception.\" << endl;\n\
+365-    }\n\
 "
 
 #define DS_MSG_UPDATE_ATTRIBUTE_VALUES "\
@@ -193,17 +193,17 @@ The federate informs interested federates about object updates. Interested \
 federates will receive the updates by a reflectAttributeValues callback. \
     "
 
-#define DS_MSG_UPDATE_ATTRIBUTE_VALUES_SRC "Example from file: controllerFederate.cc\n411:        /* update attribute */\n\
-412-        ahvps -> add(uID, (char*)&(u), sizeof(double));\n\
-413-\n\
-414-        try {\n\
-415-            rtiAmb.updateAttributeValues(objInstID_u, *ahvps, \"u\");\n\
-416-        } catch ( RTI::Exception &e ) {\n\
-417-            cerr << \"RTI exception: \" << e._name << \" [\"\n\
-418-            << (e._reason ? e._reason : \"undefined\") << \"].\" << endl;\n\
-419-        } catch ( ... ) {\n\
-420-            cerr << \"Error: unknown non-RTI exception.\" << endl;\n\
-421-        }\n\
+#define DS_MSG_UPDATE_ATTRIBUTE_VALUES_SRC "Example from file: controllerFederate.cc\n412:        /* update attribute */\n\
+413-        ahvps -> add(uID, (char*)&(u), sizeof(double));\n\
+414-\n\
+415-        try {\n\
+416-            rtiAmb.updateAttributeValues(objInstID_u, *ahvps, \"u\");\n\
+417-        } catch ( RTI::Exception &e ) {\n\
+418-            cerr << \"RTI exception: \" << e._name << \" [\"\n\
+419-            << (e._reason ? e._reason : \"undefined\") << \"].\" << endl;\n\
+420-        } catch ( ... ) {\n\
+421-            cerr << \"Error: unknown non-RTI exception.\" << endl;\n\
+422-        }\n\
 "
 
 /* Object Management - Federate services */
@@ -216,17 +216,17 @@ a former subscription invocation. In this case, we are informed about a new \
 instance of the output variable y. \
     "
 
-#define DS_MSG_DISCOVER_OBJECT_INSTANCE_SRC "Example from file: controllerFederate.cc\n169:    discoverObjectInstance (RTI::ObjectHandle theObject,\n\
-170-                            RTI::ObjectClassHandle theObjectClass,\n\
-171-                            const char *theObjectName)\n\
-172-    throw ( RTI::CouldNotDiscover,\n\
-173-            RTI::ObjectClassNotKnown,\n\
-174-            RTI::FederateInternalError) {\n\
-175-        cout << \"discoverObjInst \" << theObjectName << endl;\n\
-176-        if (!strcmp(theObjectName,\"y\")) {\n\
-177-            discovY = true;\n\
-178-        }\n\
-179-    }\n\
+#define DS_MSG_DISCOVER_OBJECT_INSTANCE_SRC "Example from file: controllerFederate.cc\n170:    discoverObjectInstance (RTI::ObjectHandle theObject,\n\
+171-                            RTI::ObjectClassHandle theObjectClass,\n\
+172-                            const char *theObjectName)\n\
+173-    throw ( RTI::CouldNotDiscover,\n\
+174-            RTI::ObjectClassNotKnown,\n\
+175-            RTI::FederateInternalError) {\n\
+176-        cout << \"discoverObjInst \" << theObjectName << endl;\n\
+177-        if (!strcmp(theObjectName,\"y\")) {\n\
+178-            discovY = true;\n\
+179-        }\n\
+180-    }\n\
 "
 
 #define DS_MSG_REFLECT_ATTRIBUTE_VALUES "\
@@ -235,36 +235,36 @@ This federate service informs the federate of new state updates for attributes \
 it is currently interesting in. \
     "
 
-#define DS_MSG_REFLECT_ATTRIBUTE_VALUES_SRC "Example from file: controllerFederate.cc\n191:    reflectAttributeValues (RTI::ObjectHandle theObject,\n\
-192-                            const RTI::AttributeHandleValuePairSet&\n\
-193-                            theAttributes,\n\
-194-                            const char *theTag)\n\
-195-    throw ( RTI::ObjectNotKnown,\n\
-196-            RTI::AttributeNotKnown,\n\
-197-            RTI::FederateOwnsAttributes,\n\
-198-            RTI::FederateInternalError) {\n\
-199-        RTI::ULong length;\n\
-200-        char *attrValue;\n\
-201-\n\
-202-        /*\n\
-203-        * common implementation scheme is to iterate through the\n\
-204-        * AttributeHandleValuePairSet.\n\
-205-        */\n\
-206-        for (unsigned int i=0; i<theAttributes.size(); i++) {\n\
-207-\n\
-208-            RTI::AttributeHandle handle = theAttributes.getHandle(i);\n\
-209-            length = theAttributes.getValueLength(i);\n\
-210-            attrValue = new char[length];\n\
-211-            theAttributes.getValue(i, attrValue, length);\n\
-212-\n\
-213-            if (!strcmp(theTag,\"y\")) {\n\
-214-                y = *(reinterpret_cast<double*>(attrValue));\n\
-215-                newY = true;\n\
-216-            }\n\
-217-\n\
-218-            delete[] attrValue;\n\
-219-        }\n\
-220-    }\n\
+#define DS_MSG_REFLECT_ATTRIBUTE_VALUES_SRC "Example from file: controllerFederate.cc\n192:    reflectAttributeValues (RTI::ObjectHandle theObject,\n\
+193-                            const RTI::AttributeHandleValuePairSet&\n\
+194-                            theAttributes,\n\
+195-                            const char *theTag)\n\
+196-    throw ( RTI::ObjectNotKnown,\n\
+197-            RTI::AttributeNotKnown,\n\
+198-            RTI::FederateOwnsAttributes,\n\
+199-            RTI::FederateInternalError) {\n\
+200-        RTI::ULong length;\n\
+201-        char *attrValue;\n\
+202-\n\
+203-        /*\n\
+204-        * common implementation scheme is to iterate through the\n\
+205-        * AttributeHandleValuePairSet.\n\
+206-        */\n\
+207-        for (unsigned int i=0; i<theAttributes.size(); i++) {\n\
+208-\n\
+209-            RTI::AttributeHandle handle = theAttributes.getHandle(i);\n\
+210-            length = theAttributes.getValueLength(i);\n\
+211-            attrValue = new char[length];\n\
+212-            theAttributes.getValue(i, attrValue, length);\n\
+213-\n\
+214-            if (!strcmp(theTag,\"y\")) {\n\
+215-                y = *(reinterpret_cast<double*>(attrValue));\n\
+216-                newY = true;\n\
+217-            }\n\
+218-\n\
+219-            delete[] attrValue;\n\
+220-        }\n\
+221-    }\n\
 "
 
 /* Ancillary Services */
@@ -275,17 +275,17 @@ This service returns a numeric handle for the named object class \
 according to the FOM resp. SOM. \
     "
 
-#define DS_MSG_GET_OBJECT_CLASS_HANDLE_SRC "Example from file: controllerFederate.cc\n279:    /* get object class handle */\n\
-280-    RTI::ObjectClassHandle twoLevelContrID;\n\
-281-\n\
-282-    try {\n\
-283-        twoLevelContrID = rtiAmb.getObjectClassHandle(\"TwoLevelControllerClass\");\n\
-284-    } catch ( RTI::Exception &e ) {\n\
-285-        cerr << \"RTI exception: \" << e._name << \" [\"\n\
-286-        << (e._reason ? e._reason : \"undefined\") << \"].\" << endl;\n\
-287-    } catch ( ... ) {\n\
-288-        cerr << \"Error: unknown non-RTI exception.\" << endl;\n\
-289-    }\n\
+#define DS_MSG_GET_OBJECT_CLASS_HANDLE_SRC "Example from file: controllerFederate.cc\n280:    /* get object class handle */\n\
+281-    RTI::ObjectClassHandle twoLevelContrID;\n\
+282-\n\
+283-    try {\n\
+284-        twoLevelContrID = rtiAmb.getObjectClassHandle(\"TwoLevelControllerClass\");\n\
+285-    } catch ( RTI::Exception &e ) {\n\
+286-        cerr << \"RTI exception: \" << e._name << \" [\"\n\
+287-        << (e._reason ? e._reason : \"undefined\") << \"].\" << endl;\n\
+288-    } catch ( ... ) {\n\
+289-        cerr << \"Error: unknown non-RTI exception.\" << endl;\n\
+290-    }\n\
 "
 
 #define DS_MSG_GET_ATTRIBUTE_HANDLE "\
@@ -295,16 +295,16 @@ the FOM resp. SOM. The numeric handle of the corresponding object class have to 
 be specified as second input parameter. \
     "
 
-#define DS_MSG_GET_ATTRIBUTE_HANDLE_SRC "Example from file: controllerFederate.cc\n293:    /* get attribute handle */\n\
-294-    RTI::AttributeHandle uID, yID;\n\
-295-    try {\n\
-296-        uID = rtiAmb.getAttributeHandle(\"U\", twoLevelContrID);\n\
-297-    } catch ( RTI::Exception &e ) {\n\
-298-        cerr << \"RTI exception: \" << e._name << \" [\"\n\
-299-        << (e._reason ? e._reason : \"undefined\") << \"].\" << endl;\n\
-300-    } catch ( ... ) {\n\
-301-        cerr << \"Error: unknown non-RTI exception.\" << endl;\n\
-302-    }\n\
+#define DS_MSG_GET_ATTRIBUTE_HANDLE_SRC "Example from file: controllerFederate.cc\n294:    /* get attribute handle */\n\
+295-    RTI::AttributeHandle uID, yID;\n\
+296-    try {\n\
+297-        uID = rtiAmb.getAttributeHandle(\"U\", twoLevelContrID);\n\
+298-    } catch ( RTI::Exception &e ) {\n\
+299-        cerr << \"RTI exception: \" << e._name << \" [\"\n\
+300-        << (e._reason ? e._reason : \"undefined\") << \"].\" << endl;\n\
+301-    } catch ( ... ) {\n\
+302-        cerr << \"Error: unknown non-RTI exception.\" << endl;\n\
+303-    }\n\
 "
 
 #define DS_MSG_ADD_TO_ATTRIBUTE_HANDLE_SET "\
@@ -312,14 +312,14 @@ Ancillary Service -> Add attribute handles to attribute handle set\n\n \
 The code below shows how to add attributes to the AttributeHandleSet class. \
     "
 
-#define DS_MSG_ADD_TO_ATTRIBUTE_HANDLE_SET_SRC "Example from file: controllerFederate.cc\n315:    /* add attribute handle to AttributeHandleSet */\n\
-316-    auto_ptr<RTI::AttributeHandleSet>\n\
-317-    attrU(RTI::AttributeHandleSetFactory::create(1));\n\
-318-    auto_ptr<RTI::AttributeHandleSet>\n\
-319-    attrY(RTI::AttributeHandleSetFactory::create(1));\n\
-320-\n\
-321-    attrU->add(uID);\n\
-322-    attrY->add(yID);\n\
+#define DS_MSG_ADD_TO_ATTRIBUTE_HANDLE_SET_SRC "Example from file: controllerFederate.cc\n316:    /* add attribute handle to AttributeHandleSet */\n\
+317-    auto_ptr<RTI::AttributeHandleSet>\n\
+318-    attrU(RTI::AttributeHandleSetFactory::create(1));\n\
+319-    auto_ptr<RTI::AttributeHandleSet>\n\
+320-    attrY(RTI::AttributeHandleSetFactory::create(1));\n\
+321-\n\
+322-    attrU->add(uID);\n\
+323-    attrY->add(yID);\n\
 "
 
 #define DS_MSG_TICK "\
@@ -328,22 +328,22 @@ Tick is used to provide computation time to the LRC. Here we tick until we \
 get the discoverObjectInstance callback. \
     "
 
-#define DS_MSG_TICK_SRC "Example from file: controllerFederate.cc\n369:    /* discover y */\n\
-370-    cout << \"Wait for second federate.\" << endl;\n\
-371-    while (!myFedAmb.getDiscoverY()) {\n\
-372-\n\
-373-        try {\n\
-374-            rtiAmb.tick();\n\
-375-        } catch ( RTI::Exception &e ) {\n\
-376-            cerr << \"RTI exception: \" << e._name << \" [\"\n\
-377-            << (e._reason ? e._reason : \"undefined\") << \"].\" << endl;\n\
-378-        } catch ( ... ) {\n\
-379-            cerr << \"Error: unknown non-RTI exception.\" << endl;\n\
-380-        }\n\
-381-\n\
-382-#ifdef _WIN32\n\
-383-        Sleep(1000);\n\
-384-#else\n\
+#define DS_MSG_TICK_SRC "Example from file: controllerFederate.cc\n370:    /* discover y */\n\
+371-    cout << \"Wait for second federate.\" << endl;\n\
+372-    while (!myFedAmb.getDiscoverY()) {\n\
+373-\n\
+374-        try {\n\
+375-            rtiAmb.tick();\n\
+376-        } catch ( RTI::Exception &e ) {\n\
+377-            cerr << \"RTI exception: \" << e._name << \" [\"\n\
+378-            << (e._reason ? e._reason : \"undefined\") << \"].\" << endl;\n\
+379-        } catch ( ... ) {\n\
+380-            cerr << \"Error: unknown non-RTI exception.\" << endl;\n\
+381-        }\n\
+382-\n\
+383-#ifdef _WIN32\n\
+384-        Sleep(1000);\n\
+385-#else\n\
 "
 
 #ifdef _WIN32

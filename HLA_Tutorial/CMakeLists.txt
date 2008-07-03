@@ -14,9 +14,7 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.4.4)
 # You should set CERTI_HOME env var to appropriate value
 # or put here the full path to the directory
 # containing FindCERTI.cmake
-#SET(CMAKE_MODULE_PATH $ENV{CERTI_HOME}/share/scripts)
-SET(CMAKE_MODULE_PATH /home/eric/CERTI/certi-cvs/share/scripts)
-#SET(CMAKE_MODULE_PATH /home/eric/TestArea/certi-3.2.7/share/scripts)
+SET(CMAKE_MODULE_PATH $ENV{CERTI_HOME}/share/scripts)
 
 # You should uncomment the following line
 # if you want VERBOSE build
