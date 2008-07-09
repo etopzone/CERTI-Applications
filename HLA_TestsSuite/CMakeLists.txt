@@ -166,4 +166,12 @@ HLATestsSuite_ADD_TEST(Interactive_Federate
                       SOURCE_FILES Interactive_Federate.cc
                       COMMENTS "A multi-purpose test interactive Federate")
 
+#########################################################################
+# ADD TEST Notification SWITCH FEDERATE 
+#########################################################################                   
+HLATestsSuite_ADD_TEST(test_NotificationSwitches
+                      FED_FILE test_NotificationSwitches.fed
+                      SOURCE_FILES test_NotificationSwitches.cc
+                      COMMENTS "A multi-purpose test interactive Federate")
+
 MESSAGE(STATUS "*** ${CMAKE_PROJECT_NAME} has been successfully configured ***")

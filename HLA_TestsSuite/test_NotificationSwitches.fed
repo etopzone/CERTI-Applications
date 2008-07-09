@@ -1,0 +1,28 @@
+;; TwoLevelController 
+
+(Fed
+  (Federation HugeAVPVTest)
+  (FedVersion v1.3)
+  (Federate "NotificationSwitches0" "Public")
+  (Federate "NotificationSwitches1" "Public")
+  (Federate "NotificationSwitches2" "Public")
+  (Federate "NotificationSwitches3" "Public")
+  (Federate "NotificationSwitches4" "Public")
+  (Federate "NotificationSwitches5" "Public")
+  (Federate "NotificationSwitches6" "Public")
+  (Federate "NotificationSwitches7" "Public")
+  (Federate "NotificationSwitches8" "Public")
+  (Federate "NotificationSwitches9" "Public")
+  (Spaces
+  )
+  (Objects
+    (Class ObjectRoot
+      (Attribute privilegeToDelete reliable timestamp)
+      (Class RTIprivate)
+    )
+  )
+  (Interactions
+    (Class InteractionRoot BEST_EFFORT RECEIVE
+    )
+  )
+)
