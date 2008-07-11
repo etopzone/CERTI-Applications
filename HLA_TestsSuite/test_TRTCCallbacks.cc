@@ -150,7 +150,6 @@ private:
     enableTimeCon(void) {
         try {
             rtiamb.enableTimeConstrained();
-            rtiamb.enableAsynchronousDelivery();
         } catch ( RTI::Exception &e ) {
             cerr << "RTI exception: " << e._name << " ["
             << (e._reason ? e._reason : "undefined") << "]." << endl;
