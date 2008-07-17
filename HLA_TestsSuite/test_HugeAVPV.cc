@@ -23,6 +23,7 @@ using std::auto_ptr;
 
 #define MAX_FEDERATES 10
 #define LH 5
+#define NUM 10
 
 class HugeAVPVFed : public NullFederateAmbassador {
 
@@ -167,7 +168,7 @@ public:
             this->waitForSyncPoint();
 	    cout << "Second sync point reached." << endl;
 
-            while (rav_ri_counter!=6) this->tickRTI();
+            while (rav_ri_counter!=NUM) this->tickRTI();
             rav_ri_counter = 0;
 
 	    // after next sync point sender is time regulating, receivers
@@ -180,7 +181,7 @@ public:
             this->waitForSyncPoint();
             cout << "Fourth sync point reached." << endl;
 
-            while (rav_ri_counter!=6) this->tickRTI();
+            while (rav_ri_counter!=NUM) this->tickRTI();
             rav_ri_counter = 0;
 
             // fourth sync point -> afterwards have to get rav and ri wo/w ts
@@ -202,7 +203,7 @@ public:
 	    cout << "Time advanced. Press ENTER ..." << endl;
 	    getchar();
 
-            while (rav_ri_counter!=6) this->tickRTI();
+            while (rav_ri_counter!=NUM) this->tickRTI();
             rav_ri_counter = 0;
 
             // final sync point
