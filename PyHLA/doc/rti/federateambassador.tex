@@ -1,0 +1,270 @@
+Each service defined in Clause 4 through Clause 10 of IEEE 1516.1 correspond to
+one method in the Python API. This may differ from the C++ API.
+
+\begin{classdesc}{FederateAmbassador}{}
+
+Each federate should subclass the \class{FederateAmbassador} and implement some
+of the RTI callbacks.
+\begin{verbatim}
+class MyAmbassador(hla.rti.FederateAmbassador):
+    def discoverObjectInstance(self, object, objectClass, objectName):
+        print "DISCOVERED", objectName
+\end{verbatim}
+
+\medskip
+\strong{Federation Management Services}
+
+\begin{methoddesc}{synchronizationPointRegistrationSucceeded}{label}
+\end{methoddesc}
+
+\begin{methoddesc}{synchronizationPointRegistrationFailed}{label}
+\end{methoddesc}
+
+\begin{methoddesc}{announceSynchronizationPoint}{label, tag}
+\end{methoddesc}
+
+\begin{methoddesc}{federationSynchronized}{label}
+\end{methoddesc}
+
+\begin{methoddesc}{initiateFederateSave}{label}
+
+May raise
+\exception{UnableToPerformSave}.
+\end{methoddesc}
+
+\begin{methoddesc}{federationSaved}{}
+\end{methoddesc}
+
+\begin{methoddesc}{federationNotSaved}{}
+\end{methoddesc}
+
+\begin{methoddesc}{requestFederationRestoreSucceeded}{label}
+\end{methoddesc}
+
+\begin{methoddesc}{requestFederationRestoreFailed}{label, reason}
+\end{methoddesc}
+
+\begin{methoddesc}{federationRestoreBegun}{}
+\end{methoddesc}
+
+\begin{methoddesc}{initiateFederateRestore}{label, federate}
+
+May raise
+\exception{SpecifiedSaveLabelDoesNotExist},
+\exception{CouldNotRestore}.
+\end{methoddesc}
+
+\begin{methoddesc}{federationRestored}{}
+\end{methoddesc}
+
+\begin{methoddesc}{federationNotRestored}{}
+\end{methoddesc}
+
+\medskip
+\strong{Declaration Management Services}
+
+\begin{methoddesc}{startRegistrationForObjectClass}{objectClass}
+
+May raise
+\exception{ObjectClassNotPublished}.
+\end{methoddesc}
+
+\begin{methoddesc}{stopRegistrationForObjectClass}{objectClass}
+
+May raise
+\exception{ObjectClassNotPublished}.
+\end{methoddesc}
+
+\begin{methoddesc}{turnInteractionsOn}{interactionClass}
+
+May raise
+\exception{InteractionClassNotPublished}.
+\end{methoddesc}
+
+\begin{methoddesc}{turnInteractionsOff}{interactionClass}
+
+May raise
+\exception{InteractionClassNotPublished}.
+\end{methoddesc}
+
+\medskip
+\strong{Object Management Services}
+
+\begin{methoddesc}{discoverObjectInstance}{object, objectClass, objectName}
+
+May raise
+\exception{CouldNotDiscover},
+\exception{ObjectClassNotKnown}.
+\end{methoddesc}
+
+\begin{methoddesc}{reflectAttributeValues}{object, \{attribute:value\}, tag, orderType, transportType\optional{, time, eventRetraction}}
+
+May raise
+\exception{ObjectNotKnown},
+\exception{AttributeNotKnown},
+\exception{FederateOwnsAttributes},
+\exception{InvalidFederationTime}.
+\end{methoddesc}
+
+\begin{methoddesc}{receiveInteraction}{interactionClass, \{parameter:value\}, tag, orderType, transportType\optional{, time, eventRetraction}}
+
+May raise
+\exception{InteractionClassNotKnown},
+\exception{InteractionParameterNotKnown},
+\exception{InvalidFederationTime}.
+\end{methoddesc}
+
+\begin{methoddesc}{removeObjectInstance}{object, tag\optional{, time, eventRetraction}}
+
+May raise
+\exception{ObjectNotKnown},
+\exception{InvalidFederationTime}.
+\end{methoddesc}
+
+\begin{methoddesc}{attributesInScope}{object, (attribute)}
+
+May raise
+\exception{ObjectNotKnown},
+\exception{AttributeNotKnown}.
+\end{methoddesc}
+
+\begin{methoddesc}{attributesOutOfScope}{object, (attribute)}
+
+May raise
+\exception{ObjectNotKnown},
+\exception{AttributeNotKnown}.
+\end{methoddesc}
+
+\begin{methoddesc}{provideAttributeValueUpdate}{object, (attribute)}
+
+May raise
+\exception{ObjectNotKnown},
+\exception{AttributeNotKnown},
+\exception{AttributeNotOwned}.
+\end{methoddesc}
+
+\begin{methoddesc}{turnUpdatesOnForObjectInstance}{object, (attribute)}
+
+May raise
+\exception{ObjectNotKnown},
+\exception{AttributeNotOwned}.
+\end{methoddesc}
+
+\begin{methoddesc}{turnUpdatesOffForObjectInstance}{object, (attribute)}
+
+May raise
+\exception{ObjectNotKnown},
+\exception{AttributeNotOwned}.
+\end{methoddesc}
+
+\medskip
+\strong{Ownership Management Services}
+
+\begin{methoddesc}{requestAttributeOwnershipAssumption}{object, (attribute), tag}
+
+May raise
+\exception{ObjectNotKnown},
+\exception{AttributeNotKnown},
+\exception{AttributeAlreadyOwned},
+\exception{AttributeNotPublished}.
+\end{methoddesc}
+
+\begin{methoddesc}{attributeOwnershipDivestitureNotification}{object, (attribute)}
+
+May raise
+\exception{ObjectNotKnown},
+\exception{AttributeNotKnown},
+\exception{AttributeNotOwned},
+\exception{AttributeDivestitureWasNotRequested}.
+\end{methoddesc}
+
+\begin{methoddesc}{attributeOwnershipAcquisitionNotification}{object, (attribute)}
+
+May raise
+\exception{ObjectNotKnown},
+\exception{AttributeNotKnown},
+\exception{AttributeAcquisitionWasNotRequested},
+\exception{AttributeAlreadyOwned},
+\exception{AttributeNotPublished}.
+\end{methoddesc}
+
+\begin{methoddesc}{attributeOwnershipUnavailable}{object, (attribute)}
+
+May raise
+\exception{ObjectNotKnown},
+\exception{AttributeNotKnown},
+\exception{AttributeAlreadyOwned},
+\exception{AttributeAcquisitionWasNotRequested}.
+\end{methoddesc}
+
+\begin{methoddesc}{requestAttributeOwnershipRelease}{object, (attribute), tag}
+
+May raise
+\exception{ObjectNotKnown},
+\exception{AttributeNotKnown},
+\exception{AttributeNotOwned}.
+\end{methoddesc}
+
+\begin{methoddesc}{confirmAttributeOwnershipAcquisitionCancellation}{object, (attribute)}
+
+May raise
+\exception{ObjectNotKnown},
+\exception{AttributeNotKnown},
+\exception{AttributeAlreadyOwned},
+\exception{AttributeAcquisitionWasNotCanceled}.
+\end{methoddesc}
+
+\begin{methoddesc}{informAttributeOwnership}{object, attribute, federate}
+
+May raise
+\exception{ObjectNotKnown},
+\exception{AttributeNotKnown}.
+\end{methoddesc}
+
+\begin{methoddesc}{attributeIsNotOwned}{object, attribute}
+
+May raise
+\exception{ObjectNotKnown},
+\exception{AttributeNotKnown}.
+\end{methoddesc}
+
+\begin{methoddesc}{attributeOwnedByRTI}{object, attribute}
+
+May raise
+\exception{ObjectNotKnown},
+\exception{AttributeNotKnown}.
+\end{methoddesc}
+
+\medskip
+\strong{Time Management Services}
+
+\begin{methoddesc}{timeRegulationEnabled}{time}
+
+May raise
+\exception{InvalidFederationTime},
+\exception{EnableTimeRegulationWasNotPending}.
+\end{methoddesc}
+
+\begin{methoddesc}{timeConstrainedEnabled}{time}
+
+May raise
+\exception{InvalidFederationTime},
+\exception{EnableTimeConstrainedWasNotPending}.
+\end{methoddesc}
+
+\begin{methoddesc}{timeAdvanceGrant}{time}
+
+May raise
+\exception{InvalidFederationTime},
+\exception{TimeAdvanceWasNotInProgress}.
+\end{methoddesc}
+
+\begin{methoddesc}{requestRetraction}{eventRetraction}
+
+May raise
+\exception{EventNotKnown}.
+\end{methoddesc}
+
+\end{classdesc}
+
+% $Id: federateambassador.tex,v 1.1 2008/09/25 17:17:28 gotthardp Exp $

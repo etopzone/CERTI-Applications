@@ -1,0 +1,89 @@
+\section{Value Encoding}
+
+This module provides
+\begin{itemize}
+\item Automatic IEEE1516.2 value encoding (pack and unpack functions).
+\item Direct import of OMT DIF files.
+\end{itemize}
+
+The module functions can be imported from \module{hla.omt}.
+\begin{verbatim}
+import hla.omt as fom
+\end{verbatim}
+
+The module defines the following basis types.
+\begin{tableiii}{l|l|l}{constant}{type}{bytes}{endian}
+\lineiii{HLAinteger16BE}{2}{Big}
+\lineiii{HLAinteger32BE}{4}{Big}
+\lineiii{HLAinteger64BE}{8}{Big}
+\lineiii{HLAfloat32BE}{4}{Big}
+\lineiii{HLAfloat64BE}{8}{Big}
+\lineiii{HLAinteger16LE}{2}{Little}
+\lineiii{HLAinteger32LE}{4}{Little}
+\lineiii{HLAinteger64LE}{8}{Little}
+\lineiii{HLAfloat32LE}{4}{Little}
+\lineiii{HLAfloat64LE}{8}{Little}
+\end{tableiii}
+
+\begin{funcdesc}{HLAuse}{filename}
+Imports data types from an OMT DIF file.
+
+All the RPR-FOM classes and data types will become accessible from the
+module's dictionary.
+
+\begin{verbatim}
+fom.HLAuse('rpr2-d18.xml')
+
+encodedValue = fom.WorldLocationStruct.pack({'X':0, 'Y':3.12, 'Z':1})
+value, offset = fom.WorldLocationStruct.unpack(encodedValue)
+\end{verbatim}
+
+\end{funcdesc}
+
+\begin{classdesc}{HLAencoding}{typename}
+\begin{verbatim}
+newType = fom.HLAencoding('WorldLocationStruct')
+\end{verbatim}
+is equivalent to the following OMT DIF
+\begin{verbatim}
+<simpleData name="newType" representation="WorldLocationStruct"/>
+\end{verbatim}
+\end{classdesc}
+
+\begin{classdesc}{HLAfixedArray}{typename, cardinality}
+\begin{verbatim}
+newType = fom.HLAfixedArray(fom.WorldLocationStruct, 3)
+\end{verbatim}
+is equivalent to the following OMT DIF
+\begin{verbatim}
+<arrayData name="newType"
+    encoding="HLAfixedArray" dataType="WorldLocationStruct" cardinality="3"/>
+\end{verbatim}
+\end{classdesc}
+
+\begin{classdesc}{HLAvariableArray}{typename, cardinality = None}
+\begin{verbatim}
+newType = fom.HLAvariableArray(fom.HLAinteger16BE, None)
+\end{verbatim}
+is equivalent to the following OMT DIF
+\begin{verbatim}
+<arrayData name="newType"
+    encoding="HLAvariableArray" dataType="HLAinteger16BE" cardinality="Dynamic"/>
+\end{verbatim}
+\end{classdesc}
+
+\begin{classdesc}{HLAfixedRecord}{[(fieldName, fieldType)]}
+\begin{verbatim}
+newType = fom.HLAfixedRecord(
+    [('X',fom.HLAinteger16BE), ('Y',fom.HLAinteger16BE)])
+\end{verbatim}
+is equivalent to the following OMT DIF
+\begin{verbatim}
+<fixedRecordData name="newType">
+    <field name="X" dataType="HLAinteger16BE"/>
+    <field name="Y" dataType="HLAinteger16BE"/>
+</fixedRecordData>
+\end{verbatim}
+\end{classdesc}
+
+% $Id: module.tex,v 1.1 2008/09/25 17:17:28 gotthardp Exp $

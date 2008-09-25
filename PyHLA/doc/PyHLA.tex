@@ -1,0 +1,128 @@
+\documentclass{howto}
+
+\title{Using M\&S HLA in Python}
+\release{0.1}
+
+\author{Petr Gotthard}
+\authoraddress{petr.gotthard@centrum.cz}
+
+\begin{document}
+\maketitle
+
+% This makes the Abstract go on a separate page in the HTML version;
+% if a copyright notice is used, it should go immediately after this.
+%
+\ifhtml
+\chapter*{Front Matter\label{front}}
+\fi
+
+% Copyright statement should go here, if needed.
+% ...
+
+% The abstract should be a paragraph or two long.
+\begin{abstract}
+\noindent
+This document describes Python language binding for the Modeling\&Simulation
+High Level Architecture (M\&S HLA).
+\end{abstract}
+
+\tableofcontents
+
+The M\&S HLA is a general purpose architecture for distributed computer
+simulation systems. It's defined in [HLA1.3] and [IEEE 1516.1].
+The \module{PyHLA} module provides Python language binding.
+
+\section{Introduction}
+
+\subsection{Motivation}
+
+The \module{PyHLA} module aims to enable rapid development of HLA federates,
+i.e. to simplify the activity 4.3 of FEDEP [IEEE 1516.3].
+
+The HLA standard defines C++ mappings [IEEE 1516.1], but a significant
+development effort is necessary to develop a HLA compliant federate in C++.
+The development effort can be reduced by using
+\begin{enumerate}
+\item higher level interfaces, e.g. the Protocol Independent Interface in M\"{A}K VR-Link
+\item code generators, e.g. the GENESIS developed by ONERA [GENESIS]
+\end{enumerate}
+
+The C++ API for value encoding [IEEE 1516.2] is not standardized. Every HLA
+developer needs to implement the value encoding functions.
+
+The Python language provides several benefits
+\begin{enumerate}
+\item Dynamic data types. High-level programming language.
+\item Interpreted. Easy modifications.
+\item Powerful plug-in system.
+\item Many plug-ins providing scientific calculations, or geodetic conversions.
+\end{enumerate}
+
+Integrating HLA into the Python language may reduce the development and
+maintenance effort (compared to C/C++).
+
+\subsection{Performance}
+
+Discuss the performance penalty. Use the DFSS/DMAIC methodology.
+
+Design experiments for performance measurements.
+
+Measure performance of Python and plain C++ federates. Use multiple RTI: CERTI and MÄK RTI.
+
+Discuss the results.
+
+\input{rti/module}
+
+\input{omt/module}
+
+\section{High-Level API (NOT IMPLEMENTED)}
+High-level interace. Shall encompass the most frequently used HLA features. May not encompass all of the features.
+
+Do not hide the main loop from the user. Keep the tick() function in the Python script.
+
+Automatic entity publication and discovery.
+
+Example:
+Connect to the RTIG.
+
+connection = hla.Connection("federation", "federate", "model.fed")
+
+Publish the aircraft.
+
+\begin{verbatim}
+connection.publishedEntities["OS-001"] = aircraft
+\end{verbatim}
+
+List world coordinates of all discovered aircrafts. By default, all discovered
+entities are automatically stored in the discoveredEntities dictionary.
+
+\begin{verbatim}
+for entity in connection.discoveredEntities:
+  if type(entity) == hla.Aircraft:
+    print entity.WorldLocation
+\end{verbatim}
+
+Dynamic data types. Duck-typed.
+Notifications received as method calls in sub-classed functions.
+
+Example:
+Define a custom Aircraft class.
+
+\begin{verbatim}
+class MyAircraft(Aircraft):
+  pass
+\end{verbatim}
+
+Define a custom connection that will discover aircrafts only. Each aircraft will
+be represented by the custom Aircraft class.
+
+\begin{verbatim}
+class MyConnection(Connection):
+  def discoverObjectInstance(self, name, class):
+    if class == hla.Aircraft:
+      self.discoveredEntities[name] = MyAircraft()
+\end{verbatim}
+
+\end{document}
+
+% $Id: PyHLA.tex,v 1.1 2008/09/25 17:17:27 gotthardp Exp $
