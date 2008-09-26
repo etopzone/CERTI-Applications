@@ -1,9 +1,41 @@
-\section{Basic API}
+\section{Standard API}
 
-\subsection{RTI Ambassador}
+The \module{hla.rti} module provides standard HLA services.
+Each service defined in Clause 4 through Clause 10 of IEEE 1516.1 correspond to
+one method in the Python API. This may differ from the C++ API.
+
+First, import the module functions
+\begin{verbatim}
+import hla.rti
+\end{verbatim}
+
+Each federate should subclass the \class{FederateAmbassador} and implement some
+of the federate ambassador services.
+\begin{verbatim}
+class MyAmbassador(hla.rti.FederateAmbassador):
+    def discoverObjectInstance(self, object, objectClass, objectName):
+        print "DISCOVERED", objectName
+\end{verbatim}
+
+Services of a RTI ambassador are provided by the \class{RTIAmbassador} class.
+
+\begin{verbatim}
+fed = MyAmbassador()
+
+rtia = hla.rti.RTIAmbassador()
+rtia.joinFederationExecution("python-01", "MyFederation", fed)
+...
+
+try:
+    while(1):
+        rtia.tick(1.0, 1.0)
+except KeyboardInterrupt:
+    pass
+
+rtia.resignFederationExecution()
+\end{verbatim}
+
 \input{rti/rtiambassador}
-
-\subsection{Federate Ambassador}
 \input{rti/federateambassador}
 
-% $Id: module.tex,v 1.1 2008/09/25 17:17:29 gotthardp Exp $
+% $Id: module.tex,v 1.2 2008/09/26 14:12:00 gotthardp Exp $

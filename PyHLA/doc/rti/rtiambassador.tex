@@ -1,17 +1,25 @@
-Each service defined in Clause 4 through Clause 10 of IEEE 1516.1 correspond to
-one method in the Python API. This may differ from the C++ API.
+\subsection{RTI Ambassador}
 
 \begin{classdesc}{RTIAmbassador}{}
+Provides RTI ambassador services.
 
-\begin{verbatim} 
+\begin{verbatim}
 rtia = hla.rti.RTIAmbassador()
-rtia.createFederationExecution("MyFederation", "model.fed")
+rtia.joinFederationExecution("python-01", "MyFederation", fed)
 \end{verbatim}
 
 \medskip
 \strong{Federation Management Services}
 
 \begin{methoddesc}{createFederationExecution}{executionName, FED}
+
+\begin{verbatim} 
+try:
+    rtia.createFederationExecution("MyFederation", "model.fed")
+    print "Federation created."
+except hla.rti.FederationExecutionAlreadyExists:
+    print "Federation already exists."
+\end{verbatim}
 
 May raise
 \exception{FederationExecutionAlreadyExists},
@@ -28,7 +36,9 @@ May raise
 \exception{ConcurrentAccessAttempted}.
 \end{methoddesc}
 
-\begin{methoddesc}[federate]{joinFederationExecution}{yourName, executionName, ambassador}
+\begin{methoddesc}{joinFederationExecution}{yourName, executionName, ambassador}
+
+Returns a federate handle.
 
 May raise
 \exception{FederateAlreadyExecutionMember},
@@ -156,6 +166,11 @@ May raise
 
 \begin{methoddesc}{publishObjectClass}{objectClass, (attribute)}
 
+\begin{verbatim} 
+wordLocationHandle = rtia.getAttributeHandle("WorldLocation", aircraftHandle)
+rtia.publishObjectClass(aircraftHandle, [wordLocationHandle])
+\end{verbatim}
+
 May raise
 \exception{ObjectClassNotDefined},
 \exception{AttributeNotDefined},
@@ -200,6 +215,11 @@ May raise
 \end{methoddesc}
 
 \begin{methoddesc}{subscribeObjectClassAttributes}{objectClass, (attribute), active=True}
+
+\begin{verbatim} 
+wordLocationHandle = rtia.getAttributeHandle("WorldLocation", aircraftHandle)
+rtia.subscribeObjectClassAttributes(aircraftHandle, [wordLocationHandle])
+\end{verbatim}
 
 May raise
 \exception{ObjectClassNotDefined},
@@ -246,7 +266,9 @@ May raise
 \medskip
 \strong{Object Management Services}
 
-\begin{methoddesc}[object]{registerObjectInstance}{objectClass\optional{, objectName}}
+\begin{methoddesc}{registerObjectInstance}{objectClass\optional{, objectName}}
+
+Returns an object handle.
 
 May raise
 \exception{ObjectClassNotDefined},
@@ -258,7 +280,15 @@ May raise
 \exception{RestoreInProgress}.
 \end{methoddesc}
 
-\begin{methoddesc}[eventRetraction]{updateAttributeValues}{object, \{attribute:value\}, tag\optional{, time}}
+\begin{methoddesc}{updateAttributeValues}{object, \{attribute:value\}, tag\optional{, time}}
+
+Returns eventRetraction handle.
+
+\begin{verbatim} 
+rtia.updateAttributeValues(thisObject,
+    {wordLocationHandle:fom.WorldLocationStruct.pack({"X":1,"Y":2,"Z":3})},
+    "update")
+\end{verbatim}
 
 May raise
 \exception{ObjectNotKnown},
@@ -271,7 +301,9 @@ May raise
 \exception{RestoreInProgress}.
 \end{methoddesc}
 
-\begin{methoddesc}[eventRetraction]{sendInteraction}{interactionClass, \{parameter:value\}, tag\optional{, time}}
+\begin{methoddesc}{sendInteraction}{interactionClass, \{parameter:value\}, tag\optional{, time}}
+
+Returns eventRetraction handle.
 
 May raise
 \exception{InteractionClassNotDefined},
@@ -284,7 +316,9 @@ May raise
 \exception{RestoreInProgress}.
 \end{methoddesc}
 
-\begin{methoddesc}[eventRetraction]{deleteObjectInstance}{object, tag\optional{, time}}
+\begin{methoddesc}{deleteObjectInstance}{object, tag\optional{, time}}
+
+Returns eventRetraction handle.
 
 May raise
 \exception{ObjectNotKnown},
@@ -411,7 +445,9 @@ May raise
 \exception{RestoreInProgress}.
 \end{methoddesc}
 
-\begin{methoddesc}[(attribute)]{attributeOwnershipReleaseResponse}{object, (attribute)}
+\begin{methoddesc}{attributeOwnershipReleaseResponse}{object, (attribute)}
+
+Returns a sequence of attribute handles.
 
 May raise
 \exception{ObjectNotKnown},
@@ -461,7 +497,9 @@ May raise
 \exception{RestoreInProgress}.
 \end{methoddesc}
 
-\begin{methoddesc}[bool]{isAttributeOwnedByFederate}{object, attribute}
+\begin{methoddesc}{isAttributeOwnedByFederate}{object, attribute}
+
+Returns True or False.
 
 May raise
 \exception{ObjectNotKnown},
@@ -695,7 +733,9 @@ May raise
 \medskip
 \strong{Data Distribution Management}
 
-\begin{methoddesc}[region]{createRegion}{space, numberOfExtents}
+\begin{methoddesc}{createRegion}{space, numberOfExtents}
+
+Returns region handle.
 
 May raise
 \exception{SpaceNotDefined},
@@ -728,7 +768,9 @@ May raise
 \exception{RestoreInProgress}.
 \end{methoddesc}
 
-\begin{methoddesc}[object]{registerObjectInstanceWithRegion}{objectClass, object, (attribute), (region)}
+\begin{methoddesc}{registerObjectInstanceWithRegion}{objectClass, object, (attribute), (region)}
+
+Returns object handle.
 
 May raise
 \exception{ObjectClassNotDefined},
@@ -744,7 +786,9 @@ May raise
 \exception{RestoreInProgress}.
 \end{methoddesc}
 
-\begin{methoddesc}[object]{registerObjectInstanceWithRegion}{objectClass, (attribute), (region)}
+\begin{methoddesc}{registerObjectInstanceWithRegion}{objectClass, (attribute), (region)}
+
+Returns object handle.
 
 May raise
 \exception{ObjectClassNotDefined},
@@ -834,7 +878,9 @@ May raise
 \exception{RestoreInProgress}.
 \end{methoddesc}
 
-\begin{methoddesc}[eventRetraction]{sendInteractionWithRegion}{interactionClass, {parameter:value}, tag, region\optional{, time}}
+\begin{methoddesc}{sendInteractionWithRegion}{interactionClass, {parameter:value}, tag, region\optional{, time}}
+
+Returns eventRetraction handle.
 
 May raise
 \exception{InteractionClassNotDefined},
@@ -864,7 +910,12 @@ May raise
 \medskip
 \strong{RTI Support Services}
 
-\begin{methoddesc}[objectClass]{getObjectClassHandle}{objectName}
+\begin{methoddesc}{getObjectClassHandle}{objectName}
+Returns object class handle.
+
+\begin{verbatim} 
+aircraftHandle = rtia.getObjectClassHandle("Aircraft")
+\end{verbatim}
 
 May raise
 \exception{NameNotFound},
@@ -872,7 +923,8 @@ May raise
 \exception{ConcurrentAccessAttempted}.
 \end{methoddesc}
 
-\begin{methoddesc}[objectName]{getObjectClassName}{objectClass}
+\begin{methoddesc}{getObjectClassName}{objectClass}
+Returns object class name.
 
 May raise
 \exception{ObjectClassNotDefined},
@@ -880,7 +932,13 @@ May raise
 \exception{ConcurrentAccessAttempted}.
 \end{methoddesc}
 
-\begin{methoddesc}[attribute]{getAttributeHandle}{attributeName, objectClass}
+\begin{methoddesc}{getAttributeHandle}{attributeName, objectClass}
+Returns class attribute handle.
+
+\begin{verbatim} 
+aircraftHandle = rtia.getObjectClassHandle("Aircraft")
+wordLocationHandle = rtia.getAttributeHandle("WorldLocation", aircraftHandle)
+\end{verbatim}
 
 May raise
 \exception{ObjectClassNotDefined},
@@ -889,7 +947,8 @@ May raise
 \exception{ConcurrentAccessAttempted}.
 \end{methoddesc}
 
-\begin{methoddesc}[attributeName]{getAttributeName}{attribute, objectClass}
+\begin{methoddesc}{getAttributeName}{attribute, objectClass}
+Returns class attribute name.
 
 May raise
 \exception{ObjectClassNotDefined},
@@ -898,7 +957,8 @@ May raise
 \exception{ConcurrentAccessAttempted}.
 \end{methoddesc}
 
-\begin{methoddesc}[interactionClass]{getInteractionClassHandle}{interactionName}
+\begin{methoddesc}{getInteractionClassHandle}{interactionName}
+Returns interaction class handle.
 
 May raise
 \exception{NameNotFound},
@@ -906,7 +966,8 @@ May raise
 \exception{ConcurrentAccessAttempted}.
 \end{methoddesc}
 
-\begin{methoddesc}[interactionName]{getInteractionClassName}{interactionClass}
+\begin{methoddesc}{getInteractionClassName}{interactionClass}
+Returns interaction class name.
 
 May raise
 \exception{InteractionClassNotDefined},
@@ -914,7 +975,8 @@ May raise
 \exception{ConcurrentAccessAttempted}.
 \end{methoddesc}
 
-\begin{methoddesc}[parameter]{getParameterHandle}{parameterName, interactionClass}
+\begin{methoddesc}{getParameterHandle}{parameterName, interactionClass}
+Returns interaction parameter handle.
 
 May raise
 \exception{InteractionClassNotDefined},
@@ -923,7 +985,8 @@ May raise
 \exception{ConcurrentAccessAttempted}.
 \end{methoddesc}
 
-\begin{methoddesc}[parameterName]{getParameterName}{parameter, interactionClass}
+\begin{methoddesc}{getParameterName}{parameter, interactionClass}
+Returns interaction parameter name.
 
 May raise
 \exception{InteractionClassNotDefined},
@@ -932,7 +995,8 @@ May raise
 \exception{ConcurrentAccessAttempted}.
 \end{methoddesc}
 
-\begin{methoddesc}[object]{getObjectInstanceHandle}{objectName}
+\begin{methoddesc}{getObjectInstanceHandle}{objectName}
+Returns object handle.
 
 May raise
 \exception{ObjectNotKnown},
@@ -940,7 +1004,8 @@ May raise
 \exception{ConcurrentAccessAttempted}.
 \end{methoddesc}
 
-\begin{methoddesc}[objectName]{getObjectInstanceName}{object}
+\begin{methoddesc}{getObjectInstanceName}{object}
+Returns object name.
 
 May raise
 \exception{ObjectNotKnown},
@@ -948,7 +1013,8 @@ May raise
 \exception{ConcurrentAccessAttempted}.
 \end{methoddesc}
 
-\begin{methoddesc}[space]{getRoutingSpaceHandle}{spaceName}
+\begin{methoddesc}{getRoutingSpaceHandle}{spaceName}
+Returns routing space handle.
 
 May raise
 \exception{NameNotFound},
@@ -956,7 +1022,8 @@ May raise
 \exception{ConcurrentAccessAttempted}.
 \end{methoddesc}
 
-\begin{methoddesc}[spaceName]{getRoutingSpaceName}{space}
+\begin{methoddesc}{getRoutingSpaceName}{space}
+Returns routing space name.
 
 May raise
 \exception{SpaceNotDefined},
@@ -964,7 +1031,8 @@ May raise
 \exception{ConcurrentAccessAttempted}.
 \end{methoddesc}
 
-\begin{methoddesc}[dimension]{getDimensionHandle}{dimensionName, space}
+\begin{methoddesc}{getDimensionHandle}{dimensionName, space}
+Returns routing space dimension handle.
 
 May raise
 \exception{SpaceNotDefined},
@@ -973,7 +1041,8 @@ May raise
 \exception{ConcurrentAccessAttempted}.
 \end{methoddesc}
 
-\begin{methoddesc}[dimensionName]{getDimensionName}{dimension, space}
+\begin{methoddesc}{getDimensionName}{dimension, space}
+Returns routing space dimension name.
 
 May raise
 \exception{SpaceNotDefined},
@@ -982,7 +1051,8 @@ May raise
 \exception{ConcurrentAccessAttempted}.
 \end{methoddesc}
 
-\begin{methoddesc}[space]{getAttributeRoutingSpaceHandle}{attribute, objectClass}
+\begin{methoddesc}{getAttributeRoutingSpaceHandle}{attribute, objectClass}
+Returns routing space handle.
 
 May raise
 \exception{ObjectClassNotDefined},
@@ -991,7 +1061,8 @@ May raise
 \exception{ConcurrentAccessAttempted}.
 \end{methoddesc}
 
-\begin{methoddesc}[objectClass]{getObjectClass}{object}
+\begin{methoddesc}{getObjectClass}{object}
+Returns object class handle.
 
 May raise
 \exception{ObjectNotKnown},
@@ -999,7 +1070,8 @@ May raise
 \exception{ConcurrentAccessAttempted}.
 \end{methoddesc}
 
-\begin{methoddesc}[space]{getInteractionRoutingSpaceHandle}{interactionClass}
+\begin{methoddesc}{getInteractionRoutingSpaceHandle}{interactionClass}
+Returns routing space handle.
 
 May raise
 \exception{InteractionClassNotDefined},
@@ -1007,7 +1079,8 @@ May raise
 \exception{ConcurrentAccessAttempted}.
 \end{methoddesc}
 
-\begin{methoddesc}[transportation]{getTransportationHandle}{transportationName}
+\begin{methoddesc}{getTransportationHandle}{transportationName}
+Returns transportation type handle.
 
 May raise
 \exception{NameNotFound},
@@ -1015,7 +1088,8 @@ May raise
 \exception{ConcurrentAccessAttempted}.
 \end{methoddesc}
 
-\begin{methoddesc}[transportationName]{getTransportationName}{transportation}
+\begin{methoddesc}{getTransportationName}{transportation}
+Returns transportation type name.
 
 May raise
 \exception{InvalidTransportationHandle},
@@ -1023,7 +1097,8 @@ May raise
 \exception{ConcurrentAccessAttempted}.
 \end{methoddesc}
 
-\begin{methoddesc}[ordering]{getOrderingHandle}{orderingName}
+\begin{methoddesc}{getOrderingHandle}{orderingName}
+Returns ordering handle.
 
 May raise
 \exception{NameNotFound},
@@ -1031,7 +1106,8 @@ May raise
 \exception{ConcurrentAccessAttempted}.
 \end{methoddesc}
 
-\begin{methoddesc}[orderingName]{getOrderingName}{ordering}
+\begin{methoddesc}{getOrderingName}{ordering}
+Returns ordering name.
 
 May raise
 \exception{InvalidOrderingHandle},
@@ -1111,14 +1187,16 @@ May raise
 \exception{RestoreInProgress}.
 \end{methoddesc}
 
-\begin{methoddesc}[bool]{tick}{\optional{minimum, maximum}}
+\begin{methoddesc}{tick}{\optional{minimum, maximum}}
+Returns True or False.
 
 May raise
 \exception{SpecifiedSaveLabelDoesNotExist},
 \exception{ConcurrentAccessAttempted}.
 \end{methoddesc}
 
-\begin{methoddesc}[regionToken]{getRegionToken}{region}
+\begin{methoddesc}{getRegionToken}{region}
+Returns region token.
 
 May raise
 \exception{FederateNotExecutionMember},
@@ -1126,7 +1204,8 @@ May raise
 \exception{RegionNotKnown}.
 \end{methoddesc}
 
-\begin{methoddesc}[region]{getRegion}{regionToken}
+\begin{methoddesc}{getRegion}{regionToken}
+Returns region handle.
 
 May raise
 \exception{FederateNotExecutionMember},
@@ -1136,4 +1215,4 @@ May raise
 
 \end{classdesc}
 
-% $Id: rtiambassador.tex,v 1.1 2008/09/25 17:17:29 gotthardp Exp $
+% $Id: rtiambassador.tex,v 1.2 2008/09/26 14:12:00 gotthardp Exp $

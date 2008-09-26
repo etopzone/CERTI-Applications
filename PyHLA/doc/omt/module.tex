@@ -1,18 +1,43 @@
 \section{Value Encoding}
 
-This module provides
+The \module{hla.omt} module provides
 \begin{itemize}
 \item Automatic IEEE1516.2 value encoding (pack and unpack functions).
 \item Direct import of OMT DIF files.
 \end{itemize}
 
-The module functions can be imported from \module{hla.omt}.
+First, import the module functions
 \begin{verbatim}
 import hla.omt as fom
 \end{verbatim}
 
-The module defines the following basis types.
-\begin{tableiii}{l|l|l}{constant}{type}{bytes}{endian}
+Each encoding object provides the \method{pack}, \method{unpack} methods, and
+the \member{octetBoundary} property.
+
+\begin{classdesc}{HLAbasic}{}
+\begin{methoddesc}[HLAbasic]{pack}{value}
+Returns encoded value.
+\begin{verbatim}
+encodedValue = fom.HLAfloat64LE.pack(3.14)
+encodedValue += fom.HLAinteger16BE.pack(42)
+\end{verbatim}
+\end{methoddesc}
+\begin{methoddesc}[HLAbasic]{unpack}{value}
+Returns a (value, offset) tuple. The offset indicates number of consumed
+bytes, i.e. offset of the next unpack operation.
+\begin{verbatim}
+value1, offset2 = fom.HLAfloat64LE.unpack(encodedValue)
+value2, offset3 = fom.HLAinteger16BE.unpack(encodedValue[offset2:])
+print value1, value2
+\end{verbatim}
+\end{methoddesc}
+\begin{memberdesc}[int]{octetBoundary}
+Read-only property. The octet boundary (in bytes) of this data type.
+\end{memberdesc}
+\end{classdesc}
+
+The \module{hla.omt} module defines the following basic types.
+\begin{tableiii}{l|l|l}{constant}{type name}{bytes}{endian}
 \lineiii{HLAinteger16BE}{2}{Big}
 \lineiii{HLAinteger32BE}{4}{Big}
 \lineiii{HLAinteger64BE}{8}{Big}
@@ -25,8 +50,13 @@ The module defines the following basis types.
 \lineiii{HLAfloat64LE}{8}{Little}
 \end{tableiii}
 
+Additional data types can be defined using the \class{HLAencoding},
+\class{HLAfixedArray}, \class{HLAvariableArray}, or \class{HLAfixedRecord}
+class, or imported from an OMT DIF file.
+
 \begin{funcdesc}{HLAuse}{filename}
-Imports data types from an OMT DIF file.
+Imports data types from an OMT DIF file. Format of the OMT DIF file is
+defined in IEEE 1516.2.
 
 All the RPR-FOM classes and data types will become accessible from the
 module's dictionary.
@@ -41,6 +71,9 @@ value, offset = fom.WorldLocationStruct.unpack(encodedValue)
 \end{funcdesc}
 
 \begin{classdesc}{HLAencoding}{typename}
+Facilitates a forward type declaration. The typename is resolved from the
+module's dictionary once the \method{pack} or \method{unpack} method is called.
+
 \begin{verbatim}
 newType = fom.HLAencoding('WorldLocationStruct')
 \end{verbatim}
@@ -51,17 +84,26 @@ is equivalent to the following OMT DIF
 \end{classdesc}
 
 \begin{classdesc}{HLAfixedArray}{typename, cardinality}
+Defines a fixed-length array.
+
 \begin{verbatim}
-newType = fom.HLAfixedArray(fom.WorldLocationStruct, 3)
+arrayType = fom.HLAfixedArray(fom.HLAfloat32LE, 3)
 \end{verbatim}
 is equivalent to the following OMT DIF
 \begin{verbatim}
-<arrayData name="newType"
-    encoding="HLAfixedArray" dataType="WorldLocationStruct" cardinality="3"/>
+<arrayData name="arrayType"
+    encoding="HLAfixedArray" dataType="HLAfloat32LE" cardinality="3"/>
+\end{verbatim}
+
+The \method{pack} function takes a sequence object.
+\begin{verbatim}
+encodedValue = fom.arrayType.pack([3.14, 17, 42])
 \end{verbatim}
 \end{classdesc}
 
 \begin{classdesc}{HLAvariableArray}{typename, cardinality = None}
+Defines a variable-length array.
+
 \begin{verbatim}
 newType = fom.HLAvariableArray(fom.HLAinteger16BE, None)
 \end{verbatim}
@@ -73,17 +115,24 @@ is equivalent to the following OMT DIF
 \end{classdesc}
 
 \begin{classdesc}{HLAfixedRecord}{[(fieldName, fieldType)]}
+Defines a fixed array.
+
 \begin{verbatim}
-newType = fom.HLAfixedRecord(
-    [('X',fom.HLAinteger16BE), ('Y',fom.HLAinteger16BE)])
+recordType = fom.HLAfixedRecord(
+    [('X',fom.HLAinteger16BE), ('Y',fom.HLAfloat32BE)])
 \end{verbatim}
 is equivalent to the following OMT DIF
 \begin{verbatim}
-<fixedRecordData name="newType">
+<fixedRecordData name="recordType">
     <field name="X" dataType="HLAinteger16BE"/>
-    <field name="Y" dataType="HLAinteger16BE"/>
+    <field name="Y" dataType="HLAfloat32BE"/>
 </fixedRecordData>
+\end{verbatim}
+
+The \method{pack} function takes a mapping object.
+\begin{verbatim}
+encodedValue = fom.recordType.pack({'X':0, 'Y':3.12})
 \end{verbatim}
 \end{classdesc}
 
-% $Id: module.tex,v 1.1 2008/09/25 17:17:28 gotthardp Exp $
+% $Id: module.tex,v 1.2 2008/09/26 14:12:00 gotthardp Exp $

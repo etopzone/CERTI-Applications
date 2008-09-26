@@ -1,14 +1,22 @@
-Each service defined in Clause 4 through Clause 10 of IEEE 1516.1 correspond to
-one method in the Python API. This may differ from the C++ API.
+\subsection{Federate Ambassador}
 
 \begin{classdesc}{FederateAmbassador}{}
+Template of a federate ambassador. Each federate should subclass the
+\class{FederateAmbassador} and implement some of the federate ambassador
+services.
 
-Each federate should subclass the \class{FederateAmbassador} and implement some
-of the RTI callbacks.
 \begin{verbatim}
 class MyAmbassador(hla.rti.FederateAmbassador):
     def discoverObjectInstance(self, object, objectClass, objectName):
         print "DISCOVERED", objectName
+\end{verbatim}
+
+A federate ambassador object is passed to the \method{joinFederationExecution}
+service.
+
+\begin{verbatim}
+fed = MyAmbassador()
+rtia.joinFederationExecution("python-01", "MyFederation", fed)
 \end{verbatim}
 
 \medskip
@@ -98,6 +106,13 @@ May raise
 \end{methoddesc}
 
 \begin{methoddesc}{reflectAttributeValues}{object, \{attribute:value\}, tag, orderType, transportType\optional{, time, eventRetraction}}
+Received attribute values are received in a dictionary. Attribute handle is used as key.
+The value can be unpacked using the \module{hla.omt} functions.
+\begin{verbatim}
+def reflectAttributeValues(self, object, attributes, tag, order, transport):
+    location, size = fom.WorldLocationStruct.unpack(attributes[self.wordLocationHandle])
+    print "REFLECT", location
+\end{verbatim}
 
 May raise
 \exception{ObjectNotKnown},
@@ -267,4 +282,4 @@ May raise
 
 \end{classdesc}
 
-% $Id: federateambassador.tex,v 1.1 2008/09/25 17:17:28 gotthardp Exp $
+% $Id: federateambassador.tex,v 1.2 2008/09/26 14:12:00 gotthardp Exp $
