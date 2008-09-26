@@ -24,15 +24,22 @@
 \noindent
 This document describes Python language binding for the Modeling\&Simulation
 High Level Architecture (M\&S HLA).
+The M\&S HLA is a general purpose architecture for distributed computer
+simulation systems. It's defined in [HLA1.3] and [IEEE 1516.1].
+
+The \module{PyHLA} module provides Python wrapper for the C++ HLA API, and
+\method{pack}/\method{unpack} methods for IEEE 1516.2 data types.
 \end{abstract}
 
 \tableofcontents
 
+\section{Introduction}
+
+The \module{PyHLA} module provides Python wrapper for the C++ HLA API, and
+\method{pack}/\method{unpack} methods for IEEE 1516.2 data types.
+
 The M\&S HLA is a general purpose architecture for distributed computer
 simulation systems. It's defined in [HLA1.3] and [IEEE 1516.1].
-The \module{PyHLA} module provides Python language binding.
-
-\section{Introduction}
 
 \subsection{Motivation}
 
@@ -47,8 +54,12 @@ The development effort can be reduced by using
 \item code generators, e.g. the GENESIS developed by ONERA [GENESIS]
 \end{enumerate}
 
+The HLA standard does not cover all aspects.
 The C++ API for value encoding [IEEE 1516.2] is not standardized. Every HLA
 developer needs to implement the value encoding functions.
+
+Integrating HLA into the Python language may reduce the development and
+maintenance effort (compared to C/C++).
 
 The Python language provides several benefits
 \begin{enumerate}
@@ -58,8 +69,25 @@ The Python language provides several benefits
 \item Many plug-ins providing scientific calculations, or geodetic conversions.
 \end{enumerate}
 
-Integrating HLA into the Python language may reduce the development and
-maintenance effort (compared to C/C++).
+\subsection{Build Instructions}
+
+The \module{PyHLA} module requires
+\begin{itemize}
+\item Classic Python interpreter (\ulink{CPython}{http://www.python.org/download})
+\item HLA1.3 RTI with C++ API (\ulink{CERTI}{http://www.cert.fr/CERTI}, \ulink{M\"{A}K RTI}{http://www.mak.com/products/rti.php})
+\end{itemize}
+
+The \module{PyHLA} source codes can be obtained from the \ulink{CERTI}{https://savannah.nongnu.org/projects/certi}
+applications repository.
+\begin{verbatim}
+cvs -d:pserver:anonymous@cvs.sv.gnu.org:/sources/certi co applications/PyHLA
+\end{verbatim}
+
+The source codes can be compiled and installed using
+\begin{verbatim}
+cmake . -DCMAKE_INSTALL_PREFIX=/usr/local
+make install
+\end{verbatim}
 
 \subsection{Performance}
 
@@ -124,4 +152,4 @@ class MyConnection(Connection):
 
 \end{document}
 
-% $Id: PyHLA.tex,v 1.2 2008/09/26 14:11:59 gotthardp Exp $
+% $Id: PyHLA.tex,v 1.3 2008/09/26 14:48:02 gotthardp Exp $
