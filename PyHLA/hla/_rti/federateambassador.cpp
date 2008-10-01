@@ -11,7 +11,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  *
- * $Id: federateambassador.cpp,v 1.2 2008/10/01 21:08:58 gotthardp Exp $
+ * $Id: federateambassador.cpp,v 1.3 2008/10/01 21:17:18 gotthardp Exp $
  */
 
 // note: you must include Python.h before any standard headers are included
@@ -304,15 +304,17 @@ Py_FederateAmbassador::reflectAttributeValues(RTI::ObjectHandle theObject,
 throw (RTI::ObjectNotKnown, RTI::AttributeNotKnown, RTI::FederateOwnsAttributes,
     RTI::InvalidFederationTime, RTI::FederateInternalError)
 {
+    const RTIfedTime& time = theTime;
     // FIXME: theAttributes.getRegion() is not handled
 
     PyObject_CallMethod((PyObject *)m_federate,
-        "reflectAttributeValues", "O&O&sOOO&",
+        "reflectAttributeValues", "O&O&sOOdO&",
         RtiObjectHandle_ToPython, &theObject,
         AttributeHandleValuePairSet_ToPython, &theAttributes,
         theTag,
         RtiULongHandle_FromULong(&RtiOrderTypeType, theAttributes.getOrderType(0)),
         RtiULongHandle_FromULong(&RtiTransportTypeType, theAttributes.getTransportType(0)),
+        time.getTime(),
         EventRetractionHandle_ToPython, &theHandle);
 
     if(PyObject *exception = PyErr_Occurred()) {
@@ -354,15 +356,17 @@ Py_FederateAmbassador::receiveInteraction(RTI::InteractionClassHandle theInterac
 throw (RTI::InteractionClassNotKnown, RTI::InteractionParameterNotKnown,
     RTI::InvalidFederationTime, RTI::FederateInternalError)
 {
+    const RTIfedTime& time = theTime;
     // FIXME: theParameters.getRegion() is not handled
 
     PyObject_CallMethod((PyObject *)m_federate,
-        "receiveInteraction", "O&O&sOOO&",
+        "receiveInteraction", "O&O&sOOdO&",
         RtiInteractionClassHandle_ToPython, &theInteraction,
         ParameterHandleValuePairSet_ToPython, &theParameters,
         theTag,
         RtiULongHandle_FromULong(&RtiOrderTypeType, theParameters.getOrderType()),
         RtiULongHandle_FromULong(&RtiTransportTypeType, theParameters.getTransportType()),
+        time.getTime(),
         EventRetractionHandle_ToPython, &theHandle);
 
     if(PyObject *exception = PyErr_Occurred()) {
@@ -823,4 +827,4 @@ FederateAmbassadorInitializer::on_init(PyObject* module)
     PyModule_AddObject(module, "FederateAmbassador", (PyObject *)&FederateAmbassadorObjectType);
 }
 
-// $Id: federateambassador.cpp,v 1.2 2008/10/01 21:08:58 gotthardp Exp $
+// $Id: federateambassador.cpp,v 1.3 2008/10/01 21:17:18 gotthardp Exp $
