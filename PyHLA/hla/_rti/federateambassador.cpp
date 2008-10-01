@@ -11,7 +11,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  *
- * $Id: federateambassador.cpp,v 1.1 2008/09/25 17:17:35 gotthardp Exp $
+ * $Id: federateambassador.cpp,v 1.2 2008/10/01 21:08:58 gotthardp Exp $
  */
 
 // note: you must include Python.h before any standard headers are included
@@ -305,15 +305,15 @@ throw (RTI::ObjectNotKnown, RTI::AttributeNotKnown, RTI::FederateOwnsAttributes,
     RTI::InvalidFederationTime, RTI::FederateInternalError)
 {
     // FIXME: theAttributes.getRegion() is not handled
-    // FIXME: EventRetractionHandle is not handled
 
     PyObject_CallMethod((PyObject *)m_federate,
-        "reflectAttributeValues", "O&O&OOs",
+        "reflectAttributeValues", "O&O&sOOO&",
         RtiObjectHandle_ToPython, &theObject,
         AttributeHandleValuePairSet_ToPython, &theAttributes,
+        theTag,
         RtiULongHandle_FromULong(&RtiOrderTypeType, theAttributes.getOrderType(0)),
         RtiULongHandle_FromULong(&RtiTransportTypeType, theAttributes.getTransportType(0)),
-        theTag);
+        EventRetractionHandle_ToPython, &theHandle);
 
     if(PyObject *exception = PyErr_Occurred()) {
         CATCH_PYTHON_EXCEPTION(exception, ObjectNotKnown)
@@ -348,15 +348,51 @@ throw (RTI::ObjectNotKnown, RTI::AttributeNotKnown, RTI::FederateOwnsAttributes,
 }
 
 void
-Py_FederateAmbassador::receiveInteraction(RTI::InteractionClassHandle, const RTI::ParameterHandleValuePairSet &, 
-    const RTI::FedTime &, const char *, RTI::EventRetractionHandle) 
-throw (RTI::InteractionClassNotKnown, RTI::InteractionParameterNotKnown, RTI::InvalidFederationTime,
-    RTI::FederateInternalError) { }
+Py_FederateAmbassador::receiveInteraction(RTI::InteractionClassHandle theInteraction,
+    const RTI::ParameterHandleValuePairSet& theParameters,
+    const RTI::FedTime& theTime, const char *theTag, RTI::EventRetractionHandle theHandle)
+throw (RTI::InteractionClassNotKnown, RTI::InteractionParameterNotKnown,
+    RTI::InvalidFederationTime, RTI::FederateInternalError)
+{
+    // FIXME: theParameters.getRegion() is not handled
+
+    PyObject_CallMethod((PyObject *)m_federate,
+        "receiveInteraction", "O&O&sOOO&",
+        RtiInteractionClassHandle_ToPython, &theInteraction,
+        ParameterHandleValuePairSet_ToPython, &theParameters,
+        theTag,
+        RtiULongHandle_FromULong(&RtiOrderTypeType, theParameters.getOrderType()),
+        RtiULongHandle_FromULong(&RtiTransportTypeType, theParameters.getTransportType()),
+        EventRetractionHandle_ToPython, &theHandle);
+
+    if(PyObject *exception = PyErr_Occurred()) {
+        CATCH_PYTHON_EXCEPTION(exception, InteractionClassNotKnown)
+        CATCH_PYTHON_EXCEPTION(exception, InteractionParameterNotKnown)
+        CATCH_PYTHON_EXCEPTION(exception, InvalidFederationTime)
+        throw SetFromPyException<RTI::FederateInternalError>(exception);
+    }
+}
 
 void
-Py_FederateAmbassador::receiveInteraction(RTI::InteractionClassHandle, const RTI::ParameterHandleValuePairSet &, 
-    const char *) 
-throw (RTI::InteractionClassNotKnown, RTI::InteractionParameterNotKnown, RTI::FederateInternalError) { }
+Py_FederateAmbassador::receiveInteraction(RTI::InteractionClassHandle theInteraction,
+    const RTI::ParameterHandleValuePairSet& theParameters, const char *theTag)
+throw (RTI::InteractionClassNotKnown, RTI::InteractionParameterNotKnown,
+    RTI::FederateInternalError)
+{
+    PyObject_CallMethod((PyObject *)m_federate,
+        "receiveInteraction", "O&O&sOO",
+        RtiInteractionClassHandle_ToPython, &theInteraction,
+        ParameterHandleValuePairSet_ToPython, &theParameters,
+        theTag,
+        RtiULongHandle_FromULong(&RtiOrderTypeType, theParameters.getOrderType()),
+        RtiULongHandle_FromULong(&RtiTransportTypeType, theParameters.getTransportType()));
+
+    if(PyObject *exception = PyErr_Occurred()) {
+        CATCH_PYTHON_EXCEPTION(exception, InteractionClassNotKnown)
+        CATCH_PYTHON_EXCEPTION(exception, InteractionParameterNotKnown)
+        throw SetFromPyException<RTI::FederateInternalError>(exception);
+    }
+}
 
 void
 Py_FederateAmbassador::removeObjectInstance(RTI::ObjectHandle theObject, const RTI::FedTime &theTime,
@@ -366,10 +402,11 @@ throw (RTI::ObjectNotKnown, RTI::InvalidFederationTime, RTI::FederateInternalErr
     const RTIfedTime& time = theTime;
 
     PyObject_CallMethod((PyObject *)m_federate,
-        "removeObjectInstance", "O&sd",
+        "removeObjectInstance", "O&sdO&",
         RtiObjectHandle_ToPython, &theObject,
         theTag,
-        time.getTime());
+        time.getTime(),
+        EventRetractionHandle_ToPython, &theHandle);
 
     if(PyObject *exception = PyErr_Occurred()) {
         CATCH_PYTHON_EXCEPTION(exception, ObjectNotKnown)
@@ -383,10 +420,9 @@ Py_FederateAmbassador::removeObjectInstance(RTI::ObjectHandle theObject, const c
 throw (RTI::ObjectNotKnown, RTI::FederateInternalError)
 {
     PyObject_CallMethod((PyObject *)m_federate,
-        "removeObjectInstance", "O&sO",
+        "removeObjectInstance", "O&s",
         RtiObjectHandle_ToPython, &theObject,
-        theTag,
-        Py_None); // no RTI::FedTime provided
+        theTag);
 
     if(PyObject *exception = PyErr_Occurred()) {
         CATCH_PYTHON_EXCEPTION(exception, ObjectNotKnown)
@@ -395,71 +431,259 @@ throw (RTI::ObjectNotKnown, RTI::FederateInternalError)
 }
 
 void
-Py_FederateAmbassador::attributesInScope(RTI::ObjectHandle, const RTI::AttributeHandleSet &) 
-throw (RTI::ObjectNotKnown, RTI::AttributeNotKnown, RTI::FederateInternalError) { }
+Py_FederateAmbassador::attributesInScope(RTI::ObjectHandle theObject, const RTI::AttributeHandleSet& theAttributes)
+throw (RTI::ObjectNotKnown, RTI::AttributeNotKnown, RTI::FederateInternalError)
+{
+    PyObject_CallMethod((PyObject *)m_federate,
+        "attributesInScope", "O&O&",
+        RtiObjectHandle_ToPython, &theObject,
+        AttributeHandleSet_ToPython, &theAttributes);
+
+    if(PyObject *exception = PyErr_Occurred()) {
+        CATCH_PYTHON_EXCEPTION(exception, ObjectNotKnown)
+        CATCH_PYTHON_EXCEPTION(exception, AttributeNotKnown)
+        throw SetFromPyException<RTI::FederateInternalError>(exception);
+    }
+}
 
 void
-Py_FederateAmbassador::attributesOutOfScope(RTI::ObjectHandle, const RTI::AttributeHandleSet &) 
-throw (RTI::ObjectNotKnown, RTI::AttributeNotKnown, RTI::FederateInternalError) { }
+Py_FederateAmbassador::attributesOutOfScope(RTI::ObjectHandle theObject, const RTI::AttributeHandleSet& theAttributes)
+throw (RTI::ObjectNotKnown, RTI::AttributeNotKnown, RTI::FederateInternalError)
+{
+    PyObject_CallMethod((PyObject *)m_federate,
+        "attributesOutOfScope", "O&O&",
+        RtiObjectHandle_ToPython, &theObject,
+        AttributeHandleSet_ToPython, &theAttributes);
+
+    if(PyObject *exception = PyErr_Occurred()) {
+        CATCH_PYTHON_EXCEPTION(exception, ObjectNotKnown)
+        CATCH_PYTHON_EXCEPTION(exception, AttributeNotKnown)
+        throw SetFromPyException<RTI::FederateInternalError>(exception);
+    }
+}
 
 void
-Py_FederateAmbassador::provideAttributeValueUpdate(RTI::ObjectHandle, const RTI::AttributeHandleSet &) 
+Py_FederateAmbassador::provideAttributeValueUpdate(RTI::ObjectHandle theObject, const RTI::AttributeHandleSet& theAttributes)
 throw (RTI::ObjectNotKnown, RTI::AttributeNotKnown, RTI::AttributeNotOwned,
-    RTI::FederateInternalError) { }
+    RTI::FederateInternalError)
+{
+    PyObject_CallMethod((PyObject *)m_federate,
+        "provideAttributeValueUpdate", "O&O&",
+        RtiObjectHandle_ToPython, &theObject,
+        AttributeHandleSet_ToPython, &theAttributes);
+
+    if(PyObject *exception = PyErr_Occurred()) {
+        CATCH_PYTHON_EXCEPTION(exception, ObjectNotKnown)
+        CATCH_PYTHON_EXCEPTION(exception, AttributeNotKnown)
+        CATCH_PYTHON_EXCEPTION(exception, AttributeNotOwned)
+        throw SetFromPyException<RTI::FederateInternalError>(exception);
+    }
+}
 
 void
-Py_FederateAmbassador::turnUpdatesOnForObjectInstance(RTI::ObjectHandle, const RTI::AttributeHandleSet &) 
-throw (RTI::ObjectNotKnown, RTI::AttributeNotOwned, RTI::FederateInternalError) { }
+Py_FederateAmbassador::turnUpdatesOnForObjectInstance(RTI::ObjectHandle theObject, const RTI::AttributeHandleSet& theAttributes)
+throw (RTI::ObjectNotKnown, RTI::AttributeNotOwned, RTI::FederateInternalError)
+{
+    PyObject_CallMethod((PyObject *)m_federate,
+        "turnUpdatesOnForObjectInstance", "O&O&",
+        RtiObjectHandle_ToPython, &theObject,
+        AttributeHandleSet_ToPython, &theAttributes);
+
+    if(PyObject *exception = PyErr_Occurred()) {
+        CATCH_PYTHON_EXCEPTION(exception, ObjectNotKnown)
+        CATCH_PYTHON_EXCEPTION(exception, AttributeNotOwned)
+        throw SetFromPyException<RTI::FederateInternalError>(exception);
+    }
+}
 
 void
-Py_FederateAmbassador::turnUpdatesOffForObjectInstance(RTI::ObjectHandle, const RTI::AttributeHandleSet &) 
-throw (RTI::ObjectNotKnown, RTI::AttributeNotOwned, RTI::FederateInternalError) { }
+Py_FederateAmbassador::turnUpdatesOffForObjectInstance(RTI::ObjectHandle theObject, const RTI::AttributeHandleSet& theAttributes)
+throw (RTI::ObjectNotKnown, RTI::AttributeNotOwned, RTI::FederateInternalError)
+{
+    PyObject_CallMethod((PyObject *)m_federate,
+        "turnUpdatesOffForObjectInstance", "O&O&",
+        RtiObjectHandle_ToPython, &theObject,
+        AttributeHandleSet_ToPython, &theAttributes);
+
+    if(PyObject *exception = PyErr_Occurred()) {
+        CATCH_PYTHON_EXCEPTION(exception, ObjectNotKnown)
+        CATCH_PYTHON_EXCEPTION(exception, AttributeNotOwned)
+        throw SetFromPyException<RTI::FederateInternalError>(exception);
+    }
+}
 
 // Ownership Management
 
 void
-Py_FederateAmbassador::requestAttributeOwnershipAssumption(RTI::ObjectHandle, const RTI::AttributeHandleSet &, 
-    const char *) 
+Py_FederateAmbassador::requestAttributeOwnershipAssumption(RTI::ObjectHandle theObject,
+    const RTI::AttributeHandleSet& offeredAttributes, const char *theTag)
 throw (RTI::ObjectNotKnown, RTI::AttributeNotKnown, RTI::AttributeAlreadyOwned,
-    RTI::AttributeNotPublished, RTI::FederateInternalError) { }
+    RTI::AttributeNotPublished, RTI::FederateInternalError)
+{
+    PyObject_CallMethod((PyObject *)m_federate,
+        "requestAttributeOwnershipAssumption", "O&O&s",
+        RtiObjectHandle_ToPython, &theObject,
+        AttributeHandleSet_ToPython, &offeredAttributes,
+        theTag);
+
+    if(PyObject *exception = PyErr_Occurred()) {
+        CATCH_PYTHON_EXCEPTION(exception, ObjectNotKnown)
+        CATCH_PYTHON_EXCEPTION(exception, AttributeNotKnown)
+        CATCH_PYTHON_EXCEPTION(exception, AttributeAlreadyOwned)
+        CATCH_PYTHON_EXCEPTION(exception, AttributeNotPublished)
+        throw SetFromPyException<RTI::FederateInternalError>(exception);
+    }
+}
 
 void
-Py_FederateAmbassador::attributeOwnershipDivestitureNotification(RTI::ObjectHandle, const RTI::AttributeHandleSet &) 
+Py_FederateAmbassador::attributeOwnershipDivestitureNotification(RTI::ObjectHandle theObject,
+    const RTI::AttributeHandleSet& releasedAttributes)
 throw (RTI::ObjectNotKnown, RTI::AttributeNotKnown, RTI::AttributeNotOwned,
-    RTI::AttributeDivestitureWasNotRequested, RTI::FederateInternalError) { }
+    RTI::AttributeDivestitureWasNotRequested, RTI::FederateInternalError)
+{
+    PyObject_CallMethod((PyObject *)m_federate,
+        "attributeOwnershipDivestitureNotification", "O&O&",
+        RtiObjectHandle_ToPython, &theObject,
+        AttributeHandleSet_ToPython, &releasedAttributes);
+
+    if(PyObject *exception = PyErr_Occurred()) {
+        CATCH_PYTHON_EXCEPTION(exception, ObjectNotKnown)
+        CATCH_PYTHON_EXCEPTION(exception, AttributeNotKnown)
+        CATCH_PYTHON_EXCEPTION(exception, AttributeNotOwned)
+        CATCH_PYTHON_EXCEPTION(exception, AttributeDivestitureWasNotRequested)
+        throw SetFromPyException<RTI::FederateInternalError>(exception);
+    }
+}
 
 void
-Py_FederateAmbassador::attributeOwnershipAcquisitionNotification(RTI::ObjectHandle, const RTI::AttributeHandleSet &) 
+Py_FederateAmbassador::attributeOwnershipAcquisitionNotification(RTI::ObjectHandle theObject,
+    const RTI::AttributeHandleSet& securedAttributes)
 throw (RTI::ObjectNotKnown, RTI::AttributeNotKnown, RTI::AttributeAcquisitionWasNotRequested,
-    RTI::AttributeAlreadyOwned, RTI::AttributeNotPublished, RTI::FederateInternalError) { }
+    RTI::AttributeAlreadyOwned, RTI::AttributeNotPublished, RTI::FederateInternalError)
+{
+    PyObject_CallMethod((PyObject *)m_federate,
+        "attributeOwnershipAcquisitionNotification", "O&O&",
+        RtiObjectHandle_ToPython, &theObject,
+        AttributeHandleSet_ToPython, &securedAttributes);
+
+    if(PyObject *exception = PyErr_Occurred()) {
+        CATCH_PYTHON_EXCEPTION(exception, ObjectNotKnown)
+        CATCH_PYTHON_EXCEPTION(exception, AttributeNotKnown)
+        CATCH_PYTHON_EXCEPTION(exception, AttributeAcquisitionWasNotRequested)
+        CATCH_PYTHON_EXCEPTION(exception, AttributeAlreadyOwned)
+        CATCH_PYTHON_EXCEPTION(exception, AttributeNotPublished)
+        throw SetFromPyException<RTI::FederateInternalError>(exception);
+    }
+}
 
 void
-Py_FederateAmbassador::attributeOwnershipUnavailable(RTI::ObjectHandle, const RTI::AttributeHandleSet &) 
+Py_FederateAmbassador::attributeOwnershipUnavailable(RTI::ObjectHandle theObject, const RTI::AttributeHandleSet& theAttributes)
 throw (RTI::ObjectNotKnown, RTI::AttributeNotKnown, RTI::AttributeAlreadyOwned,
-    RTI::AttributeAcquisitionWasNotRequested, RTI::FederateInternalError) { }
+    RTI::AttributeAcquisitionWasNotRequested, RTI::FederateInternalError)
+{
+    PyObject_CallMethod((PyObject *)m_federate,
+        "attributeOwnershipUnavailable", "O&O&",
+        RtiObjectHandle_ToPython, &theObject,
+        AttributeHandleSet_ToPython, &theAttributes);
+
+    if(PyObject *exception = PyErr_Occurred()) {
+        CATCH_PYTHON_EXCEPTION(exception, ObjectNotKnown)
+        CATCH_PYTHON_EXCEPTION(exception, AttributeNotKnown)
+        CATCH_PYTHON_EXCEPTION(exception, AttributeAlreadyOwned)
+        CATCH_PYTHON_EXCEPTION(exception, AttributeAcquisitionWasNotRequested)
+        throw SetFromPyException<RTI::FederateInternalError>(exception);
+    }
+}
 
 void
-Py_FederateAmbassador::requestAttributeOwnershipRelease(RTI::ObjectHandle, const RTI::AttributeHandleSet &, 
-    const char *) 
-throw (RTI::ObjectNotKnown, RTI::AttributeNotKnown, RTI::AttributeNotOwned, RTI::FederateInternalError) { }
+Py_FederateAmbassador::requestAttributeOwnershipRelease(RTI::ObjectHandle theObject,
+    const RTI::AttributeHandleSet& candidateAttribute, const char *theTag)
+throw (RTI::ObjectNotKnown, RTI::AttributeNotKnown, RTI::AttributeNotOwned,
+    RTI::FederateInternalError)
+{
+    PyObject_CallMethod((PyObject *)m_federate,
+        "requestAttributeOwnershipRelease", "O&O&s",
+        RtiObjectHandle_ToPython, &theObject,
+        AttributeHandleSet_ToPython, &candidateAttribute,
+        theTag);
+
+    if(PyObject *exception = PyErr_Occurred()) {
+        CATCH_PYTHON_EXCEPTION(exception, ObjectNotKnown)
+        CATCH_PYTHON_EXCEPTION(exception, AttributeNotKnown)
+        CATCH_PYTHON_EXCEPTION(exception, AttributeNotOwned)
+        throw SetFromPyException<RTI::FederateInternalError>(exception);
+    }
+}
 
 void
-Py_FederateAmbassador::confirmAttributeOwnershipAcquisitionCancellation(RTI::ObjectHandle,
-    const RTI::AttributeHandleSet &) 
+Py_FederateAmbassador::confirmAttributeOwnershipAcquisitionCancellation(RTI::ObjectHandle theObject,
+    const RTI::AttributeHandleSet& theAttributes)
 throw (RTI::ObjectNotKnown, RTI::AttributeNotKnown, RTI::AttributeAlreadyOwned,
-    RTI::AttributeAcquisitionWasNotCanceled, RTI::FederateInternalError) { }
+    RTI::AttributeAcquisitionWasNotCanceled, RTI::FederateInternalError)
+{
+    PyObject_CallMethod((PyObject *)m_federate,
+        "confirmAttributeOwnershipAcquisitionCancellation", "O&O&",
+        RtiObjectHandle_ToPython, &theObject,
+        AttributeHandleSet_ToPython, &theAttributes);
+
+    if(PyObject *exception = PyErr_Occurred()) {
+        CATCH_PYTHON_EXCEPTION(exception, ObjectNotKnown)
+        CATCH_PYTHON_EXCEPTION(exception, AttributeNotKnown)
+        CATCH_PYTHON_EXCEPTION(exception, AttributeAlreadyOwned)
+        CATCH_PYTHON_EXCEPTION(exception, AttributeAcquisitionWasNotCanceled)
+        throw SetFromPyException<RTI::FederateInternalError>(exception);
+    }
+}
 
 void
-Py_FederateAmbassador::informAttributeOwnership(RTI::ObjectHandle, RTI::AttributeHandle, RTI::FederateHandle) 
-throw (RTI::ObjectNotKnown, RTI::AttributeNotKnown, RTI::FederateInternalError) { }
+Py_FederateAmbassador::informAttributeOwnership(RTI::ObjectHandle theObject,
+    RTI::AttributeHandle theAttribute, RTI::FederateHandle theOwner)
+throw (RTI::ObjectNotKnown, RTI::AttributeNotKnown, RTI::FederateInternalError)
+{
+    PyObject_CallMethod((PyObject *)m_federate,
+        "informAttributeOwnership", "O&O&O&",
+        RtiObjectHandle_ToPython, &theObject,
+        RtiAttributeHandle_ToPython, &theAttribute,
+        RtiFederateHandle_ToPython, &theOwner);
+
+    if(PyObject *exception = PyErr_Occurred()) {
+        CATCH_PYTHON_EXCEPTION(exception, ObjectNotKnown)
+        CATCH_PYTHON_EXCEPTION(exception, AttributeNotKnown)
+        throw SetFromPyException<RTI::FederateInternalError>(exception);
+    }
+}
 
 void
-Py_FederateAmbassador::attributeIsNotOwned(RTI::ObjectHandle, RTI::AttributeHandle) 
-throw (RTI::ObjectNotKnown, RTI::AttributeNotKnown, RTI::FederateInternalError) { }
+Py_FederateAmbassador::attributeIsNotOwned(RTI::ObjectHandle theObject, RTI::AttributeHandle theAttribute)
+throw (RTI::ObjectNotKnown, RTI::AttributeNotKnown, RTI::FederateInternalError)
+{
+    PyObject_CallMethod((PyObject *)m_federate,
+        "attributeIsNotOwned", "O&O&",
+        RtiObjectHandle_ToPython, &theObject,
+        RtiAttributeHandle_ToPython, &theAttribute);
+
+    if(PyObject *exception = PyErr_Occurred()) {
+        CATCH_PYTHON_EXCEPTION(exception, ObjectNotKnown)
+        CATCH_PYTHON_EXCEPTION(exception, AttributeNotKnown)
+        throw SetFromPyException<RTI::FederateInternalError>(exception);
+    }
+}
 
 void
-Py_FederateAmbassador::attributeOwnedByRTI(RTI::ObjectHandle, RTI::AttributeHandle) 
-throw (RTI::ObjectNotKnown, RTI::AttributeNotKnown, RTI::FederateInternalError) { }
+Py_FederateAmbassador::attributeOwnedByRTI(RTI::ObjectHandle theObject, RTI::AttributeHandle theAttribute)
+throw (RTI::ObjectNotKnown, RTI::AttributeNotKnown, RTI::FederateInternalError)
+{
+    PyObject_CallMethod((PyObject *)m_federate,
+        "attributeOwnedByRTI", "O&O&",
+        RtiObjectHandle_ToPython, &theObject,
+        RtiAttributeHandle_ToPython, &theAttribute);
+
+    if(PyObject *exception = PyErr_Occurred()) {
+        CATCH_PYTHON_EXCEPTION(exception, ObjectNotKnown)
+        CATCH_PYTHON_EXCEPTION(exception, AttributeNotKnown)
+        throw SetFromPyException<RTI::FederateInternalError>(exception);
+    }
+}
 
 // Time Management
 
@@ -512,8 +736,18 @@ throw (RTI::InvalidFederationTime, RTI::TimeAdvanceWasNotInProgress, RTI::Federa
 }
 
 void
-Py_FederateAmbassador::requestRetraction(RTI::EventRetractionHandle) 
-throw (RTI::EventNotKnown, RTI::FederateInternalError) { }
+Py_FederateAmbassador::requestRetraction(RTI::EventRetractionHandle theHandle)
+throw (RTI::EventNotKnown, RTI::FederateInternalError)
+{
+    PyObject_CallMethod((PyObject *)m_federate,
+        "requestRetraction", "O&",
+        EventRetractionHandle_ToPython, &theHandle);
+
+    if(PyObject *exception = PyErr_Occurred()) {
+        CATCH_PYTHON_EXCEPTION(exception, EventNotKnown)
+        throw SetFromPyException<RTI::FederateInternalError>(exception);
+    }
+}
 
 static PyMethodDef federate_methods[] =
 {
@@ -589,4 +823,4 @@ FederateAmbassadorInitializer::on_init(PyObject* module)
     PyModule_AddObject(module, "FederateAmbassador", (PyObject *)&FederateAmbassadorObjectType);
 }
 
-// $Id: federateambassador.cpp,v 1.1 2008/09/25 17:17:35 gotthardp Exp $
+// $Id: federateambassador.cpp,v 1.2 2008/10/01 21:08:58 gotthardp Exp $

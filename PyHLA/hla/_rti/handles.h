@@ -11,7 +11,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  *
- * $Id: handles.h,v 1.1 2008/09/25 17:17:36 gotthardp Exp $
+ * $Id: handles.h,v 1.2 2008/10/01 21:08:58 gotthardp Exp $
  */
 
 #ifndef RTI_HANDLES_H
@@ -37,9 +37,14 @@ extern PyTypeObject RtiTransportTypeType;
 PyObject* RtiULongHandle_FromULong(PyTypeObject *type, unsigned long val);
 
 int RtiObjectClassHandle_FromPython(RtiULongHandleObject *value, RTI::ObjectClassHandle *addr);
-PyObject *RtiObjectClassHandle_ToPython(void *addr);
-PyObject *RtiInteractionClassHandle_ToPython(void *addr);
+PyObject *RtiObjectClassHandle_ToPython(RTI::ObjectClassHandle *value);
+
+PyObject *RtiInteractionClassHandle_ToPython(RTI::InteractionClassHandle *value);
+
 int RtiAttributeHandle_FromPython(RtiULongHandleObject *value, RTI::AttributeHandle *result);
+PyObject *RtiAttributeHandle_ToPython(RTI::AttributeHandle *value);
+
+int RtiParameterHandle_FromPython(RtiULongHandleObject *value, RTI::ParameterHandle *result);
 
 int RtiObjectHandle_FromPython(RtiULongHandleObject *value, RTI::ObjectHandle *result);
 PyObject *RtiObjectHandle_ToPython(RTI::ObjectHandle *value);
@@ -47,9 +52,13 @@ PyObject *RtiObjectHandle_ToPython(RTI::ObjectHandle *value);
 PyObject *RtiFederateHandle_ToPython(RTI::FederateHandle *value);
 
 int AttributeHandleSet_FromPython(PyObject *value, RTI::AttributeHandleSet **result);
+PyObject *AttributeHandleSet_ToPython(RTI::AttributeHandleSet *value);
 
 int AttributeHandleValuePairSet_FromPython(PyObject *value, RTI::AttributeHandleValuePairSet **result);
 PyObject *AttributeHandleValuePairSet_ToPython(RTI::AttributeHandleValuePairSet *value);
+
+int ParameterHandleValuePairSet_FromPython(PyObject *value, RTI::ParameterHandleValuePairSet **result);
+PyObject *ParameterHandleValuePairSet_ToPython(RTI::ParameterHandleValuePairSet *value);
 
 typedef struct {
     PyObject_HEAD
@@ -65,4 +74,4 @@ int RTIfedTime_FromPython(PyObject *value, RTIfedTime *result);
 
 #endif // RTI_HANDLES_H
 
-// $Id: handles.h,v 1.1 2008/09/25 17:17:36 gotthardp Exp $
+// $Id: handles.h,v 1.2 2008/10/01 21:08:58 gotthardp Exp $

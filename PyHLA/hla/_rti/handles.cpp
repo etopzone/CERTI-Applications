@@ -11,7 +11,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  *
- * $Id: handles.cpp,v 1.1 2008/09/25 17:17:35 gotthardp Exp $
+ * $Id: handles.cpp,v 1.2 2008/10/01 21:08:58 gotthardp Exp $
  */
 
 // note: you must include Python.h before any standard headers are included
@@ -51,16 +51,14 @@ int RtiObjectClassHandle_FromPython(RtiULongHandleObject *value, RTI::ObjectClas
     return 1; // success
 }
 
-PyObject *RtiObjectClassHandle_ToPython(void *addr)
+PyObject *RtiObjectClassHandle_ToPython(RTI::ObjectClassHandle *value)
 {
-    RTI::ObjectClassHandle& value = *(RTI::ObjectClassHandle *)addr;
-    return RtiULongHandle_FromULong(&RtiObjectClassHandleType, value);
+    return RtiULongHandle_FromULong(&RtiObjectClassHandleType, *value);
 }
 
-PyObject *RtiInteractionClassHandle_ToPython(void *addr)
+PyObject *RtiInteractionClassHandle_ToPython(RTI::InteractionClassHandle *value)
 {
-    RTI::InteractionClassHandle& value = *(RTI::InteractionClassHandle *)addr;
-    return RtiULongHandle_FromULong(&RtiInteractionClassHandleType, value);
+    return RtiULongHandle_FromULong(&RtiInteractionClassHandleType, *value);
 }
 
 int RtiAttributeHandle_FromPython(RtiULongHandleObject *value, RTI::AttributeHandle *result)
@@ -68,6 +66,23 @@ int RtiAttributeHandle_FromPython(RtiULongHandleObject *value, RTI::AttributeHan
     if(result == NULL || !PyObject_TypeCheck(value, &RtiAttributeHandleType)) {
         PyErr_SetString(PyExc_TypeError,
             "AttributeHandle object required");
+        return 0; // failure
+    }
+
+    *result = value->ob_ival;
+    return 1; // success
+}
+
+PyObject *RtiAttributeHandle_ToPython(RTI::AttributeHandle *value)
+{
+    return RtiULongHandle_FromULong(&RtiAttributeHandleType, *value);
+}
+
+int RtiParameterHandle_FromPython(RtiULongHandleObject *value, RTI::ParameterHandle *result)
+{
+    if(result == NULL || !PyObject_TypeCheck(value, &RtiParameterHandleType)) {
+        PyErr_SetString(PyExc_TypeError,
+            "ParameterHandle object required");
         return 0; // failure
     }
 
@@ -132,6 +147,16 @@ AttributeHandleSet_FromPython(PyObject *value, RTI::AttributeHandleSet **result)
     return 1; // success
 }
 
+PyObject *
+AttributeHandleSet_ToPython(RTI::AttributeHandleSet *value)
+{
+    PyObject *result = PyTuple_New(value->size());
+    for(RTI::ULong i = 0; i < value->size(); i++)
+        PyTuple_SetItem(result, i, RtiULongHandle_FromULong(&RtiAttributeHandleType, value->getHandle(i)));
+
+    return result;
+}
+
 int
 AttributeHandleValuePairSet_FromPython(PyObject *value, RTI::AttributeHandleValuePairSet **result)
 {
@@ -180,6 +205,68 @@ AttributeHandleValuePairSet_ToPython(RTI::AttributeHandleValuePairSet *value)
     for(RTI::ULong i = 0; i < value->size(); i++)
     {
         PyObject *atHandle = RtiULongHandle_FromULong(&RtiAttributeHandleType, value->getHandle(i));
+
+        RTI::ULong length;
+        char* data = value->getValuePointer(i, length);
+        PyObject *atData = PyString_FromStringAndSize(data, length);
+
+        PyDict_SetItem(result, atHandle, atData);
+
+        Py_DECREF(atHandle);
+        Py_DECREF(atData);
+    }
+
+    return result;
+}
+
+int
+ParameterHandleValuePairSet_FromPython(PyObject *value, RTI::ParameterHandleValuePairSet **result)
+{
+    if(value == NULL || !PyMapping_Check(value)) {
+        PyErr_SetString(PyExc_TypeError,
+            "mapping {ParameterHandle:string} required");
+        return 0; // failure
+    }
+
+    PyObject *items = PyMapping_Items(value);
+    if(items == NULL)
+        return 0; // failure
+
+    PyObject *iter = PyObject_GetIter(items);
+    if(iter == NULL) {
+        Py_DECREF(items);
+        return 0; // failure
+    }
+
+    *result = RTI::ParameterSetFactory::create(PySequence_Size(items));
+
+    PyObject *item;
+    while((item = PyIter_Next(iter)) != NULL) {
+        RTI::ParameterHandle theHandle;
+        const char *valueData;
+        int valueSize;
+
+        if(!PyArg_ParseTuple(item, "O&s#",
+            RtiParameterHandle_FromPython, &theHandle,
+            &valueData, &valueSize))
+            return 0; // failure
+
+        (*result)->add(theHandle, valueData, valueSize);
+    }
+
+    Py_DECREF(iter);
+    Py_DECREF(items);
+
+    return 1; // success
+}
+
+PyObject *
+ParameterHandleValuePairSet_ToPython(RTI::ParameterHandleValuePairSet *value)
+{
+    PyObject *result = PyDict_New();
+    for(RTI::ULong i = 0; i < value->size(); i++)
+    {
+        PyObject *atHandle = RtiULongHandle_FromULong(&RtiParameterHandleType, value->getHandle(i));
 
         RTI::ULong length;
         char* data = value->getValuePointer(i, length);
@@ -576,4 +663,4 @@ HandlesInitializer::on_init(PyObject* module)
     PyModule_AddObject(module, "EventRetractionHandle", (PyObject *)&EventRetractionHandleType);
 }
 
-// $Id: handles.cpp,v 1.1 2008/09/25 17:17:35 gotthardp Exp $
+// $Id: handles.cpp,v 1.2 2008/10/01 21:08:58 gotthardp Exp $
