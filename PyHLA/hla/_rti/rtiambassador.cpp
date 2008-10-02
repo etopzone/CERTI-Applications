@@ -11,7 +11,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  *
- * $Id: rtiambassador.cpp,v 1.1 2008/09/25 17:17:38 gotthardp Exp $
+ * $Id: rtiambassador.cpp,v 1.2 2008/10/02 10:04:04 gotthardp Exp $
  */
 
 // note: you must include Python.h before any standard headers are included
@@ -232,11 +232,12 @@ static PyObject *
 rtia_requestFederationSave(RTIAmbassadorObject *self, PyObject *args)
 {
     const char *label;
-//    double theTime; // optional
     RTIfedTime theTime; // optional
 
-//    if(!PyArg_ParseTuple(args, "s|d", &label, &theTime))
-//        return NULL;
+    if(!PyArg_ParseTuple(args, "s|O&",
+        &label,
+        RTIfedTime_FromPython, &theTime))
+        return NULL;
 
     try {
         size_t size = PyTuple_Size(args);
@@ -433,9 +434,14 @@ rtia_publishInteractionClass(RTIAmbassadorObject *self, PyObject *args)
 {
     RTI::InteractionClassHandle theInteraction;
 
+    if(!PyArg_ParseTuple(args, "O&",
+        RtiInteractionClassHandle_FromPython, &theInteraction))
+        return NULL;
+
     try {
         self->ob_rtia->publishInteractionClass(theInteraction);
 
+        return Py_None;
     }
     CATCH_RTI_EXCEPTION(InteractionClassNotDefined)
     CATCH_RTI_EXCEPTION(FederateNotExecutionMember)
@@ -453,9 +459,14 @@ rtia_unpublishInteractionClass(RTIAmbassadorObject *self, PyObject *args)
 {
     RTI::InteractionClassHandle theInteraction;
 
+    if(!PyArg_ParseTuple(args, "O&",
+        RtiInteractionClassHandle_FromPython, &theInteraction))
+        return NULL;
+
     try {
         self->ob_rtia->unpublishInteractionClass(theInteraction);
 
+        return Py_None;
     }
     CATCH_RTI_EXCEPTION(InteractionClassNotDefined)
     CATCH_RTI_EXCEPTION(InteractionClassNotPublished)
@@ -530,11 +541,18 @@ static PyObject *
 rtia_subscribeInteractionClass(RTIAmbassadorObject *self, PyObject *args)
 {
     RTI::InteractionClassHandle theClass;
-    RTI::Boolean active = RTI::RTI_TRUE;
+    bool pyActive = true;
+
+    if(!PyArg_ParseTuple(args, "O&|b",
+        RtiInteractionClassHandle_FromPython, &theClass,
+        &pyActive))
+        return NULL;
 
     try {
+        RTI::Boolean active = pyActive ? RTI::RTI_TRUE : RTI::RTI_FALSE;
         self->ob_rtia->subscribeInteractionClass(theClass, active);
 
+        return Py_None;
     }
     CATCH_RTI_EXCEPTION(InteractionClassNotDefined)
     CATCH_RTI_EXCEPTION(FederateNotExecutionMember)
@@ -553,9 +571,14 @@ rtia_unsubscribeInteractionClass(RTIAmbassadorObject *self, PyObject *args)
 {
     RTI::InteractionClassHandle theClass;
 
+    if(!PyArg_ParseTuple(args, "O&",
+        RtiInteractionClassHandle_FromPython, &theClass))
+        return NULL;
+
     try {
         self->ob_rtia->unsubscribeInteractionClass(theClass);
 
+        return Py_None;
     }
     CATCH_RTI_EXCEPTION(InteractionClassNotDefined)
     CATCH_RTI_EXCEPTION(InteractionClassNotSubscribed)
@@ -610,32 +633,25 @@ rtia_updateAttributeValues(RTIAmbassadorObject *self, PyObject *args)
 {
     RTI::ObjectHandle theObject;
     RTI::AttributeHandleValuePairSet *theAttributes;
-    RTIfedTime theTime; // optional
     const char *theTag;
+    RTIfedTime theTime; // optional
 
-    if(!PyArg_ParseTuple(args, "O&O&s",
+    if(!PyArg_ParseTuple(args, "O&O&s|O&",
         RtiObjectHandle_FromPython, &theObject,
         AttributeHandleValuePairSet_FromPython, &theAttributes,
-        &theTag))
+        &theTag,
+        RTIfedTime_FromPython, &theTime))
         return NULL;
 
     try {
-        self->ob_rtia->updateAttributeValues(theObject, *theAttributes, theTag);
-
-        return Py_None;
-    }
-    CATCH_RTI_EXCEPTION(ObjectNotKnown)
-    CATCH_RTI_EXCEPTION(AttributeNotDefined)
-    CATCH_RTI_EXCEPTION(AttributeNotOwned)
-    CATCH_RTI_EXCEPTION(FederateNotExecutionMember)
-    CATCH_RTI_EXCEPTION(ConcurrentAccessAttempted)
-    CATCH_RTI_EXCEPTION(SaveInProgress)
-    CATCH_RTI_EXCEPTION(RestoreInProgress)
-    CATCH_RTI_EXCEPTION2(RTI::Exception, rti_RTIInternalError)
-
-    try {
-        RTI::EventRetractionHandle result = self->ob_rtia->updateAttributeValues(theObject, *theAttributes, theTime, theTag);
-
+        if(PyTuple_Size(args) == 3) {
+            self->ob_rtia->updateAttributeValues(theObject, *theAttributes, theTag);
+            return Py_None;
+        }
+        else {
+            RTI::EventRetractionHandle result = self->ob_rtia->updateAttributeValues(theObject, *theAttributes, theTime, theTag);
+            return EventRetractionHandle_ToPython(&result);
+        }
     }
     CATCH_RTI_EXCEPTION(ObjectNotKnown)
     CATCH_RTI_EXCEPTION(AttributeNotDefined)
@@ -656,25 +672,25 @@ rtia_sendInteraction(RTIAmbassadorObject *self, PyObject *args)
 {
     RTI::InteractionClassHandle theInteraction;
     RTI::ParameterHandleValuePairSet *theParameters;
-    RTIfedTime theTime; // optional
     const char *theTag;
+    RTIfedTime theTime; // optional
+
+    if(!PyArg_ParseTuple(args, "O&O&s|d",
+        RtiInteractionClassHandle_FromPython, &theInteraction,
+        ParameterHandleValuePairSet_FromPython, &theParameters,
+        &theTag,
+        RTIfedTime_FromPython, &theTime))
+        return NULL;
 
     try {
-        self->ob_rtia->sendInteraction(theInteraction, *theParameters, theTag);
-
-    }
-    CATCH_RTI_EXCEPTION(InteractionClassNotDefined)
-    CATCH_RTI_EXCEPTION(InteractionClassNotPublished)
-    CATCH_RTI_EXCEPTION(InteractionParameterNotDefined)
-    CATCH_RTI_EXCEPTION(FederateNotExecutionMember)
-    CATCH_RTI_EXCEPTION(ConcurrentAccessAttempted)
-    CATCH_RTI_EXCEPTION(SaveInProgress)
-    CATCH_RTI_EXCEPTION(RestoreInProgress)
-    CATCH_RTI_EXCEPTION2(RTI::Exception, rti_RTIInternalError)
-
-    try {
-        RTI::EventRetractionHandle result = self->ob_rtia->sendInteraction(theInteraction, *theParameters, theTime, theTag);
-
+        if(PyTuple_Size(args) == 3) {
+            self->ob_rtia->sendInteraction(theInteraction, *theParameters, theTag);
+            return Py_None;
+        }
+        else {
+            RTI::EventRetractionHandle result = self->ob_rtia->sendInteraction(theInteraction, *theParameters, theTime, theTag);
+            return EventRetractionHandle_ToPython(&result);
+        }
     }
     CATCH_RTI_EXCEPTION(InteractionClassNotDefined)
     CATCH_RTI_EXCEPTION(InteractionClassNotPublished)
@@ -704,8 +720,7 @@ rtia_deleteObjectInstance(RTIAmbassadorObject *self, PyObject *args)
         return NULL;
 
     try {
-        size_t size = PyTuple_Size(args);
-        if(size == 2) {
+        if(PyTuple_Size(args) == 2) {
             self->ob_rtia->deleteObjectInstance(theObject, theTag);
             return Py_None;
         }
@@ -732,9 +747,14 @@ rtia_localDeleteObjectInstance(RTIAmbassadorObject *self, PyObject *args)
 {
     RTI::ObjectHandle theObject;
 
+    if(!PyArg_ParseTuple(args, "O&",
+        RtiObjectHandle_FromPython, &theObject))
+        return NULL;
+
     try {
         self->ob_rtia->localDeleteObjectInstance(theObject);
 
+        return Py_None;
     }
     CATCH_RTI_EXCEPTION(ObjectNotKnown)
     CATCH_RTI_EXCEPTION(FederateOwnsAttributes)
@@ -755,9 +775,16 @@ rtia_changeAttributeTransportationType(RTIAmbassadorObject *self, PyObject *args
     RTI::AttributeHandleSet *theAttributes;
     RTI::TransportationHandle theType;
 
+    if(!PyArg_ParseTuple(args, "O&O&O&",
+        RtiObjectHandle_FromPython, &theObject,
+        AttributeHandleSet_FromPython, &theAttributes,
+        RtiTransportationHandle_FromPython, &theType))
+        return NULL;
+
     try {
         self->ob_rtia->changeAttributeTransportationType(theObject, *theAttributes, theType);
 
+        return Py_None;
     }
     CATCH_RTI_EXCEPTION(ObjectNotKnown)
     CATCH_RTI_EXCEPTION(AttributeNotDefined)
@@ -779,9 +806,15 @@ rtia_changeInteractionTransportationType(RTIAmbassadorObject *self, PyObject *ar
     RTI::InteractionClassHandle theClass;
     RTI::TransportationHandle theType;
 
+    if(!PyArg_ParseTuple(args, "O&O&",
+        RtiInteractionClassHandle_FromPython, &theClass,
+        RtiTransportationHandle_FromPython, &theType))
+        return NULL;
+
     try {
         self->ob_rtia->changeInteractionTransportationType(theClass, theType);
 
+        return Py_None;
     }
     CATCH_RTI_EXCEPTION(InteractionClassNotDefined)
     CATCH_RTI_EXCEPTION(InteractionClassNotPublished)
@@ -802,9 +835,15 @@ rtia_requestObjectAttributeValueUpdate(RTIAmbassadorObject *self, PyObject *args
     RTI::ObjectHandle theObject;
     RTI::AttributeHandleSet *theAttributes;
 
+    if(!PyArg_ParseTuple(args, "O&O&",
+        RtiObjectHandle_FromPython, &theObject,
+        AttributeHandleSet_FromPython, &theAttributes))
+        return NULL;
+
     try {
         self->ob_rtia->requestObjectAttributeValueUpdate(theObject, *theAttributes);
 
+        return Py_None;
     }
     CATCH_RTI_EXCEPTION(ObjectNotKnown)
     CATCH_RTI_EXCEPTION(AttributeNotDefined)
@@ -823,9 +862,15 @@ rtia_requestClassAttributeValueUpdate(RTIAmbassadorObject *self, PyObject *args)
     RTI::ObjectClassHandle theClass;
     RTI::AttributeHandleSet *theAttributes;
 
+    if(!PyArg_ParseTuple(args, "O&O&",
+        RtiObjectClassHandle_FromPython, &theClass,
+        AttributeHandleSet_FromPython, &theAttributes))
+        return NULL;
+
     try {
         self->ob_rtia->requestClassAttributeValueUpdate(theClass, *theAttributes);
 
+        return Py_None;
     }
     CATCH_RTI_EXCEPTION(ObjectClassNotDefined)
     CATCH_RTI_EXCEPTION(AttributeNotDefined)
@@ -847,9 +892,15 @@ rtia_unconditionalAttributeOwnershipDivestiture(RTIAmbassadorObject *self, PyObj
     RTI::ObjectHandle theObject;
     RTI::AttributeHandleSet *theAttributes;
 
+    if(!PyArg_ParseTuple(args, "O&O&",
+        RtiObjectHandle_FromPython, &theObject,
+        AttributeHandleSet_FromPython, &theAttributes))
+        return NULL;
+
     try {
         self->ob_rtia->unconditionalAttributeOwnershipDivestiture(theObject, *theAttributes);
 
+        return Py_None;
     }
     CATCH_RTI_EXCEPTION(ObjectNotKnown)
     CATCH_RTI_EXCEPTION(AttributeNotDefined)
@@ -871,9 +922,16 @@ rtia_negotiatedAttributeOwnershipDivestiture(RTIAmbassadorObject *self, PyObject
     RTI::AttributeHandleSet *theAttributes;
     const char *theTag;
 
+    if(!PyArg_ParseTuple(args, "O&O&s",
+        RtiObjectHandle_FromPython, &theObject,
+        AttributeHandleSet_FromPython, &theAttributes,
+        &theTag))
+        return NULL;
+
     try {
         self->ob_rtia->negotiatedAttributeOwnershipDivestiture(theObject, *theAttributes, theTag);
 
+        return Py_None;
     }
     CATCH_RTI_EXCEPTION(ObjectNotKnown)
     CATCH_RTI_EXCEPTION(AttributeNotDefined)
@@ -896,9 +954,16 @@ rtia_attributeOwnershipAcquisition(RTIAmbassadorObject *self, PyObject *args)
     RTI::AttributeHandleSet *desiredAttributes;
     const char *theTag;
 
+    if(!PyArg_ParseTuple(args, "O&O&s",
+        RtiObjectHandle_FromPython, &theObject,
+        AttributeHandleSet_FromPython, &desiredAttributes,
+        &theTag))
+        return NULL;
+
     try {
         self->ob_rtia->attributeOwnershipAcquisition(theObject, *desiredAttributes, theTag);
 
+        return Py_None;
     }
     CATCH_RTI_EXCEPTION(ObjectNotKnown)
     CATCH_RTI_EXCEPTION(ObjectClassNotPublished)
@@ -921,9 +986,15 @@ rtia_attributeOwnershipAcquisitionIfAvailable(RTIAmbassadorObject *self, PyObjec
     RTI::ObjectHandle theObject;
     RTI::AttributeHandleSet *desiredAttributes;
 
+    if(!PyArg_ParseTuple(args, "O&O&",
+        RtiObjectHandle_FromPython, &theObject,
+        AttributeHandleSet_FromPython, &desiredAttributes))
+        return NULL;
+
     try {
         self->ob_rtia->attributeOwnershipAcquisitionIfAvailable(theObject, *desiredAttributes);
 
+        return Py_None;
     }
     CATCH_RTI_EXCEPTION(ObjectNotKnown)
     CATCH_RTI_EXCEPTION(ObjectClassNotPublished)
@@ -947,9 +1018,15 @@ rtia_attributeOwnershipReleaseResponse(RTIAmbassadorObject *self, PyObject *args
     RTI::ObjectHandle theObject;
     RTI::AttributeHandleSet *theAttributes;
 
+    if(!PyArg_ParseTuple(args, "O&O&",
+        RtiObjectHandle_FromPython, &theObject,
+        AttributeHandleSet_FromPython, &theAttributes))
+        return NULL;
+
     try {
         RTI::AttributeHandleSet *result = self->ob_rtia->attributeOwnershipReleaseResponse(theObject, *theAttributes);
 
+        return AttributeHandleSet_ToPython(result);
     }
     CATCH_RTI_EXCEPTION(ObjectNotKnown)
     CATCH_RTI_EXCEPTION(AttributeNotDefined)
@@ -971,9 +1048,15 @@ rtia_cancelNegotiatedAttributeOwnershipDivestiture(RTIAmbassadorObject *self, Py
     RTI::ObjectHandle theObject;
     RTI::AttributeHandleSet *theAttributes;
 
+    if(!PyArg_ParseTuple(args, "O&O&",
+        RtiObjectHandle_FromPython, &theObject,
+        AttributeHandleSet_FromPython, &theAttributes))
+        return NULL;
+
     try {
         self->ob_rtia->cancelNegotiatedAttributeOwnershipDivestiture(theObject, *theAttributes);
 
+        return Py_None;
     }
     CATCH_RTI_EXCEPTION(ObjectNotKnown)
     CATCH_RTI_EXCEPTION(AttributeNotDefined)
@@ -995,9 +1078,15 @@ rtia_cancelAttributeOwnershipAcquisition(RTIAmbassadorObject *self, PyObject *ar
     RTI::ObjectHandle theObject;
     RTI::AttributeHandleSet *theAttributes;
 
+    if(!PyArg_ParseTuple(args, "O&O&",
+        RtiObjectHandle_FromPython, &theObject,
+        AttributeHandleSet_FromPython, &theAttributes))
+        return NULL;
+
     try {
         self->ob_rtia->cancelAttributeOwnershipAcquisition(theObject, *theAttributes);
 
+        return Py_None;
     }
     CATCH_RTI_EXCEPTION(ObjectNotKnown)
     CATCH_RTI_EXCEPTION(AttributeNotDefined)
@@ -1019,9 +1108,15 @@ rtia_queryAttributeOwnership(RTIAmbassadorObject *self, PyObject *args)
     RTI::ObjectHandle theObject;
     RTI::AttributeHandle theAttribute;
 
+    if(!PyArg_ParseTuple(args, "O&O&",
+        RtiObjectHandle_FromPython, &theObject,
+        RtiAttributeHandle_FromPython, &theAttribute))
+        return NULL;
+
     try {
         self->ob_rtia->queryAttributeOwnership(theObject, theAttribute);
 
+        return Py_None;
     }
     CATCH_RTI_EXCEPTION(ObjectNotKnown)
     CATCH_RTI_EXCEPTION(AttributeNotDefined)
@@ -1041,9 +1136,15 @@ rtia_isAttributeOwnedByFederate(RTIAmbassadorObject *self, PyObject *args)
     RTI::ObjectHandle theObject;
     RTI::AttributeHandle theAttribute;
 
+    if(!PyArg_ParseTuple(args, "O&O&",
+        RtiObjectHandle_FromPython, &theObject,
+        RtiAttributeHandle_FromPython, &theAttribute))
+        return NULL;
+
     try {
         RTI::Boolean result = self->ob_rtia->isAttributeOwnedByFederate(theObject, theAttribute);
 
+        return PyBool_FromLong(result);
     }
     CATCH_RTI_EXCEPTION(ObjectNotKnown)
     CATCH_RTI_EXCEPTION(AttributeNotDefined)
@@ -1065,9 +1166,15 @@ rtia_enableTimeRegulation(RTIAmbassadorObject *self, PyObject *args)
     RTIfedTime theFederateTime;
     RTIfedTime theLookahead;
 
+    if(!PyArg_ParseTuple(args, "O&O&",
+        RTIfedTime_FromPython, &theFederateTime,
+        RTIfedTime_FromPython, &theLookahead))
+        return NULL;
+
     try {
         self->ob_rtia->enableTimeRegulation(theFederateTime, theLookahead);
 
+        return Py_None;
     }
     CATCH_RTI_EXCEPTION(TimeRegulationAlreadyEnabled)
     CATCH_RTI_EXCEPTION(EnableTimeRegulationPending)
@@ -1090,6 +1197,7 @@ rtia_disableTimeRegulation(RTIAmbassadorObject *self)
     try {
         self->ob_rtia->disableTimeRegulation();
 
+        return Py_None;
     }
     CATCH_RTI_EXCEPTION(TimeRegulationWasNotEnabled)
     CATCH_RTI_EXCEPTION(ConcurrentAccessAttempted)
@@ -1108,6 +1216,7 @@ rtia_enableTimeConstrained(RTIAmbassadorObject *self, PyObject *args)
     try {
         self->ob_rtia->enableTimeConstrained();
 
+        return Py_None;
     }
     CATCH_RTI_EXCEPTION(TimeConstrainedAlreadyEnabled)
     CATCH_RTI_EXCEPTION(EnableTimeConstrainedPending)
@@ -1128,6 +1237,7 @@ rtia_disableTimeConstrained(RTIAmbassadorObject *self, PyObject *args)
     try {
         self->ob_rtia->disableTimeConstrained();
 
+        return Py_None;
     }
     CATCH_RTI_EXCEPTION(TimeConstrainedWasNotEnabled)
     CATCH_RTI_EXCEPTION(FederateNotExecutionMember)
@@ -1145,9 +1255,14 @@ rtia_timeAdvanceRequest(RTIAmbassadorObject *self, PyObject *args)
 {
     RTIfedTime theTime;
 
+    if(!PyArg_ParseTuple(args, "O&",
+        RTIfedTime_FromPython, &theTime))
+        return NULL;
+
     try {
         self->ob_rtia->timeAdvanceRequest(theTime);
 
+        return Py_None;
     }
     CATCH_RTI_EXCEPTION(InvalidFederationTime)
     CATCH_RTI_EXCEPTION(FederationTimeAlreadyPassed)
@@ -1169,9 +1284,14 @@ rtia_timeAdvanceRequestAvailable(RTIAmbassadorObject *self, PyObject *args)
 {
     RTIfedTime theTime;
 
+    if(!PyArg_ParseTuple(args, "O&",
+        RTIfedTime_FromPython, &theTime))
+        return NULL;
+
     try {
         self->ob_rtia->timeAdvanceRequestAvailable(theTime);
 
+        return Py_None;
     }
     CATCH_RTI_EXCEPTION(InvalidFederationTime)
     CATCH_RTI_EXCEPTION(FederationTimeAlreadyPassed)
@@ -1193,9 +1313,14 @@ rtia_nextEventRequest(RTIAmbassadorObject *self, PyObject *args)
 {
     RTIfedTime theTime;
 
+    if(!PyArg_ParseTuple(args, "O&",
+        RTIfedTime_FromPython, &theTime))
+        return NULL;
+
     try {
         self->ob_rtia->nextEventRequest(theTime);
 
+        return Py_None;
     }
     CATCH_RTI_EXCEPTION(InvalidFederationTime)
     CATCH_RTI_EXCEPTION(FederationTimeAlreadyPassed)
@@ -1217,9 +1342,14 @@ rtia_nextEventRequestAvailable(RTIAmbassadorObject *self, PyObject *args)
 {
     RTIfedTime theTime;
 
+    if(!PyArg_ParseTuple(args, "O&",
+        RTIfedTime_FromPython, &theTime))
+        return NULL;
+
     try {
         self->ob_rtia->nextEventRequestAvailable(theTime);
 
+        return Py_None;
     }
     CATCH_RTI_EXCEPTION(InvalidFederationTime)
     CATCH_RTI_EXCEPTION(FederationTimeAlreadyPassed)
@@ -1241,9 +1371,14 @@ rtia_flushQueueRequest(RTIAmbassadorObject *self, PyObject *args)
 {
     RTIfedTime theTime;
 
+    if(!PyArg_ParseTuple(args, "O&",
+        RTIfedTime_FromPython, &theTime))
+        return NULL;
+
     try {
         self->ob_rtia->flushQueueRequest(theTime);
 
+        return Py_None;
     }
     CATCH_RTI_EXCEPTION(InvalidFederationTime)
     CATCH_RTI_EXCEPTION(FederationTimeAlreadyPassed)
@@ -1266,6 +1401,7 @@ rtia_enableAsynchronousDelivery(RTIAmbassadorObject *self)
     try {
         self->ob_rtia->enableAsynchronousDelivery();
 
+        return Py_None;
     }
     CATCH_RTI_EXCEPTION(AsynchronousDeliveryAlreadyEnabled)
     CATCH_RTI_EXCEPTION(FederateNotExecutionMember)
@@ -1284,6 +1420,7 @@ rtia_disableAsynchronousDelivery(RTIAmbassadorObject *self)
     try {
         self->ob_rtia->disableAsynchronousDelivery();
 
+        return Py_None;
     }
     CATCH_RTI_EXCEPTION(AsynchronousDeliveryAlreadyDisabled)
     CATCH_RTI_EXCEPTION(FederateNotExecutionMember)
@@ -1297,13 +1434,13 @@ rtia_disableAsynchronousDelivery(RTIAmbassadorObject *self)
 
 // 8.16
 static PyObject *
-rtia_queryLBTS(RTIAmbassadorObject *self, PyObject *args)
+rtia_queryLBTS(RTIAmbassadorObject *self)
 {
-    RTIfedTime theTime;
-
     try {
+        RTIfedTime theTime;
         self->ob_rtia->queryLBTS(theTime);
 
+        return PyFloat_FromDouble(theTime.getTime());
     }
     CATCH_RTI_EXCEPTION(FederateNotExecutionMember)
     CATCH_RTI_EXCEPTION(ConcurrentAccessAttempted)
@@ -1316,13 +1453,13 @@ rtia_queryLBTS(RTIAmbassadorObject *self, PyObject *args)
 
 // 8.17
 static PyObject *
-rtia_queryFederateTime(RTIAmbassadorObject *self, PyObject *args)
+rtia_queryFederateTime(RTIAmbassadorObject *self)
 {
-    RTIfedTime theTime;
-
     try {
+        RTIfedTime theTime;
         self->ob_rtia->queryFederateTime(theTime);
 
+        return PyFloat_FromDouble(theTime.getTime());
     }
     CATCH_RTI_EXCEPTION(FederateNotExecutionMember)
     CATCH_RTI_EXCEPTION(ConcurrentAccessAttempted)
@@ -1335,13 +1472,13 @@ rtia_queryFederateTime(RTIAmbassadorObject *self, PyObject *args)
 
 // 8.18
 static PyObject *
-rtia_queryMinNextEventTime(RTIAmbassadorObject *self, PyObject *args)
+rtia_queryMinNextEventTime(RTIAmbassadorObject *self)
 {
-    RTIfedTime theTime;
-
     try {
+        RTIfedTime theTime;
         self->ob_rtia->queryMinNextEventTime(theTime);
 
+        return PyFloat_FromDouble(theTime.getTime());
     }
     CATCH_RTI_EXCEPTION(FederateNotExecutionMember)
     CATCH_RTI_EXCEPTION(ConcurrentAccessAttempted)
@@ -1358,9 +1495,14 @@ rtia_modifyLookahead(RTIAmbassadorObject *self, PyObject *args)
 {
     RTIfedTime theLookahead;
 
+    if(!PyArg_ParseTuple(args, "O&",
+        RTIfedTime_FromPython, &theLookahead))
+        return NULL;
+
     try {
         self->ob_rtia->modifyLookahead(theLookahead);
 
+        return Py_None;
     }
     CATCH_RTI_EXCEPTION(InvalidLookahead)
     CATCH_RTI_EXCEPTION(FederateNotExecutionMember)
@@ -1374,13 +1516,13 @@ rtia_modifyLookahead(RTIAmbassadorObject *self, PyObject *args)
 
 // 8.20
 static PyObject *
-rtia_queryLookahead(RTIAmbassadorObject *self, PyObject *args)
+rtia_queryLookahead(RTIAmbassadorObject *self)
 {
-    RTIfedTime theTime;
-
     try {
+        RTIfedTime theTime;
         self->ob_rtia->queryLookahead(theTime);
 
+        return PyFloat_FromDouble(theTime.getTime());
     }
     CATCH_RTI_EXCEPTION(FederateNotExecutionMember)
     CATCH_RTI_EXCEPTION(ConcurrentAccessAttempted)
@@ -1397,9 +1539,14 @@ rtia_retract(RTIAmbassadorObject *self, PyObject *args)
 {
     RTI::EventRetractionHandle theHandle;
 
+    if(!PyArg_ParseTuple(args, "O&",
+        EventRetractionHandle_FromPython, &theHandle))
+        return NULL;
+
     try {
         self->ob_rtia->retract(theHandle);
 
+        return Py_None;
     }
     CATCH_RTI_EXCEPTION(InvalidRetractionHandle)
     CATCH_RTI_EXCEPTION(FederateNotExecutionMember)
@@ -1419,9 +1566,16 @@ rtia_changeAttributeOrderType(RTIAmbassadorObject *self, PyObject *args)
     RTI::AttributeHandleSet *theAttributes;
     RTI::OrderingHandle theType;
 
+    if(!PyArg_ParseTuple(args, "O&O&O&",
+        RtiObjectHandle_FromPython, &theObject,
+        AttributeHandleSet_FromPython, &theAttributes,
+        RtiOrderingHandle_FromPython, &theType))
+        return NULL;
+
     try {
         self->ob_rtia->changeAttributeOrderType(theObject, *theAttributes, theType);
 
+        return Py_None;
     }
     CATCH_RTI_EXCEPTION(ObjectNotKnown)
     CATCH_RTI_EXCEPTION(AttributeNotDefined)
@@ -1443,9 +1597,15 @@ rtia_changeInteractionOrderType(RTIAmbassadorObject *self, PyObject *args)
     RTI::InteractionClassHandle theClass;
     RTI::OrderingHandle theType;
 
+    if(!PyArg_ParseTuple(args, "O&O&",
+        RtiInteractionClassHandle_FromPython, &theClass,
+        RtiOrderingHandle_FromPython, &theType))
+        return NULL;
+
     try {
         self->ob_rtia->changeInteractionOrderType(theClass, theType);
 
+        return Py_None;
     }
     CATCH_RTI_EXCEPTION(InteractionClassNotDefined)
     CATCH_RTI_EXCEPTION(InteractionClassNotPublished)
@@ -1892,9 +2052,13 @@ rtia_getInteractionClassHandle(RTIAmbassadorObject *self, PyObject *args)
 {
     const char *theName;
 
+    if(!PyArg_ParseTuple(args, "s", &theName))
+        return NULL;
+
     try {
         RTI::InteractionClassHandle result = self->ob_rtia->getInteractionClassHandle(theName);
 
+        return RtiInteractionClassHandle_ToPython(&result);
     }
     CATCH_RTI_EXCEPTION(NameNotFound)
     CATCH_RTI_EXCEPTION(FederateNotExecutionMember)
@@ -1910,9 +2074,14 @@ rtia_getInteractionClassName(RTIAmbassadorObject *self, PyObject *args)
 {
     RTI::InteractionClassHandle theHandle;
 
+    if(!PyArg_ParseTuple(args, "O&",
+        RtiInteractionClassHandle_FromPython, &theHandle))
+        return NULL;
+
     try {
         char *result = self->ob_rtia->getInteractionClassName(theHandle);
 
+        return PyString_FromString(result);
     }
     CATCH_RTI_EXCEPTION(InteractionClassNotDefined)
     CATCH_RTI_EXCEPTION(FederateNotExecutionMember)
@@ -1929,9 +2098,15 @@ rtia_getParameterHandle(RTIAmbassadorObject *self, PyObject *args)
     const char *theName;
     RTI::InteractionClassHandle whichClass;
 
+    if(!PyArg_ParseTuple(args, "sO&",
+        &theName,
+        RtiInteractionClassHandle_FromPython, &whichClass))
+        return NULL;
+
     try {
         RTI::ParameterHandle result = self->ob_rtia->getParameterHandle(theName, whichClass);
 
+        return RtiParameterHandle_ToPython(&result);
     }
     CATCH_RTI_EXCEPTION(InteractionClassNotDefined)
     CATCH_RTI_EXCEPTION(NameNotFound)
@@ -1949,9 +2124,15 @@ rtia_getParameterName(RTIAmbassadorObject *self, PyObject *args)
     RTI::ParameterHandle theHandle;
     RTI::InteractionClassHandle whichClass;
 
+    if(!PyArg_ParseTuple(args, "O&O&",
+        RtiParameterHandle_FromPython, &theHandle,
+        RtiInteractionClassHandle_FromPython, &whichClass))
+        return NULL;
+
     try {
         char *result = self->ob_rtia->getParameterName(theHandle, whichClass);
 
+        return PyString_FromString(result);
     }
     CATCH_RTI_EXCEPTION(InteractionClassNotDefined)
     CATCH_RTI_EXCEPTION(InteractionParameterNotDefined)
@@ -1968,9 +2149,13 @@ rtia_getObjectInstanceHandle(RTIAmbassadorObject *self, PyObject *args)
 {
     const char *theName;
 
+    if(!PyArg_ParseTuple(args, "s", &theName))
+        return NULL;
+
     try {
         RTI::ObjectHandle result = self->ob_rtia->getObjectInstanceHandle(theName);
 
+        return RtiObjectHandle_ToPython(&result);
     }
     CATCH_RTI_EXCEPTION(ObjectNotKnown)
     CATCH_RTI_EXCEPTION(FederateNotExecutionMember)
@@ -1986,9 +2171,14 @@ rtia_getObjectInstanceName(RTIAmbassadorObject *self, PyObject *args)
 {
     RTI::ObjectHandle theHandle;
 
+    if(!PyArg_ParseTuple(args, "O&",
+        RtiObjectHandle_FromPython, &theHandle))
+        return NULL;
+
     try {
         char *result = self->ob_rtia->getObjectInstanceName(theHandle);
 
+        return PyString_FromString(result);
     }
     CATCH_RTI_EXCEPTION(ObjectNotKnown)
     CATCH_RTI_EXCEPTION(FederateNotExecutionMember)
@@ -2025,6 +2215,7 @@ rtia_getRoutingSpaceName(RTIAmbassadorObject *self, PyObject *args)
     try {
         char *result = self->ob_rtia->getRoutingSpaceName(theHandle);
 
+        return PyString_FromString(result);
     }
     CATCH_RTI_EXCEPTION(SpaceNotDefined)
     CATCH_RTI_EXCEPTION(FederateNotExecutionMember)
@@ -2064,6 +2255,7 @@ rtia_getDimensionName(RTIAmbassadorObject *self, PyObject *args)
     try {
         char *result = self->ob_rtia->getDimensionName(theHandle, whichSpace);
 
+        return PyString_FromString(result);
     }
     CATCH_RTI_EXCEPTION(SpaceNotDefined)
     CATCH_RTI_EXCEPTION(DimensionNotDefined)
@@ -2100,9 +2292,14 @@ rtia_getObjectClass(RTIAmbassadorObject *self, PyObject *args)
 {
     RTI::ObjectHandle theObject;
 
+    if(!PyArg_ParseTuple(args, "O&",
+        RtiObjectHandle_FromPython, &theObject))
+        return NULL;
+
     try {
         RTI::ObjectClassHandle result = self->ob_rtia->getObjectClass(theObject);
 
+        return RtiObjectClassHandle_ToPython(&result);
     }
     CATCH_RTI_EXCEPTION(ObjectNotKnown)
     CATCH_RTI_EXCEPTION(FederateNotExecutionMember)
@@ -2136,9 +2333,13 @@ rtia_getTransportationHandle(RTIAmbassadorObject *self, PyObject *args)
 {
     const char *theName;
 
+    if(!PyArg_ParseTuple(args, "s", &theName))
+        return NULL;
+
     try {
         RTI::TransportationHandle result = self->ob_rtia->getTransportationHandle(theName);
 
+        return RtiTransportationHandle_ToPython(&result);
     }
     CATCH_RTI_EXCEPTION(NameNotFound)
     CATCH_RTI_EXCEPTION(FederateNotExecutionMember)
@@ -2154,9 +2355,14 @@ rtia_getTransportationName(RTIAmbassadorObject *self, PyObject *args)
 {
     RTI::TransportationHandle theHandle;
 
+    if(!PyArg_ParseTuple(args, "O&",
+        RtiTransportationHandle_FromPython, &theHandle))
+        return NULL;
+
     try {
         char *result = self->ob_rtia->getTransportationName(theHandle);
 
+        return PyString_FromString(result);
     }
     CATCH_RTI_EXCEPTION(InvalidTransportationHandle)
     CATCH_RTI_EXCEPTION(FederateNotExecutionMember)
@@ -2172,9 +2378,13 @@ rtia_getOrderingHandle(RTIAmbassadorObject *self, PyObject *args)
 {
     const char *theName;
 
+    if(!PyArg_ParseTuple(args, "s", &theName))
+        return NULL;
+
     try {
         RTI::OrderingHandle result = self->ob_rtia->getOrderingHandle(theName);
 
+        return RtiOrderingHandle_ToPython(&result);
     }
     CATCH_RTI_EXCEPTION(NameNotFound)
     CATCH_RTI_EXCEPTION(FederateNotExecutionMember)
@@ -2190,9 +2400,14 @@ rtia_getOrderingName(RTIAmbassadorObject *self, PyObject *args)
 {
     RTI::OrderingHandle theHandle;
 
+    if(!PyArg_ParseTuple(args, "O&",
+        RtiOrderingHandle_FromPython, &theHandle))
+        return NULL;
+
     try {
         char *result = self->ob_rtia->getOrderingName(theHandle);
 
+        return PyString_FromString(result);
     }
     CATCH_RTI_EXCEPTION(InvalidOrderingHandle)
     CATCH_RTI_EXCEPTION(FederateNotExecutionMember)
@@ -2209,6 +2424,7 @@ rtia_enableClassRelevanceAdvisorySwitch(RTIAmbassadorObject *self)
     try {
         self->ob_rtia->enableClassRelevanceAdvisorySwitch();
 
+        return Py_None;
     }
     CATCH_RTI_EXCEPTION(FederateNotExecutionMember)
     CATCH_RTI_EXCEPTION(ConcurrentAccessAttempted)
@@ -2226,6 +2442,7 @@ rtia_disableClassRelevanceAdvisorySwitch(RTIAmbassadorObject *self)
     try {
         self->ob_rtia->disableClassRelevanceAdvisorySwitch();
 
+        return Py_None;
     }
     CATCH_RTI_EXCEPTION(FederateNotExecutionMember)
     CATCH_RTI_EXCEPTION(ConcurrentAccessAttempted)
@@ -2243,6 +2460,7 @@ rtia_enableAttributeRelevanceAdvisorySwitch(RTIAmbassadorObject *self)
     try {
         self->ob_rtia->enableAttributeRelevanceAdvisorySwitch();
 
+        return Py_None;
     }
     CATCH_RTI_EXCEPTION(FederateNotExecutionMember)
     CATCH_RTI_EXCEPTION(ConcurrentAccessAttempted)
@@ -2260,6 +2478,7 @@ rtia_disableAttributeRelevanceAdvisorySwitch(RTIAmbassadorObject *self)
     try {
         self->ob_rtia->disableAttributeRelevanceAdvisorySwitch();
 
+        return Py_None;
     }
     CATCH_RTI_EXCEPTION(FederateNotExecutionMember)
     CATCH_RTI_EXCEPTION(ConcurrentAccessAttempted)
@@ -2277,6 +2496,7 @@ rtia_enableAttributeScopeAdvisorySwitch(RTIAmbassadorObject *self)
     try {
         self->ob_rtia->enableAttributeScopeAdvisorySwitch();
 
+        return Py_None;
     }
     CATCH_RTI_EXCEPTION(FederateNotExecutionMember)
     CATCH_RTI_EXCEPTION(ConcurrentAccessAttempted)
@@ -2294,6 +2514,7 @@ rtia_disableAttributeScopeAdvisorySwitch(RTIAmbassadorObject *self)
     try {
         self->ob_rtia->disableAttributeScopeAdvisorySwitch();
 
+        return Py_None;
     }
     CATCH_RTI_EXCEPTION(FederateNotExecutionMember)
     CATCH_RTI_EXCEPTION(ConcurrentAccessAttempted)
@@ -2311,6 +2532,7 @@ rtia_enableInteractionRelevanceAdvisorySwitch(RTIAmbassadorObject *self)
     try {
         self->ob_rtia->enableInteractionRelevanceAdvisorySwitch();
 
+        return Py_None;
     }
     CATCH_RTI_EXCEPTION(FederateNotExecutionMember)
     CATCH_RTI_EXCEPTION(ConcurrentAccessAttempted)
@@ -2328,6 +2550,7 @@ rtia_disableInteractionRelevanceAdvisorySwitch(RTIAmbassadorObject *self)
     try {
         self->ob_rtia->disableInteractionRelevanceAdvisorySwitch();
 
+        return Py_None;
     }
     CATCH_RTI_EXCEPTION(FederateNotExecutionMember)
     CATCH_RTI_EXCEPTION(ConcurrentAccessAttempted)
@@ -2390,7 +2613,7 @@ rtia_getRegionToken(RTIAmbassadorObject *self, PyObject *args)
     RTI::Region *region;
 
     try {
-//        RTI::RegionToken result = self->ob_rtia->getRegionToken(region);
+        RTI::RegionToken result = self->ob_rtia->getRegionToken(region);
 
     }
     CATCH_RTI_EXCEPTION(FederateNotExecutionMember)
@@ -2407,7 +2630,7 @@ rtia_getRegion(RTIAmbassadorObject *self, PyObject *args)
     RTI::RegionToken token;
 
     try {
-//        RTI::Region *result = self->ob_rtia->getRegion(token);
+        RTI::Region *result = self->ob_rtia->getRegion(token);
 
     }
     CATCH_RTI_EXCEPTION(FederateNotExecutionMember)
@@ -2574,19 +2797,19 @@ static PyMethodDef rtia_methods[] =
         (PyCFunction)rtia_disableAsynchronousDelivery, METH_NOARGS,
         ""},
     {"queryLBTS",
-        (PyCFunction)rtia_queryLBTS, METH_VARARGS,
+        (PyCFunction)rtia_queryLBTS, METH_NOARGS,
         ""},
     {"queryFederateTime",
-        (PyCFunction)rtia_queryFederateTime, METH_VARARGS,
+        (PyCFunction)rtia_queryFederateTime, METH_NOARGS,
         ""},
     {"queryMinNextEventTime",
-        (PyCFunction)rtia_queryMinNextEventTime, METH_VARARGS,
+        (PyCFunction)rtia_queryMinNextEventTime, METH_NOARGS,
         ""},
     {"modifyLookahead",
         (PyCFunction)rtia_modifyLookahead, METH_VARARGS,
         ""},
     {"queryLookahead",
-        (PyCFunction)rtia_queryLookahead, METH_VARARGS,
+        (PyCFunction)rtia_queryLookahead, METH_NOARGS,
         ""},
     {"retract",
         (PyCFunction)rtia_retract, METH_VARARGS,
@@ -2802,4 +3025,4 @@ RTIAmbassadorInitializer::on_init(PyObject* module)
     PyModule_AddObject(module, "RTIAmbassador", (PyObject *)&RTIAmbassadorObjectType);
 }
 
-// $Id: rtiambassador.cpp,v 1.1 2008/09/25 17:17:38 gotthardp Exp $
+// $Id: rtiambassador.cpp,v 1.2 2008/10/02 10:04:04 gotthardp Exp $

@@ -11,7 +11,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  *
- * $Id: federateambassador.cpp,v 1.3 2008/10/01 21:17:18 gotthardp Exp $
+ * $Id: federateambassador.cpp,v 1.4 2008/10/02 10:04:04 gotthardp Exp $
  */
 
 // note: you must include Python.h before any standard headers are included
@@ -312,8 +312,8 @@ throw (RTI::ObjectNotKnown, RTI::AttributeNotKnown, RTI::FederateOwnsAttributes,
         RtiObjectHandle_ToPython, &theObject,
         AttributeHandleValuePairSet_ToPython, &theAttributes,
         theTag,
-        RtiULongHandle_FromULong(&RtiOrderTypeType, theAttributes.getOrderType(0)),
-        RtiULongHandle_FromULong(&RtiTransportTypeType, theAttributes.getTransportType(0)),
+        RtiULongHandle_FromULong(&RtiOrderingHandleType, theAttributes.getOrderType(0)),
+        RtiULongHandle_FromULong(&RtiTransportationHandleType, theAttributes.getTransportType(0)),
         time.getTime(),
         EventRetractionHandle_ToPython, &theHandle);
 
@@ -337,8 +337,8 @@ throw (RTI::ObjectNotKnown, RTI::AttributeNotKnown, RTI::FederateOwnsAttributes,
         RtiObjectHandle_ToPython, &theObject,
         AttributeHandleValuePairSet_ToPython, &theAttributes,
         theTag,
-        RtiULongHandle_FromULong(&RtiOrderTypeType, theAttributes.getOrderType(0)),
-        RtiULongHandle_FromULong(&RtiTransportTypeType, theAttributes.getTransportType(0)));
+        RtiULongHandle_FromULong(&RtiOrderingHandleType, theAttributes.getOrderType(0)),
+        RtiULongHandle_FromULong(&RtiTransportationHandleType, theAttributes.getTransportType(0)));
 
     if(PyObject *exception = PyErr_Occurred()) {
         CATCH_PYTHON_EXCEPTION(exception, ObjectNotKnown)
@@ -364,8 +364,8 @@ throw (RTI::InteractionClassNotKnown, RTI::InteractionParameterNotKnown,
         RtiInteractionClassHandle_ToPython, &theInteraction,
         ParameterHandleValuePairSet_ToPython, &theParameters,
         theTag,
-        RtiULongHandle_FromULong(&RtiOrderTypeType, theParameters.getOrderType()),
-        RtiULongHandle_FromULong(&RtiTransportTypeType, theParameters.getTransportType()),
+        RtiULongHandle_FromULong(&RtiOrderingHandleType, theParameters.getOrderType()),
+        RtiULongHandle_FromULong(&RtiTransportationHandleType, theParameters.getTransportType()),
         time.getTime(),
         EventRetractionHandle_ToPython, &theHandle);
 
@@ -388,8 +388,8 @@ throw (RTI::InteractionClassNotKnown, RTI::InteractionParameterNotKnown,
         RtiInteractionClassHandle_ToPython, &theInteraction,
         ParameterHandleValuePairSet_ToPython, &theParameters,
         theTag,
-        RtiULongHandle_FromULong(&RtiOrderTypeType, theParameters.getOrderType()),
-        RtiULongHandle_FromULong(&RtiTransportTypeType, theParameters.getTransportType()));
+        RtiULongHandle_FromULong(&RtiOrderingHandleType, theParameters.getOrderType()),
+        RtiULongHandle_FromULong(&RtiTransportationHandleType, theParameters.getTransportType()));
 
     if(PyObject *exception = PyErr_Occurred()) {
         CATCH_PYTHON_EXCEPTION(exception, InteractionClassNotKnown)
@@ -827,4 +827,4 @@ FederateAmbassadorInitializer::on_init(PyObject* module)
     PyModule_AddObject(module, "FederateAmbassador", (PyObject *)&FederateAmbassadorObjectType);
 }
 
-// $Id: federateambassador.cpp,v 1.3 2008/10/01 21:17:18 gotthardp Exp $
+// $Id: federateambassador.cpp,v 1.4 2008/10/02 10:04:04 gotthardp Exp $

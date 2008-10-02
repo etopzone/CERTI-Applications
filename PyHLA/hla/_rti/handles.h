@@ -11,7 +11,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  *
- * $Id: handles.h,v 1.2 2008/10/01 21:08:58 gotthardp Exp $
+ * $Id: handles.h,v 1.3 2008/10/02 10:04:04 gotthardp Exp $
  */
 
 #ifndef RTI_HANDLES_H
@@ -31,25 +31,33 @@ extern PyTypeObject RtiParameterHandleType;
 extern PyTypeObject RtiObjectHandleType;
 extern PyTypeObject RtiFederateHandleType;
 
-extern PyTypeObject RtiOrderTypeType;
-extern PyTypeObject RtiTransportTypeType;
+extern PyTypeObject RtiOrderingHandleType;
+extern PyTypeObject RtiTransportationHandleType;
 
 PyObject* RtiULongHandle_FromULong(PyTypeObject *type, unsigned long val);
 
 int RtiObjectClassHandle_FromPython(RtiULongHandleObject *value, RTI::ObjectClassHandle *addr);
 PyObject *RtiObjectClassHandle_ToPython(RTI::ObjectClassHandle *value);
 
+int RtiInteractionClassHandle_FromPython(RtiULongHandleObject *value, RTI::InteractionClassHandle *addr);
 PyObject *RtiInteractionClassHandle_ToPython(RTI::InteractionClassHandle *value);
 
 int RtiAttributeHandle_FromPython(RtiULongHandleObject *value, RTI::AttributeHandle *result);
 PyObject *RtiAttributeHandle_ToPython(RTI::AttributeHandle *value);
 
 int RtiParameterHandle_FromPython(RtiULongHandleObject *value, RTI::ParameterHandle *result);
+PyObject *RtiParameterHandle_ToPython(RTI::ParameterHandle *value);
 
 int RtiObjectHandle_FromPython(RtiULongHandleObject *value, RTI::ObjectHandle *result);
 PyObject *RtiObjectHandle_ToPython(RTI::ObjectHandle *value);
 
 PyObject *RtiFederateHandle_ToPython(RTI::FederateHandle *value);
+
+int RtiOrderingHandle_FromPython(RtiULongHandleObject *value, RTI::OrderingHandle *result);
+PyObject *RtiOrderingHandle_ToPython(RTI::OrderingHandle *value);
+
+int RtiTransportationHandle_FromPython(RtiULongHandleObject *value, RTI::TransportationHandle *result);
+PyObject *RtiTransportationHandle_ToPython(RTI::TransportationHandle *value);
 
 int AttributeHandleSet_FromPython(PyObject *value, RTI::AttributeHandleSet **result);
 PyObject *AttributeHandleSet_ToPython(RTI::AttributeHandleSet *value);
@@ -74,4 +82,4 @@ int RTIfedTime_FromPython(PyObject *value, RTIfedTime *result);
 
 #endif // RTI_HANDLES_H
 
-// $Id: handles.h,v 1.2 2008/10/01 21:08:58 gotthardp Exp $
+// $Id: handles.h,v 1.3 2008/10/02 10:04:04 gotthardp Exp $

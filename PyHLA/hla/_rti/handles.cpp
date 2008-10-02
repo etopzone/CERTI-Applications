@@ -11,7 +11,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  *
- * $Id: handles.cpp,v 1.2 2008/10/01 21:08:58 gotthardp Exp $
+ * $Id: handles.cpp,v 1.3 2008/10/02 10:04:04 gotthardp Exp $
  */
 
 // note: you must include Python.h before any standard headers are included
@@ -56,6 +56,18 @@ PyObject *RtiObjectClassHandle_ToPython(RTI::ObjectClassHandle *value)
     return RtiULongHandle_FromULong(&RtiObjectClassHandleType, *value);
 }
 
+int RtiInteractionClassHandle_FromPython(RtiULongHandleObject *value, RTI::InteractionClassHandle *addr)
+{
+    if(value == NULL || !PyObject_TypeCheck(value, &RtiInteractionClassHandleType)) {
+        PyErr_SetString(PyExc_TypeError,
+            "InteractionClassHandle object required");
+        return 0; // failure
+    }
+
+    *addr = value->ob_ival;
+    return 1; // success
+}
+
 PyObject *RtiInteractionClassHandle_ToPython(RTI::InteractionClassHandle *value)
 {
     return RtiULongHandle_FromULong(&RtiInteractionClassHandleType, *value);
@@ -90,6 +102,11 @@ int RtiParameterHandle_FromPython(RtiULongHandleObject *value, RTI::ParameterHan
     return 1; // success
 }
 
+PyObject *RtiParameterHandle_ToPython(RTI::ParameterHandle *value)
+{
+    return RtiULongHandle_FromULong(&RtiParameterHandleType, *value);
+}
+
 int RtiObjectHandle_FromPython(RtiULongHandleObject *value, RTI::ObjectHandle *result)
 {
     if(result == NULL || !PyObject_TypeCheck(value, &RtiObjectHandleType)) {
@@ -110,6 +127,42 @@ PyObject *RtiObjectHandle_ToPython(RTI::ObjectHandle *value)
 PyObject *RtiFederateHandle_ToPython(RTI::FederateHandle *value)
 {
     return RtiULongHandle_FromULong(&RtiFederateHandleType, *value);
+}
+
+int
+RtiOrderingHandle_FromPython(RtiULongHandleObject *value, RTI::OrderingHandle *result)
+{
+    if(result == NULL || !PyObject_TypeCheck(value, &RtiOrderingHandleType)) {
+        PyErr_SetString(PyExc_TypeError,
+            "OrderingHandle object required");
+        return 0; // failure
+    }
+
+    *result = value->ob_ival;
+    return 1; // success
+}
+
+PyObject *RtiOrderingHandle_ToPython(RTI::OrderingHandle *value)
+{
+    return RtiULongHandle_FromULong(&RtiOrderingHandleType, *value);
+}
+
+int
+RtiTransportationHandle_FromPython(RtiULongHandleObject *value, RTI::TransportationHandle *result)
+{
+    if(result == NULL || !PyObject_TypeCheck(value, &RtiTransportationHandleType)) {
+        PyErr_SetString(PyExc_TypeError,
+            "TransportationHandle object required");
+        return 0; // failure
+    }
+
+    *result = value->ob_ival;
+    return 1; // success
+}
+
+PyObject *RtiTransportationHandle_ToPython(RTI::TransportationHandle *value)
+{
+    return RtiULongHandle_FromULong(&RtiTransportationHandleType, *value);
 }
 
 int
@@ -459,10 +512,10 @@ PyTypeObject RtiFederateHandleType = {
     "FederateHandle",          /* tp_doc */
 };
 
-PyTypeObject RtiOrderTypeType = {
+PyTypeObject RtiOrderingHandleType = {
     PyObject_HEAD_INIT(NULL)
     0,                         /* ob_size */
-    MODULE_NAME ".OrderType", /* tp_name */
+    MODULE_NAME ".OrderingHandle", /* tp_name */
     sizeof(RtiULongHandleObject), /* tp_basicsize */
     0,                         /* tp_itemsize */
     0,                         /* tp_dealloc */
@@ -481,13 +534,13 @@ PyTypeObject RtiOrderTypeType = {
     0,                         /* tp_setattro */
     0,                         /* tp_as_buffer */
     Py_TPFLAGS_DEFAULT,        /* tp_flags */
-    "OrderType",               /* tp_doc */
+    "OrderingHandle",               /* tp_doc */
 };
 
-PyTypeObject RtiTransportTypeType = {
+PyTypeObject RtiTransportationHandleType = {
     PyObject_HEAD_INIT(NULL)
     0,                         /* ob_size */
-    MODULE_NAME ".TransportType", /* tp_name */
+    MODULE_NAME ".TransportationHandle", /* tp_name */
     sizeof(RtiULongHandleObject), /* tp_basicsize */
     0,                         /* tp_itemsize */
     0,                         /* tp_dealloc */
@@ -506,7 +559,7 @@ PyTypeObject RtiTransportTypeType = {
     0,                         /* tp_setattro */
     0,                         /* tp_as_buffer */
     Py_TPFLAGS_DEFAULT,        /* tp_flags */
-    "TransportType",           /* tp_doc */
+    "TransportationHandle",    /* tp_doc */
 };
 
 static int
@@ -647,15 +700,15 @@ HandlesInitializer::on_init(PyObject* module)
     Py_INCREF(&RtiFederateHandleType);
     PyModule_AddObject(module, "FederateHandle", (PyObject *)&RtiFederateHandleType);
 
-    if (PyType_Ready(&RtiOrderTypeType) < 0)
+    if (PyType_Ready(&RtiOrderingHandleType) < 0)
         return;
-    Py_INCREF(&RtiOrderTypeType);
-    PyModule_AddObject(module, "OrderType", (PyObject *)&RtiOrderTypeType);
+    Py_INCREF(&RtiOrderingHandleType);
+    PyModule_AddObject(module, "OrderingHandle", (PyObject *)&RtiOrderingHandleType);
 
-    if (PyType_Ready(&RtiTransportTypeType) < 0)
+    if (PyType_Ready(&RtiTransportationHandleType) < 0)
         return;
-    Py_INCREF(&RtiTransportTypeType);
-    PyModule_AddObject(module, "TransportType", (PyObject *)&RtiTransportTypeType);
+    Py_INCREF(&RtiTransportationHandleType);
+    PyModule_AddObject(module, "TransportationHandle", (PyObject *)&RtiTransportationHandleType);
 
     if (PyType_Ready(&EventRetractionHandleType) < 0)
         return;
@@ -663,4 +716,4 @@ HandlesInitializer::on_init(PyObject* module)
     PyModule_AddObject(module, "EventRetractionHandle", (PyObject *)&EventRetractionHandleType);
 }
 
-// $Id: handles.cpp,v 1.2 2008/10/01 21:08:58 gotthardp Exp $
+// $Id: handles.cpp,v 1.3 2008/10/02 10:04:04 gotthardp Exp $
