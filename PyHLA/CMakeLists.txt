@@ -16,4 +16,25 @@ MESSAGE(STATUS "Python modules will be installed in: ${SITE_PACKAGES}")
 
 ADD_SUBDIRECTORY(hla)
 
-# $Id: CMakeLists.txt,v 1.1 2008/09/25 17:17:26 gotthardp Exp $
+SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Python bindings for the Modeling and Simulation (M&S) High Level Architecture (HLA)")
+SET(CPACK_PACKAGE_VENDOR "Petr Gotthard")
+SET(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/COPYING")
+SET(CPACK_PACKAGE_NAME PyHLA)
+SET(CPACK_SYSTEM_NAME ${CMAKE_SYSTEM_NAME})
+
+IF (WIN32)
+    SET(CPACK_SOURCE_GENERATOR "ZIP")
+    SET(CPACK_GENERATOR "NSIS;ZIP")
+ELSE (WIN32)
+    SET(CPACK_SOURCE_GENERATOR "TGZ;ZIP")
+    SET(CPACK_GENERATOR "TGZ;ZIP;RPM")
+ENDIF (WIN32)
+
+SET(CPACK_SOURCE_IGNORE_FILES
+    "~" ".pdf" ".pyc" ".so" ".dll" ".zip" ".tar.gz" ".rpm"
+    "/.cvsignore" "/Makefile" "/CMakeCache.txt" "/cmake_install.cmake" "/CPack.*.cmake"
+    "/CVS/" "/CMakeFiles/" "/_CPack_Packages/")
+
+INCLUDE(CPack)
+
+# $Id: CMakeLists.txt,v 1.2 2008/10/03 09:05:03 gotthardp Exp $
