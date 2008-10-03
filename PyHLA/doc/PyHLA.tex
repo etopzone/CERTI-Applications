@@ -69,7 +69,18 @@ The Python language provides several benefits
 \item Many plug-ins providing scientific calculations, or geodetic conversions.
 \end{enumerate}
 
-\subsection{Build Instructions}
+\subsection{Installation Instructions}
+
+\paragraph{Windows}
+
+A binary installer is provided for the latest CERTI and Python release.
+
+The wizzard will guide you through the installation process. The \module{PyHLA}
+module should be installed into the Python \file{site-packages} directory.
+When prompted for a destination folder, you should enter something like
+\file{C:/Program Files/Python2.5/Lib/site-packages}.
+
+\paragraph{Linux}
 
 The \module{PyHLA} module requires
 \begin{itemize}
@@ -83,9 +94,20 @@ applications repository.
 cvs -d:pserver:anonymous@cvs.sv.gnu.org:/sources/certi co applications/PyHLA
 \end{verbatim}
 
-The source codes can be compiled and installed using
+To build the \module{PyHLA} module you must provide a path to the Python
+\file{site-packages} directory.
+
+If no \makevar{CMAKE_INSTALL_PREFIX} is provided, the path is determined
+automatically. The source codes can be compiled and installed using
 \begin{verbatim}
-cmake . -DCMAKE_INSTALL_PREFIX=/usr/local
+cmake .
+make install
+\end{verbatim}
+
+Alternatively, you may provide the path to the \file{site-packages} directory
+in the \makevar{CMAKE_INSTALL_PREFIX} cmake variable.
+\begin{verbatim}
+cmake . -DCMAKE_INSTALL_PREFIX=/usr/lib/python2.5/site-packages
 make install
 \end{verbatim}
 
@@ -152,4 +174,4 @@ class MyConnection(Connection):
 
 \end{document}
 
-% $Id: PyHLA.tex,v 1.3 2008/09/26 14:48:02 gotthardp Exp $
+% $Id: PyHLA.tex,v 1.4 2008/10/03 15:28:16 gotthardp Exp $
