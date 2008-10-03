@@ -5,6 +5,6 @@ SET(PYTHON_SOURCES
     record.py)
 
 INSTALL(FILES ${PYTHON_SOURCES}
-    DESTINATION ${SITE_PACKAGES}/data)
+    DESTINATION hla/omt)
 
-# $Id: CMakeLists.txt,v 1.1 2008/09/25 17:17:41 gotthardp Exp $
+# $Id: CMakeLists.txt,v 1.2 2008/10/03 15:02:23 gotthardp Exp $
