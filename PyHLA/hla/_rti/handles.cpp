@@ -11,7 +11,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  *
- * $Id: handles.cpp,v 1.3 2008/10/02 10:04:04 gotthardp Exp $
+ * $Id: handles.cpp,v 1.4 2008/10/09 16:50:58 gotthardp Exp $
  */
 
 // note: you must include Python.h before any standard headers are included
@@ -658,6 +658,198 @@ RTIfedTime_FromPython(PyObject *value, RTIfedTime *result)
     return 1; // success
 }
 
+static int
+RegionHandle_print(RegionHandleObject *v, FILE *fp, int flags)
+{
+    fprintf(fp, "<%s=%lu>", v->ob_type->tp_name, v->ob_handle);
+    return 0;
+}
+
+static int
+RegionHandle_compare(RegionHandleObject *v, RegionHandleObject *w)
+{
+    return (v->ob_handle < w->ob_handle) ? -1 :
+        (v->ob_handle > w->ob_handle) ? 1 : 0;
+}
+
+static PyObject *
+RegionHandle_repr(RegionHandleObject *v)
+{
+    return PyString_FromFormat("<%s=%lu>", v->ob_type->tp_name, v->ob_handle);
+}
+
+static long
+RegionHandle_hash(RegionHandleObject *v)
+{
+    // create a "signed long" hash from an "unsigned long" number
+    static const int __shift = 15; // see SHIFT in longintrepr.h
+    return (v->ob_handle >> __shift) | (v->ob_handle & ~0UL << __shift);
+}
+
+PyTypeObject RegionHandleType = {
+    PyObject_HEAD_INIT(NULL)
+    0,                         /* ob_size */
+    MODULE_NAME ".RegionHandle", /* tp_name */
+    sizeof(RtiULongHandleObject), /* tp_basicsize */
+    0,                         /* tp_itemsize */
+    0,                         /* tp_dealloc */
+    (printfunc)RegionHandle_print, /* tp_print */
+    0,                         /* tp_getattr */
+    0,                         /* tp_setattr */
+    (cmpfunc)RegionHandle_compare, /* tp_compare */
+    (reprfunc)RegionHandle_repr, /* tp_repr */
+    0,                         /* tp_as_number */
+    0,                         /* tp_as_sequence */
+    0,                         /* tp_as_mapping */
+    (hashfunc)RegionHandle_hash, /* tp_hash */
+    0,                         /* tp_call */
+    0,                         /* tp_str */
+    0,                         /* tp_getattro */
+    0,                         /* tp_setattro */
+    0,                         /* tp_as_buffer */
+    Py_TPFLAGS_DEFAULT,        /* tp_flags */
+    "RegionHandle",            /* tp_doc */
+};
+
+int
+RegionHandle_FromPython(RegionHandleObject *value, RTI::Region **result)
+{
+    if(value == NULL || !PyObject_TypeCheck(value, &RegionHandleType)) {
+        PyErr_SetString(PyExc_TypeError,
+            "RegionHandle object required");
+        return 0; // failure
+    }
+
+    *result = value->ob_value;
+    return 1; // success
+}
+
+static int
+longhandle_print(RtiLongHandleObject *v, FILE *fp, int flags)
+{
+    fprintf(fp, "<%s=%li>", v->ob_type->tp_name, v->ob_ival);
+    return 0;
+}
+
+static int
+longhandle_compare(RtiLongHandleObject *v, RtiLongHandleObject *w)
+{
+    return (v->ob_ival < w->ob_ival) ? -1 :
+        (v->ob_ival > w->ob_ival) ? 1 : 0;
+}
+
+static PyObject *
+longhandle_repr(RtiLongHandleObject *v)
+{
+    return PyString_FromFormat("<%s=%li>", v->ob_type->tp_name, v->ob_ival);
+}
+
+static long
+longhandle_hash(RtiLongHandleObject *v)
+{
+    return v->ob_ival;
+}
+
+PyTypeObject RtiSpaceHandleType = {
+    PyObject_HEAD_INIT(NULL)
+    0,                         /* ob_size */
+    MODULE_NAME ".SpaceHandle", /* tp_name */
+    sizeof(RtiLongHandleObject), /* tp_basicsize */
+    0,                         /* tp_itemsize */
+    0,                         /* tp_dealloc */
+    (printfunc)longhandle_print, /* tp_print */
+    0,                         /* tp_getattr */
+    0,                         /* tp_setattr */
+    (cmpfunc)longhandle_compare, /* tp_compare */
+    (reprfunc)longhandle_repr, /* tp_repr */
+    0,                         /* tp_as_number */
+    0,                         /* tp_as_sequence */
+    0,                         /* tp_as_mapping */
+    (hashfunc)longhandle_hash, /* tp_hash */
+    0,                         /* tp_call */
+    0,                         /* tp_str */
+    0,                         /* tp_getattro */
+    0,                         /* tp_setattro */
+    0,                         /* tp_as_buffer */
+    Py_TPFLAGS_DEFAULT,        /* tp_flags */
+    "SpaceHandle",             /* tp_doc */
+};
+
+int
+RtiSpaceHandle_FromPython(RtiLongHandleObject *value, RTI::SpaceHandle *result)
+{
+    if(value == NULL || !PyObject_TypeCheck(value, &RtiSpaceHandleType)) {
+        PyErr_SetString(PyExc_TypeError,
+            "SpaceHandle object required");
+        return 0; // failure
+    }
+
+    *result = value->ob_ival;
+    return 1; // success
+}
+
+PyObject *
+RtiSpaceHandle_ToPython(RTI::SpaceHandle *value)
+{
+    RtiLongHandleObject *self =
+        PyObject_New(RtiLongHandleObject, &RtiSpaceHandleType);
+    if (self == NULL)
+        return NULL;
+    self->ob_ival = *value;
+
+    return (PyObject *)self;
+}
+
+PyTypeObject RtiDimensionHandleType = {
+    PyObject_HEAD_INIT(NULL)
+    0,                         /* ob_size */
+    MODULE_NAME ".DimensionHandle", /* tp_name */
+    sizeof(RtiULongHandleObject), /* tp_basicsize */
+    0,                         /* tp_itemsize */
+    0,                         /* tp_dealloc */
+    (printfunc)ulonghandle_print, /* tp_print */
+    0,                         /* tp_getattr */
+    0,                         /* tp_setattr */
+    (cmpfunc)ulonghandle_compare, /* tp_compare */
+    (reprfunc)ulonghandle_repr, /* tp_repr */
+    0,                         /* tp_as_number */
+    0,                         /* tp_as_sequence */
+    0,                         /* tp_as_mapping */
+    (hashfunc)ulonghandle_hash, /* tp_hash */
+    0,                         /* tp_call */
+    0,                         /* tp_str */
+    0,                         /* tp_getattro */
+    0,                         /* tp_setattro */
+    0,                         /* tp_as_buffer */
+    Py_TPFLAGS_DEFAULT,        /* tp_flags */
+    "DimensionHandle",         /* tp_doc */
+};
+
+int
+RtiDimensionHandle_FromPython(RtiULongHandleObject *value, RTI::DimensionHandle *result)
+{
+    if(value == NULL || !PyObject_TypeCheck(value, &RtiDimensionHandleType)) {
+        PyErr_SetString(PyExc_TypeError,
+            "DimensionHandle object required");
+        return 0; // failure
+    }
+
+    *result = value->ob_ival;
+    return 1; // success
+}
+
+PyObject *
+RtiDimensionHandle_ToPython(RTI::DimensionHandle *value)
+{
+    RtiULongHandleObject *self =
+        PyObject_New(RtiULongHandleObject, &RtiDimensionHandleType);
+    if (self == NULL)
+        return NULL;
+    self->ob_ival = *value;
+
+    return (PyObject *)self;
+}
+
 class HandlesInitializer : public RtiInitializer
 {
 public:
@@ -714,6 +906,21 @@ HandlesInitializer::on_init(PyObject* module)
         return;
     Py_INCREF(&EventRetractionHandleType);
     PyModule_AddObject(module, "EventRetractionHandle", (PyObject *)&EventRetractionHandleType);
+
+    if (PyType_Ready(&RegionHandleType) < 0)
+        return;
+    Py_INCREF(&RegionHandleType);
+    PyModule_AddObject(module, "RegionHandle", (PyObject *)&RegionHandleType);
+
+    if (PyType_Ready(&RtiSpaceHandleType) < 0)
+        return;
+    Py_INCREF(&RtiSpaceHandleType);
+    PyModule_AddObject(module, "SpaceHandle", (PyObject *)&RtiSpaceHandleType);
+
+    if (PyType_Ready(&RtiDimensionHandleType) < 0)
+        return;
+    Py_INCREF(&RtiDimensionHandleType);
+    PyModule_AddObject(module, "DimensionHandle", (PyObject *)&RtiDimensionHandleType);
 }
 
-// $Id: handles.cpp,v 1.3 2008/10/02 10:04:04 gotthardp Exp $
+// $Id: handles.cpp,v 1.4 2008/10/09 16:50:58 gotthardp Exp $

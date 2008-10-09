@@ -1,10 +1,29 @@
-\documentclass{howto}
+\documentclass[12pt,a4paper]{howto}
+% Download msc.sty from http://satoss.uni.lu/mscpackage
+\usepackage{msc}
+
+\newenvironment{hlamsc}[1]{
+\begin{figure}[h]
+\centering
+\pagecolor{white}
+\begin{msc}{#1}
+\drawframe{no}
+\setmscvalues{small}
+\setlength{\instdist}{4.5cm}
+\setlength{\bottomfootdist}{0cm}
+}{
+\end{msc}
+\textcolor{white}{.} % workaround for the msc.sty clipping error
+\end{figure}
+}
 
 \title{Using M\&S HLA in Python}
 \release{0.1}
 
 \author{Petr Gotthard}
-\authoraddress{petr.gotthard@centrum.cz}
+\authoraddress{petr.gotthard at centrum.cz}
+
+\makeindex
 
 \begin{document}
 \maketitle
@@ -172,6 +191,7 @@ class MyConnection(Connection):
       self.discoveredEntities[name] = MyAircraft()
 \end{verbatim}
 
+\input{PyHLA.ind}
 \end{document}
 
-% $Id: PyHLA.tex,v 1.4 2008/10/03 15:28:16 gotthardp Exp $
+% $Id: PyHLA.tex,v 1.5 2008/10/09 16:50:58 gotthardp Exp $

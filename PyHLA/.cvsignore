@@ -1,5 +1,12 @@
 Makefile
 CMakeFiles
+_CPack_Packages
 cmake_install.cmake
+install_manifest*.txt
 CMakeCache.txt
+CPackConfig.cmake
+CPackSourceConfig.cmake
 *.pyc
+*.rpm
+*.zip
+*.gz

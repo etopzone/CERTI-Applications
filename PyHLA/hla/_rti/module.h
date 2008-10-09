@@ -11,7 +11,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  *
- * $Id: module.h,v 1.1 2008/09/25 17:17:37 gotthardp Exp $
+ * $Id: module.h,v 1.2 2008/10/09 16:50:58 gotthardp Exp $
  */
 
 #ifndef RTI_MODULE_H
@@ -20,6 +20,20 @@
 #include <vector>
 
 #define MODULE_NAME "rti"
+
+template<typename T>
+class auto_arrayptr
+{
+public:
+    auto_arrayptr(T *ptr = NULL) { m_ptr = ptr; }
+    ~auto_arrayptr() { delete[] m_ptr; }
+
+    operator T*() const { return m_ptr; }
+    T* get() const { return m_ptr; }
+
+private:
+    T* m_ptr;
+};
 
 template<typename T>
 class auto_decref
@@ -51,4 +65,4 @@ private:
 
 #endif // RTI_MODULE_H
 
-// $Id: module.h,v 1.1 2008/09/25 17:17:37 gotthardp Exp $
+// $Id: module.h,v 1.2 2008/10/09 16:50:58 gotthardp Exp $

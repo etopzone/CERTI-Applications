@@ -11,7 +11,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  *
- * $Id: rtiambassador.cpp,v 1.2 2008/10/02 10:04:04 gotthardp Exp $
+ * $Id: rtiambassador.cpp,v 1.3 2008/10/09 16:50:58 gotthardp Exp $
  */
 
 // note: you must include Python.h before any standard headers are included
@@ -152,10 +152,13 @@ rtia_joinFederationExecution(RTIAmbassadorObject *self, PyObject *args)
 static PyObject *
 rtia_resignFederationExecution(RTIAmbassadorObject *self, PyObject *args)
 {
-    RTI::ResignAction theAction;
+    int theAction;
+
+    if(!PyArg_ParseTuple(args, "i", &theAction))
+        return NULL;
 
     try {
-        self->ob_rtia->resignFederationExecution(theAction);
+        self->ob_rtia->resignFederationExecution((RTI::ResignAction)theAction);
 
         // destroy the pointer stored in rtia_joinFederationExecution()
         Py_DECREF(self->ob_federate);
@@ -240,8 +243,7 @@ rtia_requestFederationSave(RTIAmbassadorObject *self, PyObject *args)
         return NULL;
 
     try {
-        size_t size = PyTuple_Size(args);
-        if(size == 1)
+        if(PyTuple_Size(args) == 1)
             self->ob_rtia->requestFederationSave(label);
         else
             self->ob_rtia->requestFederationSave(label, theTime);
@@ -1626,11 +1628,50 @@ static PyObject *
 rtia_createRegion(RTIAmbassadorObject *self, PyObject *args)
 {
     RTI::SpaceHandle theSpace;
-    RTI::ULong numberOfExtents;
+    PyObject *theDimensions;
+
+    if(!PyArg_ParseTuple(args, "O&O",
+        RtiSpaceHandle_FromPython, &theSpace,
+        &theDimensions))
+        return NULL;
+
+    if(!PySequence_Check(theDimensions)) {
+        PyErr_SetString(PyExc_TypeError,
+            "sequence [DimensionHandle,(int,int)] required");
+        return NULL;
+    }
 
     try {
-        RTI::Region *result = self->ob_rtia->createRegion(theSpace, numberOfExtents);
+        RTI::ULong numberOfExtents = PySequence_Size(theDimensions);
+        RTI::Region *regionData = self->ob_rtia->createRegion(theSpace, numberOfExtents);
 
+        for (Py_ssize_t pos = 0; pos < numberOfExtents; pos++) {
+            RTI::DimensionHandle dimension;
+            unsigned long lowerBound;
+            unsigned long upperBound;
+
+            auto_decref<PyObject> item = PySequence_GetItem(theDimensions, pos);
+
+            if(!PyArg_ParseTuple(item, "O&(kk)",
+                RtiDimensionHandle_FromPython, &dimension,
+                &lowerBound,
+                &upperBound))
+                return 0; // failure
+
+            regionData->setRangeLowerBound(pos, dimension, lowerBound);
+            regionData->setRangeUpperBound(pos, dimension, upperBound);
+        }
+
+        RegionHandleObject *result =
+            PyObject_New(RegionHandleObject, &RegionHandleType);
+        if (result == NULL)
+            return NULL;
+        // keep also the handle
+        // this is to facilitate hashing and forward compatibility with IEEE1516
+        result->ob_handle = self->ob_rtia->getRegionToken(regionData);
+        result->ob_value = regionData;
+
+        return (PyObject *)result;
     }
     CATCH_RTI_EXCEPTION(SpaceNotDefined)
     CATCH_RTI_EXCEPTION(InvalidExtents)
@@ -1649,9 +1690,14 @@ rtia_notifyAboutRegionModification(RTIAmbassadorObject *self, PyObject *args)
 {
     RTI::Region *theRegion;
 
+    if(!PyArg_ParseTuple(args, "O&",
+        RegionHandle_FromPython, &theRegion))
+        return NULL;
+
     try {
         self->ob_rtia->notifyAboutRegionModification(*theRegion);
 
+        return Py_None;
     }
     CATCH_RTI_EXCEPTION(RegionNotKnown)
     CATCH_RTI_EXCEPTION(InvalidExtents)
@@ -1670,9 +1716,14 @@ rtia_deleteRegion(RTIAmbassadorObject *self, PyObject *args)
 {
     RTI::Region *theRegion;
 
+    if(!PyArg_ParseTuple(args, "O&",
+        RegionHandle_FromPython, &theRegion))
+        return NULL;
+
     try {
         self->ob_rtia->deleteRegion(theRegion);
 
+        return Py_None;
     }
     CATCH_RTI_EXCEPTION(RegionNotKnown)
     CATCH_RTI_EXCEPTION(RegionInUse)
@@ -1690,32 +1741,40 @@ static PyObject *
 rtia_registerObjectInstanceWithRegion(RTIAmbassadorObject *self, PyObject *args)
 {
     RTI::ObjectClassHandle theClass;
-    const char *theObject; // optional
-    RTI::AttributeHandle *theAttributes;
-    RTI::Region **theRegions;
-    RTI::ULong theNumberOfHandles;
+    PyObject *attributesAndRegions;
+    const char *theObject = NULL; // optional
+
+    if(!PyArg_ParseTuple(args, "O&O|s",
+        RtiObjectClassHandle_FromPython, &theClass,
+        &attributesAndRegions,
+        &theObject))
+        return NULL;
 
     try {
-        RTI::ObjectHandle result = self->ob_rtia->registerObjectInstanceWithRegion(theClass,
-            theAttributes, theRegions, theNumberOfHandles);
+        RTI::ULong theNumberOfHandles = PySequence_Size(attributesAndRegions);
 
-    }
-    CATCH_RTI_EXCEPTION(ObjectClassNotDefined)
-    CATCH_RTI_EXCEPTION(ObjectClassNotPublished)
-    CATCH_RTI_EXCEPTION(AttributeNotDefined)
-    CATCH_RTI_EXCEPTION(AttributeNotPublished)
-    CATCH_RTI_EXCEPTION(RegionNotKnown)
-    CATCH_RTI_EXCEPTION(InvalidRegionContext)
-    CATCH_RTI_EXCEPTION(FederateNotExecutionMember)
-    CATCH_RTI_EXCEPTION(ConcurrentAccessAttempted)
-    CATCH_RTI_EXCEPTION(SaveInProgress)
-    CATCH_RTI_EXCEPTION(RestoreInProgress)
-    CATCH_RTI_EXCEPTION2(RTI::Exception, rti_RTIInternalError)
+        // note, std::auto_ptr cannot handle arrays
+        auto_arrayptr<RTI::AttributeHandle> theAttributes = new RTI::AttributeHandle[theNumberOfHandles];
+        auto_arrayptr<RTI::Region *> theRegions = new RTI::Region *[theNumberOfHandles];
 
-    try {
-        RTI::ObjectHandle result = self->ob_rtia->registerObjectInstanceWithRegion(theClass,
-            theObject, theAttributes, theRegions, theNumberOfHandles);
+        for (RTI::ULong pos = 0; pos < theNumberOfHandles; pos++) {
+            auto_decref<PyObject> item = PySequence_GetItem(attributesAndRegions, pos);
 
+            if(!PyArg_ParseTuple(item, "O&O&",
+                RtiAttributeHandle_FromPython, theAttributes+pos,
+                RegionHandle_FromPython, theRegions+pos))
+                return NULL;
+        }
+
+        RTI::ObjectHandle result;
+        if (theObject == NULL)
+            result = self->ob_rtia->registerObjectInstanceWithRegion(
+                theClass, theAttributes, theRegions, theNumberOfHandles);
+        else
+            result = self->ob_rtia->registerObjectInstanceWithRegion(
+                theClass, theObject, theAttributes, theRegions, theNumberOfHandles);
+
+        return RtiULongHandle_FromULong(&RtiObjectHandleType, result);
     }
     CATCH_RTI_EXCEPTION(ObjectClassNotDefined)
     CATCH_RTI_EXCEPTION(ObjectClassNotPublished)
@@ -1741,9 +1800,16 @@ rtia_associateRegionForUpdates(RTIAmbassadorObject *self, PyObject *args)
     RTI::ObjectHandle theObject;
     RTI::AttributeHandleSet *theAttributes;
 
+    if(!PyArg_ParseTuple(args, "O&O&O&",
+        RegionHandle_FromPython, &theRegion,
+        RtiObjectHandle_FromPython, &theObject,
+        AttributeHandleSet_FromPython, &theAttributes))
+        return NULL;
+
     try {
         self->ob_rtia->associateRegionForUpdates(*theRegion, theObject, *theAttributes);
 
+        return Py_None;
     }
     CATCH_RTI_EXCEPTION(ObjectNotKnown)
     CATCH_RTI_EXCEPTION(AttributeNotDefined)
@@ -1765,9 +1831,15 @@ rtia_unassociateRegionForUpdates(RTIAmbassadorObject *self, PyObject *args)
     RTI::Region *theRegion;
     RTI::ObjectHandle theObject;
 
+    if(!PyArg_ParseTuple(args, "O&O&",
+        RegionHandle_FromPython, &theRegion,
+        RtiObjectHandle_FromPython, &theObject))
+        return NULL;
+
     try {
         self->ob_rtia->unassociateRegionForUpdates(*theRegion, theObject);
 
+        return Py_None;
     }
     CATCH_RTI_EXCEPTION(ObjectNotKnown)
     CATCH_RTI_EXCEPTION(InvalidRegionContext)
@@ -1788,11 +1860,20 @@ rtia_subscribeObjectClassAttributesWithRegion(RTIAmbassadorObject *self, PyObjec
     RTI::ObjectClassHandle theClass;
     RTI::Region *theRegion;
     RTI::AttributeHandleSet *attributeList;
-    RTI::Boolean active = RTI::RTI_TRUE;
+    bool pyActive = true;
+
+    if(!PyArg_ParseTuple(args, "O&O&O&|b",
+        RtiObjectClassHandle_FromPython, &theClass,
+        RegionHandle_FromPython, &theRegion,
+        AttributeHandleSet_FromPython, &attributeList,
+        &pyActive))
+        return NULL;
 
     try {
+        RTI::Boolean active = pyActive ? RTI::RTI_TRUE : RTI::RTI_FALSE;
         self->ob_rtia->subscribeObjectClassAttributesWithRegion(theClass, *theRegion, *attributeList, active);
 
+        return Py_None;
     }
     CATCH_RTI_EXCEPTION(ObjectClassNotDefined)
     CATCH_RTI_EXCEPTION(AttributeNotDefined)
@@ -1814,9 +1895,15 @@ rtia_unsubscribeObjectClassWithRegion(RTIAmbassadorObject *self, PyObject *args)
     RTI::ObjectClassHandle theClass;
     RTI::Region *theRegion;
 
+    if(!PyArg_ParseTuple(args, "O&O&",
+        RtiObjectClassHandle_FromPython, &theClass,
+        RegionHandle_FromPython, &theRegion))
+        return NULL;
+
     try {
         self->ob_rtia->unsubscribeObjectClassWithRegion(theClass, *theRegion);
 
+        return Py_None;
     }
     CATCH_RTI_EXCEPTION(ObjectClassNotDefined)
     CATCH_RTI_EXCEPTION(RegionNotKnown)
@@ -1836,11 +1923,19 @@ rtia_subscribeInteractionClassWithRegion(RTIAmbassadorObject *self, PyObject *ar
 {
     RTI::InteractionClassHandle theClass;
     RTI::Region *theRegion;
-    RTI::Boolean active = RTI::RTI_TRUE;
+    bool pyActive = true;
+
+    if(!PyArg_ParseTuple(args, "O&O&|b",
+        RtiInteractionClassHandle_FromPython, &theClass,
+        RegionHandle_FromPython, &theRegion,
+        &pyActive))
+        return NULL;
 
     try {
+        RTI::Boolean active = pyActive ? RTI::RTI_TRUE : RTI::RTI_FALSE;
         self->ob_rtia->subscribeInteractionClassWithRegion(theClass, *theRegion, active);
 
+        return Py_None;
     }
     CATCH_RTI_EXCEPTION(InteractionClassNotDefined)
     CATCH_RTI_EXCEPTION(RegionNotKnown)
@@ -1862,9 +1957,15 @@ rtia_unsubscribeInteractionClassWithRegion(RTIAmbassadorObject *self, PyObject *
     RTI::InteractionClassHandle theClass;
     RTI::Region *theRegion;
 
+    if(!PyArg_ParseTuple(args, "O&O&",
+        RtiInteractionClassHandle_FromPython, &theClass,
+        RegionHandle_FromPython, &theRegion))
+        return NULL;
+
     try {
         self->ob_rtia->unsubscribeInteractionClassWithRegion(theClass, *theRegion);
 
+        return Py_None;
     }
     CATCH_RTI_EXCEPTION(InteractionClassNotDefined)
     CATCH_RTI_EXCEPTION(InteractionClassNotSubscribed)
@@ -1884,29 +1985,29 @@ rtia_sendInteractionWithRegion(RTIAmbassadorObject *self, PyObject *args)
 {
     RTI::InteractionClassHandle theInteraction;
     RTI::ParameterHandleValuePairSet *theParameters;
-    RTIfedTime theTime; // optional
-    const char *theTag;
     RTI::Region *theRegion;
+    const char *theTag;
+    RTIfedTime theTime; // optional
+
+    if(!PyArg_ParseTuple(args, "O&O&O&s|O&",
+        RtiInteractionClassHandle_FromPython, &theInteraction,
+        ParameterHandleValuePairSet_FromPython, &theParameters,
+        RegionHandle_FromPython, &theRegion,
+        &theTag,
+        RTIfedTime_FromPython, &theTime))
+        return NULL;
 
     try {
-        self->ob_rtia->sendInteractionWithRegion(theInteraction, *theParameters, theTag, *theRegion);
-
-    }
-    CATCH_RTI_EXCEPTION(InteractionClassNotDefined)
-    CATCH_RTI_EXCEPTION(InteractionClassNotPublished)
-    CATCH_RTI_EXCEPTION(InteractionParameterNotDefined)
-    CATCH_RTI_EXCEPTION(RegionNotKnown)
-    CATCH_RTI_EXCEPTION(InvalidRegionContext)
-    CATCH_RTI_EXCEPTION(FederateNotExecutionMember)
-    CATCH_RTI_EXCEPTION(ConcurrentAccessAttempted)
-    CATCH_RTI_EXCEPTION(SaveInProgress)
-    CATCH_RTI_EXCEPTION(RestoreInProgress)
-    CATCH_RTI_EXCEPTION2(RTI::Exception, rti_RTIInternalError)
-
-    try {
-        RTI::EventRetractionHandle result = self->ob_rtia->sendInteractionWithRegion(theInteraction,
-            *theParameters, theTime, theTag, *theRegion);
-
+        if(PyTuple_Size(args) == 4) {
+            self->ob_rtia->sendInteractionWithRegion(
+                theInteraction, *theParameters, theTag, *theRegion);
+            return Py_None;
+        }
+        else {
+            RTI::EventRetractionHandle result = self->ob_rtia->sendInteractionWithRegion(
+                theInteraction, *theParameters, theTime, theTag, *theRegion);
+            return EventRetractionHandle_ToPython(&result);
+        }
     }
     CATCH_RTI_EXCEPTION(InteractionClassNotDefined)
     CATCH_RTI_EXCEPTION(InteractionClassNotPublished)
@@ -1931,9 +2032,16 @@ rtia_requestClassAttributeValueUpdateWithRegion(RTIAmbassadorObject *self, PyObj
     RTI::AttributeHandleSet *theAttributes;
     RTI::Region *theRegion;
 
+    if(!PyArg_ParseTuple(args, "O&O&O&",
+        RtiObjectClassHandle_FromPython, &theClass,
+        AttributeHandleSet_FromPython, &theAttributes,
+        RegionHandle_FromPython, &theRegion))
+        return NULL;
+
     try {
         self->ob_rtia->requestClassAttributeValueUpdateWithRegion(theClass, *theAttributes, *theRegion);
 
+        return Py_None;
     }
     CATCH_RTI_EXCEPTION(ObjectClassNotDefined)
     CATCH_RTI_EXCEPTION(AttributeNotDefined)
@@ -2194,9 +2302,13 @@ rtia_getRoutingSpaceHandle(RTIAmbassadorObject *self, PyObject *args)
 {
     const char *theName;
 
+    if(!PyArg_ParseTuple(args, "s", &theName))
+        return NULL;
+
     try {
         RTI::SpaceHandle result = self->ob_rtia->getRoutingSpaceHandle(theName);
 
+        return RtiSpaceHandle_ToPython(&result);
     }
     CATCH_RTI_EXCEPTION(NameNotFound)
     CATCH_RTI_EXCEPTION(FederateNotExecutionMember)
@@ -2211,6 +2323,10 @@ static PyObject *
 rtia_getRoutingSpaceName(RTIAmbassadorObject *self, PyObject *args)
 {
     RTI::SpaceHandle theHandle;
+
+    if(!PyArg_ParseTuple(args, "O&",
+        RtiSpaceHandle_FromPython, &theHandle))
+        return NULL;
 
     try {
         char *result = self->ob_rtia->getRoutingSpaceName(theHandle);
@@ -2232,9 +2348,15 @@ rtia_getDimensionHandle(RTIAmbassadorObject *self, PyObject *args)
     const char *theName;
     RTI::SpaceHandle whichSpace;
 
+    if(!PyArg_ParseTuple(args, "sO&",
+        &theName,
+        RtiSpaceHandle_FromPython, &whichSpace))
+        return NULL;
+
     try {
         RTI::DimensionHandle result = self->ob_rtia->getDimensionHandle(theName, whichSpace);
 
+        return RtiDimensionHandle_ToPython(&result);
     }
     CATCH_RTI_EXCEPTION(SpaceNotDefined)
     CATCH_RTI_EXCEPTION(NameNotFound)
@@ -2251,6 +2373,11 @@ rtia_getDimensionName(RTIAmbassadorObject *self, PyObject *args)
 {
     RTI::DimensionHandle theHandle;
     RTI::SpaceHandle whichSpace;
+
+    if(!PyArg_ParseTuple(args, "O&O&",
+        RtiDimensionHandle_FromPython, &theHandle,
+        RtiSpaceHandle_FromPython, &whichSpace))
+        return NULL;
 
     try {
         char *result = self->ob_rtia->getDimensionName(theHandle, whichSpace);
@@ -2273,9 +2400,15 @@ rtia_getAttributeRoutingSpaceHandle(RTIAmbassadorObject *self, PyObject *args)
     RTI::AttributeHandle theHandle;
     RTI::ObjectClassHandle whichClass;
 
+    if(!PyArg_ParseTuple(args, "O&O&",
+        RtiAttributeHandle_FromPython, &theHandle,
+        RtiObjectClassHandle_FromPython, &whichClass))
+        return NULL;
+
     try {
         RTI::SpaceHandle result = self->ob_rtia->getAttributeRoutingSpaceHandle(theHandle, whichClass);
 
+        return RtiSpaceHandle_ToPython(&result);
     }
     CATCH_RTI_EXCEPTION(ObjectClassNotDefined)
     CATCH_RTI_EXCEPTION(AttributeNotDefined)
@@ -2315,9 +2448,14 @@ rtia_getInteractionRoutingSpaceHandle(RTIAmbassadorObject *self, PyObject *args)
 {
     RTI::InteractionClassHandle theHandle;
 
+    if(!PyArg_ParseTuple(args, "O&",
+        RtiInteractionClassHandle_FromPython, &theHandle))
+        return NULL;
+
     try {
         RTI::SpaceHandle result = self->ob_rtia->getInteractionRoutingSpaceHandle(theHandle);
 
+        return RtiSpaceHandle_ToPython(&result);
     }
     CATCH_RTI_EXCEPTION(InteractionClassNotDefined)
     CATCH_RTI_EXCEPTION(FederateNotExecutionMember)
@@ -2605,40 +2743,6 @@ rtia_tick(RTIAmbassadorObject *self, PyObject *args)
         return __rtia_tick_1(self, args);
     else
         return __rtia_tick_2(self, args);
-}
-
-static PyObject *
-rtia_getRegionToken(RTIAmbassadorObject *self, PyObject *args)
-{
-    RTI::Region *region;
-
-    try {
-        RTI::RegionToken result = self->ob_rtia->getRegionToken(region);
-
-    }
-    CATCH_RTI_EXCEPTION(FederateNotExecutionMember)
-    CATCH_RTI_EXCEPTION(ConcurrentAccessAttempted)
-    CATCH_RTI_EXCEPTION(RegionNotKnown)
-    CATCH_RTI_EXCEPTION2(RTI::Exception, rti_RTIInternalError)
-
-    return NULL;
-}
-
-static PyObject *
-rtia_getRegion(RTIAmbassadorObject *self, PyObject *args)
-{
-    RTI::RegionToken token;
-
-    try {
-        RTI::Region *result = self->ob_rtia->getRegion(token);
-
-    }
-    CATCH_RTI_EXCEPTION(FederateNotExecutionMember)
-    CATCH_RTI_EXCEPTION(ConcurrentAccessAttempted)
-    CATCH_RTI_EXCEPTION(RegionNotKnown)
-    CATCH_RTI_EXCEPTION2(RTI::Exception, rti_RTIInternalError)
-
-    return NULL;
 }
 
 static PyMethodDef rtia_methods[] =
@@ -2949,12 +3053,6 @@ static PyMethodDef rtia_methods[] =
     {"tick",
         (PyCFunction)rtia_tick, METH_VARARGS,
         ""},
-    {"getRegionToken",
-        (PyCFunction)rtia_getRegionToken, METH_VARARGS,
-        ""},
-    {"getRegion",
-        (PyCFunction)rtia_getRegion, METH_VARARGS,
-        ""},
     {NULL} // sentinel
 };
 
@@ -3025,4 +3123,4 @@ RTIAmbassadorInitializer::on_init(PyObject* module)
     PyModule_AddObject(module, "RTIAmbassador", (PyObject *)&RTIAmbassadorObjectType);
 }
 
-// $Id: rtiambassador.cpp,v 1.2 2008/10/02 10:04:04 gotthardp Exp $
+// $Id: rtiambassador.cpp,v 1.3 2008/10/09 16:50:58 gotthardp Exp $

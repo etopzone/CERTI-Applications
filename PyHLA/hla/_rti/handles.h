@@ -11,7 +11,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  *
- * $Id: handles.h,v 1.3 2008/10/02 10:04:04 gotthardp Exp $
+ * $Id: handles.h,v 1.4 2008/10/09 16:50:58 gotthardp Exp $
  */
 
 #ifndef RTI_HANDLES_H
@@ -20,8 +20,8 @@
 #include "module.h"
 
 typedef struct {
-  PyObject_HEAD
-  unsigned long ob_ival;
+    PyObject_HEAD
+    RTI::ULong ob_ival;
 } RtiULongHandleObject;
 
 extern PyTypeObject RtiObjectClassHandleType;
@@ -80,6 +80,30 @@ PyObject *EventRetractionHandle_ToPython(RTI::EventRetractionHandle *value);
 
 int RTIfedTime_FromPython(PyObject *value, RTIfedTime *result);
 
+typedef struct {
+    PyObject_HEAD
+    RTI::RegionToken ob_handle;
+    RTI::Region *ob_value;
+} RegionHandleObject;
+
+extern PyTypeObject RegionHandleType;
+
+int RegionHandle_FromPython(RegionHandleObject *value, RTI::Region **result);
+
+typedef struct {
+    PyObject_HEAD
+    RTI::Long ob_ival;
+} RtiLongHandleObject;
+
+extern PyTypeObject RtiSpaceHandleType;
+extern PyTypeObject RtiDimensionHandleType;
+
+int RtiSpaceHandle_FromPython(RtiLongHandleObject *value, RTI::SpaceHandle *result);
+PyObject *RtiSpaceHandle_ToPython(RTI::SpaceHandle *value);
+
+int RtiDimensionHandle_FromPython(RtiULongHandleObject *value, RTI::DimensionHandle *result);
+PyObject *RtiDimensionHandle_ToPython(RTI::DimensionHandle *value);
+
 #endif // RTI_HANDLES_H
 
-// $Id: handles.h,v 1.3 2008/10/02 10:04:04 gotthardp Exp $
+// $Id: handles.h,v 1.4 2008/10/09 16:50:58 gotthardp Exp $
