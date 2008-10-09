@@ -11,7 +11,7 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # Lesser General Public License for more details.
 #
-# $Id: record.py,v 1.1 2008/09/25 17:17:44 gotthardp Exp $
+# $Id: record.py,v 1.2 2008/10/09 16:49:47 gotthardp Exp $
 
 from hla._omt import *
 from basic import *
@@ -93,7 +93,7 @@ class HLAvariantRecord:
                 return fieldName, fieldType
         # step 2: look for the 'HLAother' symbol
         for fieldEnumerator, fieldName, fieldType in self.alternatives:
-            if(fieldEnumerator == None):
+            if(None in fieldEnumerator):
                 return fieldName, fieldType
         # not found
         return None, None
@@ -121,4 +121,4 @@ class HLAvariantRecord:
             buffer += padding(len(buffer), self.octetBoundary)*'\0'
         return value, size
 
-# $Id: record.py,v 1.1 2008/09/25 17:17:44 gotthardp Exp $
+# $Id: record.py,v 1.2 2008/10/09 16:49:47 gotthardp Exp $
