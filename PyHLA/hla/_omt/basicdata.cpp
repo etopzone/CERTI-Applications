@@ -11,7 +11,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  *
- * $Id: basicdata.cpp,v 1.1 2008/09/25 17:17:31 gotthardp Exp $
+ * $Id: basicdata.cpp,v 1.2 2008/10/12 13:31:13 gotthardp Exp $
  */
 
 // note: you must include Python.h before any standard headers are included
@@ -132,8 +132,8 @@ getUnpackBuffer(PyObject *args)
 {
     const char *buffer;
     int size;
-    Py_ssize_t offset = 0;
-    if(!PyArg_ParseTuple(args, "s#|n", &buffer, &size, &offset))
+    long int offset = 0;
+    if(!PyArg_ParseTuple(args, "s#|l", &buffer, &size, &offset))
         return NULL;
     if(size-offset < (int)sizeof(T)) {
         PyErr_Format(PyExc_TypeError, "need at least %d bytes", offset+sizeof(T));
@@ -144,11 +144,11 @@ getUnpackBuffer(PyObject *args)
 }
 
 static PyObject *
-createObjectSizeTuple(PyObject *object, size_t size)
+createObjectSizeTuple(PyObject *object, long int size)
 {
     return PyTuple_Pack(2,
         object,
-        PyInt_FromSize_t(size));
+        PyInt_FromLong(size));
 }
 
 /*
@@ -581,4 +581,4 @@ BasicDataInitializer::on_init(PyObject *module)
         add_encoding(dict, pos->co_name, pos->co_size, pos->co_methods);
 }
 
-// $Id: basicdata.cpp,v 1.1 2008/09/25 17:17:31 gotthardp Exp $
+// $Id: basicdata.cpp,v 1.2 2008/10/12 13:31:13 gotthardp Exp $

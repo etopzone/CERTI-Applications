@@ -11,7 +11,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  *
- * $Id: rtiambassador.cpp,v 1.3 2008/10/09 16:50:58 gotthardp Exp $
+ * $Id: rtiambassador.cpp,v 1.4 2008/10/12 13:31:14 gotthardp Exp $
  */
 
 // note: you must include Python.h before any standard headers are included
@@ -1645,7 +1645,7 @@ rtia_createRegion(RTIAmbassadorObject *self, PyObject *args)
         RTI::ULong numberOfExtents = PySequence_Size(theDimensions);
         RTI::Region *regionData = self->ob_rtia->createRegion(theSpace, numberOfExtents);
 
-        for (Py_ssize_t pos = 0; pos < numberOfExtents; pos++) {
+        for (RTI::ULong pos = 0; pos < numberOfExtents; pos++) {
             RTI::DimensionHandle dimension;
             unsigned long lowerBound;
             unsigned long upperBound;
@@ -3123,4 +3123,4 @@ RTIAmbassadorInitializer::on_init(PyObject* module)
     PyModule_AddObject(module, "RTIAmbassador", (PyObject *)&RTIAmbassadorObjectType);
 }
 
-// $Id: rtiambassador.cpp,v 1.3 2008/10/09 16:50:58 gotthardp Exp $
+// $Id: rtiambassador.cpp,v 1.4 2008/10/12 13:31:14 gotthardp Exp $

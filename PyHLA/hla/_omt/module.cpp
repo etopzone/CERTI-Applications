@@ -11,14 +11,12 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  *
- * $Id: module.cpp,v 1.1 2008/09/25 17:17:32 gotthardp Exp $
+ * $Id: module.cpp,v 1.2 2008/10/12 13:31:13 gotthardp Exp $
  */
 
 // note: you must include Python.h before any standard headers are included
 #include <Python.h>
 #include <structmember.h>
-
-#include <expat.h>
 
 #include "module.h"
 
@@ -65,4 +63,4 @@ init_omt(void)
     DataInitializer::init(module);
 }
 
-// $Id: module.cpp,v 1.1 2008/09/25 17:17:32 gotthardp Exp $
+// $Id: module.cpp,v 1.2 2008/10/12 13:31:13 gotthardp Exp $
