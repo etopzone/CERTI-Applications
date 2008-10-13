@@ -11,7 +11,7 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # Lesser General Public License for more details.
 #
-# $Id: record.py,v 1.2 2008/10/09 16:49:47 gotthardp Exp $
+# $Id: record.py,v 1.3 2008/10/13 17:15:41 gotthardp Exp $
 
 from hla._omt import *
 from basic import *
@@ -30,7 +30,7 @@ from basic import *
 # +-------------+---------+--------------+-----------+----------------+-----------+
 
 class HLAfixedRecord:
-    def __init__(self, fields):
+    def __init__(self, typeName, fields):
         self.fields = fields
         # to enable late binding, the octetBoundary cannot be evaluated now
         self._octetBoundary = None
@@ -72,7 +72,7 @@ class HLAfixedRecord:
 
 # Enumerator = None ... HLAother
 class HLAvariantRecord:
-    def __init__(self, discriminant, alternatives):
+    def __init__(self, typeName, discriminant, alternatives):
         self.discriminantName, self.discriminantType = discriminant
         self.alternatives = alternatives
         # to enable late binding, the octetBoundary cannot be evaluated now
@@ -121,4 +121,4 @@ class HLAvariantRecord:
             buffer += padding(len(buffer), self.octetBoundary)*'\0'
         return value, size
 
-# $Id: record.py,v 1.2 2008/10/09 16:49:47 gotthardp Exp $
+# $Id: record.py,v 1.3 2008/10/13 17:15:41 gotthardp Exp $

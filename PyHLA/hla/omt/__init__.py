@@ -11,17 +11,20 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # Lesser General Public License for more details.
 #
-# $Id: __init__.py,v 1.1 2008/09/25 17:17:42 gotthardp Exp $
+# $Id: __init__.py,v 1.2 2008/10/13 17:15:39 gotthardp Exp $
 
 import xml.sax.handler
 
 from hla._omt import *
+from enumerated import HLAenumerated
 from array import HLAfixedArray, HLAvariableArray
 from record import HLAfixedRecord, HLAvariantRecord
 
 class TypeParser(xml.sax.handler.ContentHandler):
     def __init__(self):
-        self.inRecord = False
+        self.inEnumerated = False
+        self.inFixedRecord = False
+        self.inVariantRecord = False
 
     def startElement(self, name, attributes):
 
@@ -30,7 +33,15 @@ class TypeParser(xml.sax.handler.ContentHandler):
             globals()[attributes["name"]] = HLAencoding(attributes["representation"])
 
         elif name == "enumeratedData":
-            pass
+            self.inEnumerated = True
+            self.enumName = attributes["name"]
+            self.enumRepresentation = HLAencoding(attributes["representation"])
+            self.enumEnumerators = []
+
+        elif name == "enumerator":
+            if not self.inEnumerated:
+                return
+    	    self.enumEnumerators += [(attributes["name"],int(attributes["values"]))]
 
         elif name == "arrayData":
             if(attributes["cardinality"].lower() == "dynamic"):
@@ -38,39 +49,66 @@ class TypeParser(xml.sax.handler.ContentHandler):
             else:
                 cardinality = attributes["cardinality"]
 
-            # name = HLAfixedArray(HLAinteger32LE, 3)
-            globals()[attributes["name"]] = HLAencoding(
-                attributes["encoding"], (HLAencoding(attributes["dataType"]), cardinality))
+            # name = HLAfixedArray("name", HLAinteger32LE, 3)
+            globals()[attributes["name"]] = HLAencoding(attributes["encoding"],
+                (attributes["name"], HLAencoding(attributes["dataType"]), cardinality))
 
         elif name == "fixedRecordData":
-            self.inRecord = True
+            self.inFixedRecord = True
     	    self.recordName = attributes["name"]
     	    self.recordFields = []
 
         elif name == "field":
-            if not self.inRecord:
+            if not self.inFixedRecord:
                 return
     	    self.recordFields += [(attributes["name"], HLAencoding(attributes["dataType"]))]
 
         elif name == "variantRecordData":
-            pass
+            self.inVariantRecord = True
+            self.recordName = attributes["name"]
+            self.recordEncoding = attributes["encoding"]
+            self.recordDiscriminant = (attributes["discriminant"], attributes["dataType"])
+            self.recordFields = []
 
         elif name == "alternative":
-            pass
+            if not self.inVariantRecord:
+                return
+            self.recordFields += [(attributes["enumerator"].split(','),
+                attributes["name"], HLAencoding(attributes["dataType"]))]
 
     def endElement(self, name):
 
-        if name == "fixedRecordData":
-            if not self.inRecord:
+        if name == "enumeratedData":
+            if not self.inEnumerated:
                 return
 
-            # name = HLAfixedRecord([("X",HLAinteger32LE), ("Y",HLAinteger32LE)])
-            globals()[self.recordName] = HLAfixedRecord(self.recordFields)
-            self.inRecord = False
+            # name = HLAenumerated("name",
+            #     HLAinteger32BE, {"HLAfalse":0, "HLAtrue":1})
+            globals()[self.enumName] = HLAenumerated(
+                self.enumName, self.enumRepresentation, dict(self.enumEnumerators))
+            self.inEnumerated = False
+
+        elif name == "fixedRecordData":
+            if not self.inFixedRecord:
+                return
+
+            # name = HLAfixedRecord("name", [("X",HLAinteger32LE), ("Y",HLAinteger32LE)])
+            globals()[self.recordName] = HLAfixedRecord(self.recordName, self.recordFields)
+            self.inFixedRecord = False
+
+        elif name == "variantRecordData":
+            if not self.inVariantRecord:
+                return
+
+            # name = HLAvariantRecord("name", ("Axis",AxisEnum),
+            #     [(["TX"],"X",HLAinteger32LE), (["TY"],"Y",HLAinteger32LE)])
+            globals()[self.recordName] = HLAencoding(self.recordEncoding,
+                (self.recordName, self.recordDiscriminant, self.recordFields))
+            self.inVariantRecord = False
 
 class HLAencoding:
-    def __init__(self, typeName, typeParameters = None):
-        self.typeName = typeName
+    def __init__(self, representation, typeParameters = None):
+        self.representation = representation
         self.typeParameters = typeParameters
         self._encoding = None
 
@@ -78,9 +116,9 @@ class HLAencoding:
     def encoding(self):
         if(self._encoding == None):
             if(self.typeParameters == None):
-                self._encoding = globals()[self.typeName]
+                self._encoding = globals()[self.representation]
             else:
-                self._encoding = globals()[self.typeName](self.typeParameters)
+                self._encoding = globals()[self.representation](self.typeParameters)
         return self._encoding;
 
     @property
@@ -100,4 +138,4 @@ def HLAuse(filename):
     parser.setContentHandler(handler)
     parser.parse(filename)
 
-# $Id: __init__.py,v 1.1 2008/09/25 17:17:42 gotthardp Exp $
+# $Id: __init__.py,v 1.2 2008/10/13 17:15:39 gotthardp Exp $

@@ -83,11 +83,38 @@ is equivalent to the following OMT DIF
 \end{verbatim}
 \end{classdesc}
 
-\begin{classdesc}{HLAfixedArray}{typename, cardinality}
+\begin{classdesc}{HLAenumerated}{name, representation, \{enumeratorName:value\}}
+Defines an enumeration.
+
+\begin{verbatim}
+HLAboolean = fom.HLAenumerated("HLAboolean",
+    HLAinteger32BE, {"HLAfalse":0, "HLAtrue":1})
+\end{verbatim}
+is equivalent to the following OMT DIF
+\begin{verbatim}
+<enumeratedData name="HLAboolean" representation="HLAinteger32BE">
+    <enumerator name="HLAfalse" values="0"/>
+    <enumerator name="HLAtrue" values="1"/>
+</enumeratedData>
+\end{verbatim}
+
+The enumerators are accessible via attributes. The values behave like integers,
+but don't support arithmetic.
+\begin{verbatim}
+print HLAboolean.HLAtrue
+\end{verbatim}
+
+The \method{pack} function takes an enumerator, or an integer value.
+\begin{verbatim}
+encodedValue = fom.HLAboolean.pack(HLAboolean.HLAtrue)
+\end{verbatim}
+\end{classdesc}
+
+\begin{classdesc}{HLAfixedArray}{name, elementType, cardinality}
 Defines a fixed-length array.
 
 \begin{verbatim}
-arrayType = fom.HLAfixedArray(fom.HLAfloat32LE, 3)
+arrayType = fom.HLAfixedArray("arrayType", fom.HLAfloat32LE, 3)
 \end{verbatim}
 is equivalent to the following OMT DIF
 \begin{verbatim}
@@ -101,11 +128,13 @@ encodedValue = fom.arrayType.pack([3.14, 17, 42])
 \end{verbatim}
 \end{classdesc}
 
-\begin{classdesc}{HLAvariableArray}{typename, cardinality = None}
+\begin{classdesc}{HLAvariableArray}{name, elementType, cardinality = None}
 Defines a variable-length array.
 
+Dynamic cardinality is represented by the \class{None} value.
+
 \begin{verbatim}
-newType = fom.HLAvariableArray(fom.HLAinteger16BE, None)
+newType = fom.HLAvariableArray("newType", fom.HLAinteger16BE, None)
 \end{verbatim}
 is equivalent to the following OMT DIF
 \begin{verbatim}
@@ -114,11 +143,11 @@ is equivalent to the following OMT DIF
 \end{verbatim}
 \end{classdesc}
 
-\begin{classdesc}{HLAfixedRecord}{[(fieldName, fieldType)]}
-Defines a fixed array.
+\begin{classdesc}{HLAfixedRecord}{name, [(fieldName, fieldType)]}
+Defines a fixed record.
 
 \begin{verbatim}
-recordType = fom.HLAfixedRecord(
+recordType = fom.HLAfixedRecord("recordType",
     [('X',fom.HLAinteger16BE), ('Y',fom.HLAfloat32BE)])
 \end{verbatim}
 is equivalent to the following OMT DIF
@@ -135,4 +164,28 @@ encodedValue = fom.recordType.pack({'X':0, 'Y':3.12})
 \end{verbatim}
 \end{classdesc}
 
-% $Id: module.tex,v 1.2 2008/09/26 14:12:00 gotthardp Exp $
+\begin{classdesc}{HLAvariantRecord}{name, (discriminant, dataType), [([enumerators], altName, altType)]}
+Defines a variant record.
+
+\begin{verbatim}
+recordType = fom.HLAvariantRecord("recordType", ("Axis",AxisEnum),
+    [(["TX"],"X",HLAinteger32LE), (["TY",None],"Y",HLAinteger32LE)])
+\end{verbatim}
+is equivalent to the following OMT DIF
+\begin{verbatim}
+<variantRecordData name="recordType"
+    encoding="HLAvariantRecord" dataType="AxisEnum" discriminant="Axis">
+    <alternative enumerator="TX" name="X" dataType="HLAinteger32LE"/>
+    <alternative enumerator="TY,HLAother" name="Y" dataType="HLAinteger32LE"/>
+</variantRecordData>
+\end{verbatim}
+
+The \constant{HLAother} enumerator is represented by the \class{None} value.
+
+The \method{pack} function takes a mapping object.
+\begin{verbatim}
+encodedValue = fom.recordType.pack({'Axis':AxisEnum.TX, 'X':7.2})
+\end{verbatim}
+\end{classdesc}
+
+% $Id: module.tex,v 1.3 2008/10/13 17:15:35 gotthardp Exp $

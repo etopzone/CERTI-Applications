@@ -3,8 +3,9 @@
 \begin{classdesc}{RTIAmbassador}{}
 Provides RTI ambassador services.
 
+For example
 \begin{verbatim}
-rtia = hla.rti.RTIAmbassador()
+rtia = hla.RTIAmbassador()
 rtia.joinFederationExecution("python-01", "MyFederation", fed)
 \end{verbatim}
 
@@ -37,11 +38,12 @@ rtia.joinFederationExecution("python-01", "MyFederation", fed)
 
 \begin{methoddesc}{createFederationExecution}{executionName, FED}
 
+For example
 \begin{verbatim} 
 try:
     rtia.createFederationExecution("MyFederation", "model.fed")
     print "Federation created."
-except hla.rti.FederationExecutionAlreadyExists:
+except hla.FederationExecutionAlreadyExists:
     print "Federation already exists."
 \end{verbatim}
 
@@ -75,6 +77,26 @@ May raise
 \end{methoddesc}
 
 \begin{methoddesc}{resignFederationExecution}{resignAction}
+The \class{ResignAction} class provides different resign actions.
+
+\begin{tableii}{l|l}{constant}{resignAction}{Description}
+\lineii{ReleaseAttributes}
+    {The resigning federate releases control of all owned attributes.}
+\lineii{DeleteObjects}
+    {The resigning federate deletes all objects for which it holds the
+    privilege to delete.}
+\lineii{DeleteObjectsAndReleaseAttributes}
+    {The resigning federate deletes all objects for which it holds the
+    privilege to delete and then releases ownership of any remaining
+    owned attributes.}
+\lineii{NoAction}
+    {The attributes and objects owned by the federate become "orphaned".}
+\end{tableii}
+
+For example
+\begin{verbatim} 
+rtia.resignFederationExecution(hla.ResignAction.DeleteObjects)
+\end{verbatim}
 
 May raise
 \exception{FederateOwnsAttributes},
@@ -139,6 +161,7 @@ May raise
 \begin{methoddesc}{getObjectClassHandle}{objectName}
 Returns object class handle.
 
+For example
 \begin{verbatim} 
 aircraftHandle = rtia.getObjectClassHandle("Aircraft")
 \end{verbatim}
@@ -161,6 +184,7 @@ May raise
 \begin{methoddesc}{getAttributeHandle}{attributeName, objectClass}
 Returns class attribute handle.
 
+For example
 \begin{verbatim} 
 aircraftHandle = rtia.getObjectClassHandle("Aircraft")
 wordLocationHandle = rtia.getAttributeHandle("WorldLocation", aircraftHandle)
@@ -185,6 +209,7 @@ May raise
 
 \begin{methoddesc}{publishObjectClass}{objectClass, (attribute)}
 
+For example
 \begin{verbatim} 
 wordLocationHandle = rtia.getAttributeHandle("WorldLocation", aircraftHandle)
 rtia.publishObjectClass(aircraftHandle, [wordLocationHandle])
@@ -214,6 +239,7 @@ May raise
 
 \begin{methoddesc}{subscribeObjectClassAttributes}{objectClass, (attribute), active=True}
 
+For example
 \begin{verbatim} 
 wordLocationHandle = rtia.getAttributeHandle("WorldLocation", aircraftHandle)
 rtia.subscribeObjectClassAttributes(aircraftHandle, [wordLocationHandle])
@@ -400,6 +426,7 @@ May raise
 
 Returns eventRetraction handle.
 
+For example
 \begin{verbatim} 
 rtia.updateAttributeValues(thisObject,
     {wordLocationHandle:fom.WorldLocationStruct.pack({"X":1,"Y":2,"Z":3})},
@@ -1567,4 +1594,4 @@ May raise
 
 \end{classdesc}
 
-% $Id: rtiambassador.tex,v 1.4 2008/10/09 16:50:58 gotthardp Exp $
+% $Id: rtiambassador.tex,v 1.5 2008/10/13 17:15:38 gotthardp Exp $

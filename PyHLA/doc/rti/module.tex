@@ -6,13 +6,13 @@ one method in the Python API. This may differ from the C++ API.
 
 First, import the module functions
 \begin{verbatim}
-import hla.rti
+import hla.rti as hla
 \end{verbatim}
 
 Each federate should subclass the \class{FederateAmbassador} and implement some
 of the federate ambassador services.
 \begin{verbatim}
-class MyAmbassador(hla.rti.FederateAmbassador):
+class MyAmbassador(hla.FederateAmbassador):
     def discoverObjectInstance(self, object, objectClass, objectName):
         print "DISCOVERED", objectName
 \end{verbatim}
@@ -22,7 +22,7 @@ Services of a RTI ambassador are provided by the \class{RTIAmbassador} class.
 \begin{verbatim}
 fed = MyAmbassador()
 
-rtia = hla.rti.RTIAmbassador()
+rtia = hla.RTIAmbassador()
 rtia.joinFederationExecution("python-01", "MyFederation", fed)
 ...
 
@@ -38,4 +38,4 @@ rtia.resignFederationExecution()
 \input{rti/rtiambassador}
 \input{rti/federateambassador}
 
-% $Id: module.tex,v 1.2 2008/09/26 14:12:00 gotthardp Exp $
+% $Id: module.tex,v 1.3 2008/10/13 17:15:38 gotthardp Exp $

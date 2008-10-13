@@ -11,7 +11,7 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # Lesser General Public License for more details.
 #
-# $Id: array.py,v 1.1 2008/09/25 17:17:43 gotthardp Exp $
+# $Id: array.py,v 1.2 2008/10/13 17:15:39 gotthardp Exp $
 
 from hla._omt import *
 from basic import *
@@ -26,7 +26,7 @@ from basic import *
 # +-------------+----------------+-------------+-----------------+-----------+
 
 class HLAfixedArray:
-    def __init__(self, elementType, cardinality):
+    def __init__(self, typeName, elementType, cardinality):
         self.elementType = elementType
         if(cardinality == None):
             raise TypeError("HLAfixedArray cannot have dynamic cardinality")
@@ -60,7 +60,7 @@ class HLAfixedArray:
 class HLAvariableArray:
     # if cardinality = None, any cardinality is accepted (Dynamic cardinality)
     # note: we support HLAvariableArray encoding with fixed cardinality
-    def __init__(self, elementType, cardinality = None):
+    def __init__(self, typeName, elementType, cardinality = None):
         self.elementType = elementType
         self.cardinality = cardinality
 
@@ -92,4 +92,4 @@ class HLAvariableArray:
 
         return value, size
 
-# $Id: array.py,v 1.1 2008/09/25 17:17:43 gotthardp Exp $
+# $Id: array.py,v 1.2 2008/10/13 17:15:39 gotthardp Exp $
