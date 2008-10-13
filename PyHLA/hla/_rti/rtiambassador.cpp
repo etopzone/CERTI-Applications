@@ -11,7 +11,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  *
- * $Id: rtiambassador.cpp,v 1.4 2008/10/12 13:31:14 gotthardp Exp $
+ * $Id: rtiambassador.cpp,v 1.5 2008/10/13 11:35:11 gotthardp Exp $
  */
 
 // note: you must include Python.h before any standard headers are included
@@ -2090,9 +2090,12 @@ rtia_getObjectClassName(RTIAmbassadorObject *self, PyObject *args)
         return NULL;
 
     try {
-        char *result = self->ob_rtia->getObjectClassName(theHandle);
+        char *theName = self->ob_rtia->getObjectClassName(theHandle);
 
-        return PyString_FromString(result);
+        PyObject *result = PyString_FromString(theName);
+        delete[] theName;
+
+        return result;
     }
     CATCH_RTI_EXCEPTION(ObjectClassNotDefined)
     CATCH_RTI_EXCEPTION(FederateNotExecutionMember)
@@ -2141,9 +2144,12 @@ rtia_getAttributeName(RTIAmbassadorObject *self, PyObject *args)
         return NULL;
 
     try {
-        char *result = self->ob_rtia->getAttributeName(theHandle, whichClass);
+        char *theName = self->ob_rtia->getAttributeName(theHandle, whichClass);
 
-        return PyString_FromString(result);
+        PyObject *result = PyString_FromString(theName);
+        delete[] theName;
+
+        return result;
     }
     CATCH_RTI_EXCEPTION(ObjectClassNotDefined)
     CATCH_RTI_EXCEPTION(AttributeNotDefined)
@@ -2187,9 +2193,12 @@ rtia_getInteractionClassName(RTIAmbassadorObject *self, PyObject *args)
         return NULL;
 
     try {
-        char *result = self->ob_rtia->getInteractionClassName(theHandle);
+        char *theName = self->ob_rtia->getInteractionClassName(theHandle);
 
-        return PyString_FromString(result);
+        PyObject *result = PyString_FromString(theName);
+        delete[] theName;
+
+        return result;
     }
     CATCH_RTI_EXCEPTION(InteractionClassNotDefined)
     CATCH_RTI_EXCEPTION(FederateNotExecutionMember)
@@ -2238,9 +2247,12 @@ rtia_getParameterName(RTIAmbassadorObject *self, PyObject *args)
         return NULL;
 
     try {
-        char *result = self->ob_rtia->getParameterName(theHandle, whichClass);
+        char *theName = self->ob_rtia->getParameterName(theHandle, whichClass);
 
-        return PyString_FromString(result);
+        PyObject *result = PyString_FromString(theName);
+        delete[] theName;
+
+        return result;
     }
     CATCH_RTI_EXCEPTION(InteractionClassNotDefined)
     CATCH_RTI_EXCEPTION(InteractionParameterNotDefined)
@@ -2284,9 +2296,12 @@ rtia_getObjectInstanceName(RTIAmbassadorObject *self, PyObject *args)
         return NULL;
 
     try {
-        char *result = self->ob_rtia->getObjectInstanceName(theHandle);
+        char *theName = self->ob_rtia->getObjectInstanceName(theHandle);
 
-        return PyString_FromString(result);
+        PyObject *result = PyString_FromString(theName);
+        delete[] theName;
+
+        return result;
     }
     CATCH_RTI_EXCEPTION(ObjectNotKnown)
     CATCH_RTI_EXCEPTION(FederateNotExecutionMember)
@@ -2329,9 +2344,12 @@ rtia_getRoutingSpaceName(RTIAmbassadorObject *self, PyObject *args)
         return NULL;
 
     try {
-        char *result = self->ob_rtia->getRoutingSpaceName(theHandle);
+        char *theName = self->ob_rtia->getRoutingSpaceName(theHandle);
 
-        return PyString_FromString(result);
+        PyObject *result = PyString_FromString(theName);
+        delete[] theName;
+
+        return result;
     }
     CATCH_RTI_EXCEPTION(SpaceNotDefined)
     CATCH_RTI_EXCEPTION(FederateNotExecutionMember)
@@ -2380,9 +2398,12 @@ rtia_getDimensionName(RTIAmbassadorObject *self, PyObject *args)
         return NULL;
 
     try {
-        char *result = self->ob_rtia->getDimensionName(theHandle, whichSpace);
+        char *theName = self->ob_rtia->getDimensionName(theHandle, whichSpace);
 
-        return PyString_FromString(result);
+        PyObject *result = PyString_FromString(theName);
+        delete[] theName;
+
+        return result;
     }
     CATCH_RTI_EXCEPTION(SpaceNotDefined)
     CATCH_RTI_EXCEPTION(DimensionNotDefined)
@@ -2498,9 +2519,12 @@ rtia_getTransportationName(RTIAmbassadorObject *self, PyObject *args)
         return NULL;
 
     try {
-        char *result = self->ob_rtia->getTransportationName(theHandle);
+        char *theName = self->ob_rtia->getTransportationName(theHandle);
 
-        return PyString_FromString(result);
+        PyObject *result = PyString_FromString(theName);
+        delete[] theName;
+
+        return result;
     }
     CATCH_RTI_EXCEPTION(InvalidTransportationHandle)
     CATCH_RTI_EXCEPTION(FederateNotExecutionMember)
@@ -2543,9 +2567,12 @@ rtia_getOrderingName(RTIAmbassadorObject *self, PyObject *args)
         return NULL;
 
     try {
-        char *result = self->ob_rtia->getOrderingName(theHandle);
+        char *theName = self->ob_rtia->getOrderingName(theHandle);
 
-        return PyString_FromString(result);
+        PyObject *result = PyString_FromString(theName);
+        delete[] theName;
+
+        return result;
     }
     CATCH_RTI_EXCEPTION(InvalidOrderingHandle)
     CATCH_RTI_EXCEPTION(FederateNotExecutionMember)
@@ -3123,4 +3150,4 @@ RTIAmbassadorInitializer::on_init(PyObject* module)
     PyModule_AddObject(module, "RTIAmbassador", (PyObject *)&RTIAmbassadorObjectType);
 }
 
-// $Id: rtiambassador.cpp,v 1.4 2008/10/12 13:31:14 gotthardp Exp $
+// $Id: rtiambassador.cpp,v 1.5 2008/10/13 11:35:11 gotthardp Exp $
