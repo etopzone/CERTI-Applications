@@ -54,11 +54,24 @@ The \module{PyHLA} module provides Python wrapper for the C++ HLA API, and
 
 \section{Introduction}
 
-The \module{PyHLA} module provides Python wrapper for the C++ HLA API, and
-\method{pack}/\method{unpack} methods for IEEE 1516.2 data types.
-
+The \module{PyHLA} module provides Python language bindings for the
+Modeling\&Simulation High Level Architecture (M\&S HLA).
 The M\&S HLA is a general purpose architecture for distributed computer
 simulation systems. It's defined in [HLA1.3] and [IEEE 1516.1].
+
+The \module{PyHLA} module provides
+\begin{itemize}
+\item Python language HLA API, that is compliant with the HLA 1.3 standard
+(implemented as a Python wrapper for the C++ HLA API),
+\item \method{pack}/\method{unpack} methods providing IEEE 1516.2 encoding,
+\item \function{HLAuse} function that is able to directly import OMT DIF
+datatypes (the XML format described in IEEE 1516.2)
+\end{itemize}
+
+The \module{PyHLA} module can be build on a variety of platform/compiler
+combinations, including Windows, Linux and Sun Solaris.
+The module relies on the Classic Python interpreter (version 2.4 or higher)
+and requires a HLA 1.3 compliant RTI with C++ DLC API.
 
 \subsection{Motivation}
 
@@ -194,4 +207,4 @@ class MyConnection(Connection):
 \input{PyHLA.ind}
 \end{document}
 
-% $Id: PyHLA.tex,v 1.5 2008/10/09 16:50:58 gotthardp Exp $
+% $Id: PyHLA.tex,v 1.6 2008/10/13 17:50:19 gotthardp Exp $
