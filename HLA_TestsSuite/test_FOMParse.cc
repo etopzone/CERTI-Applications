@@ -28,11 +28,17 @@ class ParseFederate : public NullFederateAmbassador {
 private:
     string federationName;
     string federationFile;
+    bool   verbose;
 
 public:
-    ParseFederate(std::string federationFile, std::string federationName) {
-    	federationFile = federationFile;
-        federationName = federationName;
+    ParseFederate(std::string federationFile, std::string federationName, bool verbose=false) {
+    	this->verbose        = verbose;
+    	if (verbose) {
+    		cout << "federationFile = " << federationFile <<endl;
+    		cout << "federationName = " << federationName <<endl;
+    	}
+    	this->federationFile = federationFile;
+        this->federationName = federationName;
     };
 
     virtual ~ParseFederate() throw (RTI::FederateInternalError) {
@@ -101,7 +107,7 @@ private:
     }
 
 protected:
-    RTI::myRTIambassador myRTIamb;
+    RTI::RTIambassador myRTIamb;
 };
 
 int main(int argc, char **argv) {
@@ -111,7 +117,7 @@ int main(int argc, char **argv) {
 	if (cmdline_parser(argc, argv, &args))
 		    exit(EXIT_FAILURE);
 
-    ParseFederate parseFederate(std::string(args.fedfile),
-								std::string(args.fedname));
-    return testFed.main();
+    ParseFederate parseFederate(std::string(args.fedfile_arg),
+								std::string(args.fedname_arg),args.verbose_arg);
+    return parseFederate.main();
 }
