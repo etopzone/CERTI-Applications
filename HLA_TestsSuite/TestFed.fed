@@ -1,0 +1,60 @@
+(FED
+  (Federation TestFed)
+  (FEDversion v1.3)
+  (spaces
+    (space thefinalfrontier
+      (dimension x)
+      (dimension y)
+      (dimension z)
+      (dimension time)
+    )
+    (space a
+       (dimension x)
+       (dimension y)
+    )
+    (space b
+        (dimension x)
+        (dimension y)
+        (dimension z)
+    )
+    (space c
+        (dimension x)
+    )
+    (space ip_space
+       (dimension subnet)
+    )
+  )
+  (objects
+    (class ObjectRoot
+      (attribute privilegeToDelete reliable timestamp)
+      (class RTIprivate)
+      (class UpO 
+		(attribute BufferName reliable timestamp)
+		(attribute ModelName reliable timestamp)
+      );;class UpO
+	(class SimulationModel 
+		(attribute Name reliable receive)
+	) ;;class SimulationModel
+    )
+  )
+  (interactions
+    (class InteractionRoot reliable receive
+      (class RTIprivate reliable receive)
+      (class StartPart reliable timestamp
+	   (parameter ModelName)
+	   (parameter TimeStamp)
+       )
+       (class FinishPart reliable timestamp
+	    (parameter modelName)
+	    (parameter timeStamp)
+          (parameter test)
+       )
+    )
+  )
+)
+
+
+
+
+
+

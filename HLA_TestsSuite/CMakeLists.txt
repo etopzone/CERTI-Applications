@@ -185,7 +185,7 @@ HLATestsSuite_ADD_TEST(test_NotificationSwitches
 # ADD TEST Parse FOM file 
 #########################################################################                   
 HLATestsSuite_ADD_TEST(test_FOMParse
-                      FED_FILE test_NotificationSwitches.fed
+                      FED_FILE TestFed.fed BuggyFed.fed
                       SOURCE_FILES test_FOMParse.cc test_FOMParse_cmdline.h test_FOMParse_cmdline.c 
                       COMMENTS "A FOM parsing test")
 
