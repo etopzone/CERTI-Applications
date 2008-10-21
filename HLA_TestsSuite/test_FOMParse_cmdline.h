@@ -26,7 +26,7 @@ extern "C" {
 
 #ifndef CMDLINE_PARSER_VERSION
 /** @brief the program version */
-#define CMDLINE_PARSER_VERSION "1.1"
+#define CMDLINE_PARSER_VERSION "0.1"
 #endif
 
 /** @brief Where the command line options are stored */
@@ -40,14 +40,25 @@ struct gengetopt_args_info
   char * fedname_arg;	/**< @brief The Federation name.  */
   char * fedname_orig;	/**< @brief The Federation name original value given at command line.  */
   const char *fedname_help; /**< @brief The Federation name help description.  */
-  short verbose_arg;	/**< @brief verbose mode.  */
-  char * verbose_orig;	/**< @brief verbose mode original value given at command line.  */
+  char * joinname_arg;	/**< @brief The federate name used to join the federation.  */
+  char * joinname_orig;	/**< @brief The federate name used to join the federation original value given at command line.  */
+  const char *joinname_help; /**< @brief The federate name used to join the federation help description.  */
+  char * classname_arg;	/**< @brief The object class to subscribe to (or publish).  */
+  char * classname_orig;	/**< @brief The object class to subscribe to (or publish) original value given at command line.  */
+  const char *classname_help; /**< @brief The object class to subscribe to (or publish) help description.  */
+  char * attname_arg;	/**< @brief The attribute name to subscribe to (or publish).  */
+  char * attname_orig;	/**< @brief The attribute name to subscribe to (or publish) original value given at command line.  */
+  const char *attname_help; /**< @brief The attribute name to subscribe to (or publish) help description.  */
+  int verbose_flag;	/**< @brief verbose mode (default=off).  */
   const char *verbose_help; /**< @brief verbose mode help description.  */
   
   unsigned int help_given ;	/**< @brief Whether help was given.  */
   unsigned int version_given ;	/**< @brief Whether version was given.  */
   unsigned int fedfile_given ;	/**< @brief Whether fedfile was given.  */
   unsigned int fedname_given ;	/**< @brief Whether fedname was given.  */
+  unsigned int joinname_given ;	/**< @brief Whether joinname was given.  */
+  unsigned int classname_given ;	/**< @brief Whether classname was given.  */
+  unsigned int attname_given ;	/**< @brief Whether attname was given.  */
   unsigned int verbose_given ;	/**< @brief Whether verbose was given.  */
 
 } ;

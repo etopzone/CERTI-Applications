@@ -1,10 +1,10 @@
 # This is used by gengetopt to generate test_FOMParse command line parser
 # see http://www.gnu.org/software/gengetopt/gengetopt.html#Basic-Usage
 package		"FOMParse"
-version		"1.1"
+version		"0.1"
 purpose		"test FOM parsing"
 usage		"test_FOMParse -f <fedfile> -n <FederationName> [-v]"
-description	"Use by the CERTI HLA TestSuite"
+description	"A FOM parse test which is part of the CERTI HLA TestsSuite"
 
 # gengetopt options
 args "-F test_FOMParse_cmdline -G"
@@ -12,4 +12,7 @@ args "-F test_FOMParse_cmdline -G"
 # Options
 option "fedfile"  	f "The FED file (XML or FED) to be used" 	string     required
 option "fedname"    n "The Federation name" string required
-option "verbose"  	v "verbose mode" 			short   optional
+option "joinname"   j "The federate name used to join the federation" string  optional
+option "classname"  c "The object class to subscribe to (or publish)" string optional
+option "attname"    a "The attribute name to subscribe to (or publish)" string optional
+option "verbose"  	v "verbose mode" 			flag   off

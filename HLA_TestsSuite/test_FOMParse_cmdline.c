@@ -24,20 +24,23 @@ const char *gengetopt_args_info_purpose = "test FOM parsing";
 
 const char *gengetopt_args_info_usage = "Usage: test_FOMParse -f <fedfile> -n <FederationName> [-v]";
 
-const char *gengetopt_args_info_description = "Use by the CERTI HLA TestSuite";
+const char *gengetopt_args_info_description = "A FOM parse test which is part of the CERTI HLA TestsSuite";
 
 const char *gengetopt_args_info_help[] = {
-  "  -h, --help            Print help and exit",
-  "  -V, --version         Print version and exit",
-  "  -f, --fedfile=STRING  The FED file (XML or FED) to be used",
-  "  -n, --fedname=STRING  The Federation name",
-  "  -v, --verbose=SHORT   verbose mode",
+  "  -h, --help              Print help and exit",
+  "  -V, --version           Print version and exit",
+  "  -f, --fedfile=STRING    The FED file (XML or FED) to be used",
+  "  -n, --fedname=STRING    The Federation name",
+  "  -j, --joinname=STRING   The federate name used to join the federation",
+  "  -c, --classname=STRING  The object class to subscribe to (or publish)",
+  "  -a, --attname=STRING    The attribute name to subscribe to (or publish)",
+  "  -v, --verbose           verbose mode  (default=off)",
     0
 };
 
 typedef enum {ARG_NO
+  , ARG_FLAG
   , ARG_STRING
-  , ARG_SHORT
 } cmdline_parser_arg_type;
 
 static
@@ -62,6 +65,9 @@ void clear_given (struct gengetopt_args_info *args_info)
   args_info->version_given = 0 ;
   args_info->fedfile_given = 0 ;
   args_info->fedname_given = 0 ;
+  args_info->joinname_given = 0 ;
+  args_info->classname_given = 0 ;
+  args_info->attname_given = 0 ;
   args_info->verbose_given = 0 ;
 }
 
@@ -72,7 +78,13 @@ void clear_args (struct gengetopt_args_info *args_info)
   args_info->fedfile_orig = NULL;
   args_info->fedname_arg = NULL;
   args_info->fedname_orig = NULL;
-  args_info->verbose_orig = NULL;
+  args_info->joinname_arg = NULL;
+  args_info->joinname_orig = NULL;
+  args_info->classname_arg = NULL;
+  args_info->classname_orig = NULL;
+  args_info->attname_arg = NULL;
+  args_info->attname_orig = NULL;
+  args_info->verbose_flag = 0;
   
 }
 
@@ -85,7 +97,10 @@ void init_args_info(struct gengetopt_args_info *args_info)
   args_info->version_help = gengetopt_args_info_help[1] ;
   args_info->fedfile_help = gengetopt_args_info_help[2] ;
   args_info->fedname_help = gengetopt_args_info_help[3] ;
-  args_info->verbose_help = gengetopt_args_info_help[4] ;
+  args_info->joinname_help = gengetopt_args_info_help[4] ;
+  args_info->classname_help = gengetopt_args_info_help[5] ;
+  args_info->attname_help = gengetopt_args_info_help[6] ;
+  args_info->verbose_help = gengetopt_args_info_help[7] ;
   
 }
 
@@ -168,7 +183,12 @@ cmdline_parser_release (struct gengetopt_args_info *args_info)
   free_string_field (&(args_info->fedfile_orig));
   free_string_field (&(args_info->fedname_arg));
   free_string_field (&(args_info->fedname_orig));
-  free_string_field (&(args_info->verbose_orig));
+  free_string_field (&(args_info->joinname_arg));
+  free_string_field (&(args_info->joinname_orig));
+  free_string_field (&(args_info->classname_arg));
+  free_string_field (&(args_info->classname_orig));
+  free_string_field (&(args_info->attname_arg));
+  free_string_field (&(args_info->attname_orig));
   
   
 
@@ -206,8 +226,14 @@ cmdline_parser_dump(FILE *outfile, struct gengetopt_args_info *args_info)
     write_into_file(outfile, "fedfile", args_info->fedfile_orig, 0);
   if (args_info->fedname_given)
     write_into_file(outfile, "fedname", args_info->fedname_orig, 0);
+  if (args_info->joinname_given)
+    write_into_file(outfile, "joinname", args_info->joinname_orig, 0);
+  if (args_info->classname_given)
+    write_into_file(outfile, "classname", args_info->classname_orig, 0);
+  if (args_info->attname_given)
+    write_into_file(outfile, "attname", args_info->attname_orig, 0);
   if (args_info->verbose_given)
-    write_into_file(outfile, "verbose", args_info->verbose_orig, 0);
+    write_into_file(outfile, "verbose", 0, 0 );
   
 
   i = EXIT_SUCCESS;
@@ -1027,8 +1053,8 @@ int update_arg(void *field, char **orig_field,
     val = possible_values[found];
 
   switch(arg_type) {
-  case ARG_SHORT:
-    if (val) *((short *)field) = (short)strtol (val, &stop_char, 0);
+  case ARG_FLAG:
+    *((int *)field) = !*((int *)field);
     break;
   case ARG_STRING:
     if (val) {
@@ -1042,21 +1068,11 @@ int update_arg(void *field, char **orig_field,
     break;
   };
 
-  /* check numeric conversion */
-  switch(arg_type) {
-  case ARG_SHORT:
-    if (val && !(stop_char && *stop_char == '\0')) {
-      fprintf(stderr, "%s: invalid numeric value: %s\n", package_name, val);
-      return 1; /* failure */
-    }
-    break;
-  default:
-    ;
-  };
 
   /* store the original value */
   switch(arg_type) {
   case ARG_NO:
+  case ARG_FLAG:
     break;
   default:
     if (value && orig_field) {
@@ -1114,7 +1130,10 @@ cmdline_parser_internal (int argc, char * const *argv, struct gengetopt_args_inf
         { "version",	0, NULL, 'V' },
         { "fedfile",	1, NULL, 'f' },
         { "fedname",	1, NULL, 'n' },
-        { "verbose",	1, NULL, 'v' },
+        { "joinname",	1, NULL, 'j' },
+        { "classname",	1, NULL, 'c' },
+        { "attname",	1, NULL, 'a' },
+        { "verbose",	0, NULL, 'v' },
         { NULL,	0, NULL, 0 }
       };
 
@@ -1123,7 +1142,7 @@ cmdline_parser_internal (int argc, char * const *argv, struct gengetopt_args_inf
       custom_opterr = opterr;
       custom_optopt = optopt;
 
-      c = custom_getopt_long (argc, argv, "hVf:n:v:", long_options, &option_index);
+      c = custom_getopt_long (argc, argv, "hVf:n:j:c:a:v", long_options, &option_index);
 
       optarg = custom_optarg;
       optind = custom_optind;
@@ -1168,14 +1187,48 @@ cmdline_parser_internal (int argc, char * const *argv, struct gengetopt_args_inf
             goto failure;
         
           break;
+        case 'j':	/* The federate name used to join the federation.  */
+        
+        
+          if (update_arg( (void *)&(args_info->joinname_arg), 
+               &(args_info->joinname_orig), &(args_info->joinname_given),
+              &(local_args_info.joinname_given), optarg, 0, 0, ARG_STRING,
+              check_ambiguity, override, 0, 0,
+              "joinname", 'j',
+              additional_error))
+            goto failure;
+        
+          break;
+        case 'c':	/* The object class to subscribe to (or publish).  */
+        
+        
+          if (update_arg( (void *)&(args_info->classname_arg), 
+               &(args_info->classname_orig), &(args_info->classname_given),
+              &(local_args_info.classname_given), optarg, 0, 0, ARG_STRING,
+              check_ambiguity, override, 0, 0,
+              "classname", 'c',
+              additional_error))
+            goto failure;
+        
+          break;
+        case 'a':	/* The attribute name to subscribe to (or publish).  */
+        
+        
+          if (update_arg( (void *)&(args_info->attname_arg), 
+               &(args_info->attname_orig), &(args_info->attname_given),
+              &(local_args_info.attname_given), optarg, 0, 0, ARG_STRING,
+              check_ambiguity, override, 0, 0,
+              "attname", 'a',
+              additional_error))
+            goto failure;
+        
+          break;
         case 'v':	/* verbose mode.  */
         
         
-          if (update_arg( (void *)&(args_info->verbose_arg), 
-               &(args_info->verbose_orig), &(args_info->verbose_given),
-              &(local_args_info.verbose_given), optarg, 0, 0, ARG_SHORT,
-              check_ambiguity, override, 0, 0,
-              "verbose", 'v',
+          if (update_arg((void *)&(args_info->verbose_flag), 0, &(args_info->verbose_given),
+              &(local_args_info.verbose_given), optarg, 0, 0, ARG_FLAG,
+              check_ambiguity, override, 1, 0, "verbose", 'v',
               additional_error))
             goto failure;
         
