@@ -52,6 +52,9 @@ public:
 		try {
 			myRTIamb.createFederationExecution(federationName.c_str(),
 					federationFile.c_str());
+			if (verbose) {
+				cout << "createFederationExecution SUCCESS." << endl;
+			}
 		} catch ( RTI::FederationExecutionAlreadyExists& e) {
 			cout << "--> Federation already created by another federate." << endl;
 		} catch ( RTI::Exception &e ) {
@@ -85,7 +88,7 @@ public:
 					federationName.c_str(),
 					this);
 			if (verbose) {
-				cout << "Done." << endl;
+				cout << "SUCCESS." << endl;
 			}
 		} catch (RTI::FederateAlreadyExecutionMember& e) {
 			cerr << "Federate already execution member" << endl;
@@ -105,7 +108,7 @@ public:
 			}
 			myRTIamb.resignFederationExecution(RTI::DELETE_OBJECTS_AND_RELEASE_ATTRIBUTES);
 			if (verbose) {
-				cout << "Done." << endl;
+				cout << "SUCCESS." << endl;
 			}
 		} catch ( RTI::Exception &e ) {
 			cerr << "RTI exception: " << e._name << " ["

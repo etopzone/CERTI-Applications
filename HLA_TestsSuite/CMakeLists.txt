@@ -186,7 +186,8 @@ HLATestsSuite_ADD_TEST(test_NotificationSwitches
 #########################################################################                   
 HLATestsSuite_ADD_TEST(test_FOMParse
                       FED_FILE TestFed.fed BuggyFed.fed
-                      SOURCE_FILES test_FOMParse.cc test_FOMParse_cmdline.h test_FOMParse_cmdline.c 
+                      SOURCE_FILES test_FOMParse.cc test_FOMParse_cmdline.h test_FOMParse_cmdline.c
+                      DTEST_SCRIPT dtest_test_FOMParse.py 
                       COMMENTS "A FOM parsing test")
 
 MESSAGE(STATUS "*** ${CMAKE_PROJECT_NAME} has been successfully configured ***")
