@@ -1,0 +1,45 @@
+(FED
+  (Federation Hierarchical)
+  (FEDversion v1.3)
+  (spaces
+    (space deep
+      (dimension x)
+      (dimension y)
+      (dimension z)
+      (dimension time)
+    )    
+  )
+  (objects
+    (class ObjectRoot
+      (attribute privilegeToDelete reliable timestamp)
+      (class RTIprivate)
+      (class L1 
+		(attribute attL1_1 reliable timestamp)
+		(attribute attL1_2 reliable timestamp)		
+		(class L2
+		   (attribute attL2_1 reliable timestamp)
+		   (attribute attL2_2 reliable timestamp)
+		)
+		(class L1
+		   (attribute attL1L1_1 reliable timestamp)		   
+		)
+      )
+  )
+  (interactions
+    (class InteractionRoot reliable receive
+      (class RTIprivate reliable receive)
+      (class IL1 reliable timestamp
+	   (parameter paramIL1_1)
+	   (parameter paramIL1_2)
+	   (parameter timeStamp)
+       )
+       (class IL2 reliable timestamp
+	    (parameter paramIL2_1)
+	    (parameter paramIL2_2)          
+       )
+       (class IL1 reliable timestamp
+        (parameter paramIL1L1_1)
+       )
+    )
+  )
+)
