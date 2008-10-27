@@ -9,7 +9,7 @@ SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR})
 FIND_PACKAGE(PythonLibs REQUIRED)
 FIND_PACKAGE(PythonInterp REQUIRED)
 EXEC_PROGRAM("${PYTHON_EXECUTABLE}"
-    ARGS "-c \"from distutils.sysconfig import get_python_lib; print get_python_lib()\""
+    ARGS "-c 'from distutils.sysconfig import get_python_lib; print get_python_lib().replace(\"\\\\\",\"/\")'"
     OUTPUT_VARIABLE PYTHON_PACKAGES_PATH)
 
 # Use the PYTHON_PACKAGES_PATH as a default CMAKE_INSTALL_PREFIX
@@ -41,4 +41,4 @@ SET(CPACK_SOURCE_IGNORE_FILES
 
 INCLUDE(CPack)
 
-# $Id: CMakeLists.txt,v 1.3 2008/10/03 15:02:22 gotthardp Exp $
+# $Id: CMakeLists.txt,v 1.4 2008/10/27 22:22:47 gotthardp Exp $
