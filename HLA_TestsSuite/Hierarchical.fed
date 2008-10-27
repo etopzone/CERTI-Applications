@@ -9,7 +9,7 @@
       (dimension time)
     )    
   )
-  (objects
+  (Objects
     (class ObjectRoot
       (attribute privilegeToDelete reliable timestamp)
       (class RTIprivate)
@@ -20,26 +20,27 @@
 		   (attribute attL2_1 reliable timestamp)
 		   (attribute attL2_2 reliable timestamp)
 		)
-		(class L1
+		(class L1p
 		   (attribute attL1L1_1 reliable timestamp)		   
 		)
       )
+    )
   )
-  (interactions
+  (Interactions
     (class InteractionRoot reliable receive
       (class RTIprivate reliable receive)
       (class IL1 reliable timestamp
-	   (parameter paramIL1_1)
-	   (parameter paramIL1_2)
-	   (parameter timeStamp)
-       )
-       (class IL2 reliable timestamp
-	    (parameter paramIL2_1)
-	    (parameter paramIL2_2)          
-       )
-       (class IL1 reliable timestamp
-        (parameter paramIL1L1_1)
-       )
+	     (parameter paramIL1_1)
+	     (parameter paramIL1_2)
+	     (parameter timeStamp)	       
+         (class IL2 reliable timestamp
+	        (parameter paramIL2_1)
+	        (parameter paramIL2_2)          
+         )
+         (class IL1p reliable timestamp
+            (parameter paramIL1L1_1)
+         )
+      )
     )
   )
 )
