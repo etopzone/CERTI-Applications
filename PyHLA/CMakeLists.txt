@@ -26,6 +26,7 @@ ENDIF (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 MESSAGE(STATUS "Python modules will be installed in: ${CMAKE_INSTALL_PREFIX}")
 
 ADD_SUBDIRECTORY(hla)
+ADD_SUBDIRECTORY(test)
 
 SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Python bindings for the Modeling and Simulation (M&S) High Level Architecture (HLA)")
 SET(CPACK_PACKAGE_VENDOR "Petr Gotthard")
@@ -48,4 +49,4 @@ SET(CPACK_SOURCE_IGNORE_FILES
 
 INCLUDE(CPack)
 
-# $Id: CMakeLists.txt,v 1.5 2008/10/28 17:00:11 gotthardp Exp $
+# $Id: CMakeLists.txt,v 1.6 2008/10/28 21:13:19 gotthardp Exp $

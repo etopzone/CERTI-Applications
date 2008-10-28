@@ -6,6 +6,7 @@ install_manifest*.txt
 CMakeCache.txt
 CPackConfig.cmake
 CPackSourceConfig.cmake
+.comFedRTI.*
 *.pyc
 *.rpm
 *.zip
