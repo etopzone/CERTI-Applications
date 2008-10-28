@@ -8,13 +8,20 @@ SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR})
 
 FIND_PACKAGE(PythonLibs REQUIRED)
 FIND_PACKAGE(PythonInterp REQUIRED)
-EXEC_PROGRAM("${PYTHON_EXECUTABLE}"
-    ARGS "-c 'from distutils.sysconfig import get_python_lib; print get_python_lib().replace(\"\\\\\",\"/\")'"
-    OUTPUT_VARIABLE PYTHON_PACKAGES_PATH)
+
+IF(NOT PYTHON_PACKAGES_PATH)
+    EXEC_PROGRAM("${PYTHON_EXECUTABLE}"
+        ARGS "-c 'from distutils.sysconfig import get_python_lib; print get_python_lib().replace(\"\\\\\",\"/\")'"
+        OUTPUT_VARIABLE PYTHON_PACKAGES_PATH)
+    MESSAGE(STATUS "Found Python modules: ${PYTHON_PACKAGES_PATH}")
+    SET(PYTHON_PACKAGES_PATH "${PYTHON_PACKAGES_PATH}"
+        CACHE PATH "Path to Python modules.")
+ENDIF(NOT PYTHON_PACKAGES_PATH)
 
 # Use the PYTHON_PACKAGES_PATH as a default CMAKE_INSTALL_PREFIX
 IF (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-    SET(CMAKE_INSTALL_PREFIX "${PYTHON_PACKAGES_PATH}")
+    SET(CMAKE_INSTALL_PREFIX "${PYTHON_PACKAGES_PATH}"
+        CACHE PATH "PyHLA install path prefix, prepended onto install directories." FORCE)
 ENDIF (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 MESSAGE(STATUS "Python modules will be installed in: ${CMAKE_INSTALL_PREFIX}")
 
@@ -41,4 +48,4 @@ SET(CPACK_SOURCE_IGNORE_FILES
 
 INCLUDE(CPack)
 
-# $Id: CMakeLists.txt,v 1.4 2008/10/27 22:22:47 gotthardp Exp $
+# $Id: CMakeLists.txt,v 1.5 2008/10/28 17:00:11 gotthardp Exp $
