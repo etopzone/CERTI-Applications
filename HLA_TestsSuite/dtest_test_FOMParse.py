@@ -67,11 +67,14 @@ if not certi_home_defined:
 rtig = dtest.DTester("RTIG",
                      session=dtest.SSHSessionHandler(rtig_param['user'],host=rtig_param['host']))
 
-firstFederate = dtest.DTester("test_FOMParse1",
+firstFederate = dtest.DTester("test_FOMParse-TestFed",
                                session=dtest.SSHSessionHandler(federate_param['user'],host=federate_param['host']))
 
-otherFederate = dtest.DTester("test_FOMParse2",
-                               session=dtest.SSHSessionHandler(federate_param['user'],host=federate_param['host']))
+FOMFed2 = dtest.DTester("test_FOMParse-RPR-FOM-flat",
+                        session=dtest.SSHSessionHandler(federate_param['user'],host=federate_param['host']))
+
+FOMFed3 = dtest.DTester("test_FOMParse-RPR-FOM-hierarchical",
+                        session=dtest.SSHSessionHandler(federate_param['user'],host=federate_param['host']))
 
 # you may change the default time out value
 rtig.timeout = 40
@@ -87,37 +90,44 @@ dtest.ReusableSequences.addConditionalRunShellScript(rtig,c_shell_cmd="source "+
 rtig.addRunStep("runCommand",command=rtig_param['path'])
 rtig.addRunStep("expectFromCommand",pattern="CERTI RTIG up and running",timeout=5)
 rtig.addRunStep("barrier","RTIG started")
+rtig.addRunStep("expectFromCommand",pattern="200.",timeout=20,silent=True)
+rtig.addRunStep("expectFromCommand",pattern="200.",timeout=20,silent=True)
 rtig.addRunStep("barrier","All Federate(s) ended")
 rtig.addRunStep("terminateCommand")
 rtig.addRunStep("waitCommandTermination")
-rtig.addRunStep("ok",True,"HLA test test_Sync Ends.")
+rtig.addRunStep("ok",True,"HLA test test_FOMParse Ends.")
 
 #dtest.DTester.logger.setLevel(level=logging.DEBUG)
 
 # describe first federate run steps
-firstFederate.timeout = 20
-firstFederate.stdout  = file(firstFederate.name + ".out",'w+')
-firstFederate.stdin   = file(firstFederate.name + ".in",'w+')
-firstFederate.stderr  = file(firstFederate.name + ".err",'w+')
-firstFederate.addRunStep("barrier","RTIG started")
-dtest.ReusableSequences.addConditionalRunShellScript(firstFederate,c_shell_cmd="source "+certi_home+"/share/scripts/myCERTI_env.csh "+rtig_param['host'],
-                               bourne_shell_cmd="source "+certi_home+"/share/scripts/myCERTI_env.sh "+rtig_param['host'])
-firstFederate.addRunStep("runCommand",command=federate_param['path']+" -f TestFed.fed -n TestFed -v -j \"FOMParse1\"")
-firstFederate.addRunStep("expectFromCommand",pattern="createFederationExecution SUCCESS.*")
-firstFederate.addRunStep("ok",firstFederate.getFutureLastStepStatus,"Federation created")
-firstFederate.addRunStep("expectFromCommand",pattern="join federation as.*SUCCESS")
-firstFederate.addRunStep("ok",firstFederate.getFutureLastStepStatus,"Federation joined")
-firstFederate.addRunStep("expectFromCommand",pattern="resign from federation.*SUCCESS")
-firstFederate.addRunStep("ok",firstFederate.getFutureLastStepStatus,"resigned from Federation")
-firstFederate.addRunStep("terminateCommand")
-firstFederate.addRunStep("barrier","All Federate(s) ended")
+def addFOMFedSequence(federate, specificLaunchParameters,barrierStart,barrierStop):
+    federate.timeout = 20
+    federate.stdout  = file(federate.name + ".out",'w+')
+    federate.stdin   = file(federate.name + ".in",'w+')
+    federate.stderr  = file(federate.name + ".err",'w+')
+    #federate.addRunStep("barrier","RTIG started")
+    federate.addRunStep("barrier",barrierStart)
+    dtest.ReusableSequences.addConditionalRunShellScript(federate,c_shell_cmd="source "+certi_home+"/share/scripts/myCERTI_env.csh "+rtig_param['host'],
+                                                         bourne_shell_cmd="source "+certi_home+"/share/scripts/myCERTI_env.sh "+rtig_param['host'])
+   
+    federate.addRunStep("runCommand",command=federate_param['path']+specificLaunchParameters)
+    federate.addRunStep("expectFromCommand",pattern="GLOBAL SUCCESS.*")
+    federate.addRunStep("ok",federate.getFutureLastStepStatus,federate.name)    
+    federate.addRunStep("terminateCommand")
+    federate.addRunStep("barrier",barrierStop)
+    #federate.addRunStep("barrier","All Federate(s) ended",timeout=60)
 
+addFOMFedSequence(firstFederate," -v -f TestFed.fed -n TestFed -j FOMParse1" , "RTIG started", "FOM1")
+addFOMFedSequence(FOMFed2, " -v -f RPR-FOM.fed -n FederationName -j FOMFed2 -o PhysicalEntity -a DamageState","FOM1","FOM2")
+addFOMFedSequence(FOMFed3, " -v -f RPR-FOM.fed -n FederationName","FOM2","All Federate(s) ended")
 
 def goTest():
-    myDTestMaster = dtest.DTestMaster("HLA test test_FOMParse Starts","Launch RTIG + test_FOMParse federate for testing FOM file parsing.")
-    myDTestMaster.timeout = 40
+    myDTestMaster = dtest.DTestMaster("HLA test test_FOMParse Starts","Launch RTIG + several test_FOMParse federates for testing several FOM file parsing.")
+    myDTestMaster.timeout = 120
     myDTestMaster.register(rtig)
     myDTestMaster.register(firstFederate)
+    myDTestMaster.register(FOMFed2)
+    myDTestMaster.register(FOMFed3)
     myDTestMaster.startTestSequence()
     myDTestMaster.waitTestSequenceEnd()
     
