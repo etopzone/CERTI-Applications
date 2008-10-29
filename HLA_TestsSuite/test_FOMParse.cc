@@ -309,5 +309,10 @@ main(int argc, char **argv) {
 	}
 
 	status &= parseFederate.destroy();
+	if (status) {
+		cout << "GLOBAL SUCCESS." <<endl;
+	} else {
+		cout << "GLOBAL ERROR." <<endl;
+	}
 	return status ? 0 : 1;
 }
