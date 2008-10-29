@@ -99,9 +99,12 @@ rtig.addRunStep("ok",True,"HLA test test_FOMParse Ends.")
 
 #dtest.DTester.logger.setLevel(level=logging.DEBUG)
 
-# describe first federate run steps
+nbfederate = 1
+
+# describe FOM federate run steps
 def addFOMFedSequence(federate, specificLaunchParameters,barrierStart,barrierStop):
-    federate.timeout = 20
+    federate.timeout = globals()['nbfederate']*20
+    globals()['nbfederate']  += 1
     federate.stdout  = file(federate.name + ".out",'w+')
     federate.stdin   = file(federate.name + ".in",'w+')
     federate.stderr  = file(federate.name + ".err",'w+')
@@ -123,7 +126,8 @@ addFOMFedSequence(FOMFed3, " -v -f RPR-FOM.fed -n FederationName","FOM2","All Fe
 
 def goTest():
     myDTestMaster = dtest.DTestMaster("HLA test test_FOMParse Starts","Launch RTIG + several test_FOMParse federates for testing several FOM file parsing.")
-    myDTestMaster.timeout = 120
+    myDTestMaster.timeout = globals()['nbfederate']*20+30
+    rtig.timeout = globals()['nbfederate']*20
     myDTestMaster.register(rtig)
     myDTestMaster.register(firstFederate)
     myDTestMaster.register(FOMFed2)
