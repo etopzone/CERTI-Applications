@@ -10,9 +10,11 @@ description	"A FOM parse test which is part of the CERTI HLA TestsSuite"
 args "-F test_FOMParse_cmdline -G"
 
 # Options
-option "fedfile"  	f "The FED file (XML or FED) to be used" 	string     required
-option "fedname"    n "The Federation name" string required
-option "joinname"   j "The federate name used to join the federation" string  optional
-option "classname"  c "The object class to subscribe to (or publish)" string optional
-option "attname"    a "The attribute name to subscribe to (or publish)" string optional
-option "verbose"  	v "verbose mode" 			flag   off
+option "fedfile"      f "The FED file (XML or FED) to be used" 						string required
+option "fedname"      n "The Federation name" 										string required
+option "joinname"     j "The federate name used to join the federation" 			string optional
+option "objectclass"  o "The object class to subscribe to (or publish)" 			string optional
+option "attribute"    a "The attribute name to subscribe to (or publish)" 			string optional
+option "interaction"  i "The interaction class name to subscribe to (or publish)" 	string optional
+option "parameter"    p "The parameter name to subscribe to (or publish)" 			string optional
+option "verbose"  	  v "verbose mode" 												flag   off
