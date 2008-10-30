@@ -76,6 +76,16 @@ FOMFed2 = dtest.DTester("test_FOMParse-RPR-FOM-flat",
 FOMFed3 = dtest.DTester("test_FOMParse-RPR-FOM-hierarchical",
                         session=dtest.SSHSessionHandler(federate_param['user'],host=federate_param['host']))
 
+FOMFed4 = dtest.DTester("test_FOMParse-aviationsimnetV3.1.xml-flat",
+                        session=dtest.SSHSessionHandler(federate_param['user'],host=federate_param['host']))
+
+FOMFed5 = dtest.DTester("test_FOMParse-aviationsimnetV3.1.xml-hierarchical",
+                        session=dtest.SSHSessionHandler(federate_param['user'],host=federate_param['host']))
+
+FOMFed6 = dtest.DTester("test_FOMParse-BuggyFed",
+                        session=dtest.SSHSessionHandler(federate_param['user'],host=federate_param['host']))
+
+
 # you may change the default time out value
 rtig.timeout = 40
 # you add want to save the output of your dtester to a file.
@@ -87,11 +97,11 @@ rtig.stderr    = file(rtig.name + ".err",'w+')
 rtig.addRunStep("ok",True,"HLA test test_FOMParse Starts.")
 dtest.ReusableSequences.addConditionalRunShellScript(rtig,c_shell_cmd="source "+certi_home+"/share/scripts/myCERTI_env.csh "+rtig_param['host'],
                                bourne_shell_cmd="source "+certi_home+"/share/scripts/myCERTI_env.sh "+rtig_param['host'])
-rtig.addRunStep("runCommand",command=rtig_param['path'])
+rtig.addRunStep("runCommand",command=rtig_param['path']+" -v 1")
 rtig.addRunStep("expectFromCommand",pattern="CERTI RTIG up and running",timeout=5)
 rtig.addRunStep("barrier","RTIG started")
-rtig.addRunStep("expectFromCommand",pattern="200.",timeout=20,silent=True)
-rtig.addRunStep("expectFromCommand",pattern="200.",timeout=20,silent=True)
+#rtig.addRunStep("expectFromCommand",pattern="200.",timeout=20,silent=True)
+#rtig.addRunStep("expectFromCommand",pattern="200.",timeout=20,silent=True)
 rtig.addRunStep("barrier","All Federate(s) ended")
 rtig.addRunStep("terminateCommand")
 rtig.addRunStep("waitCommandTermination")
@@ -101,8 +111,8 @@ rtig.addRunStep("ok",True,"HLA test test_FOMParse Ends.")
 
 nbfederate = 1
 
-# describe FOM federate run steps
-def addFOMFedSequence(federate, specificLaunchParameters,barrierStart,barrierStop):
+# Describe a generic successful FOM sequence federate run steps
+def addFOMFedSequence(shouldBeSuccessfull,federate, specificLaunchParameters,barrierStart,barrierStop):
     federate.timeout = globals()['nbfederate']*20
     globals()['nbfederate']  += 1
     federate.stdout  = file(federate.name + ".out",'w+')
@@ -114,15 +124,22 @@ def addFOMFedSequence(federate, specificLaunchParameters,barrierStart,barrierSto
                                                          bourne_shell_cmd="source "+certi_home+"/share/scripts/myCERTI_env.sh "+rtig_param['host'])
    
     federate.addRunStep("runCommand",command=federate_param['path']+specificLaunchParameters)
-    federate.addRunStep("expectFromCommand",pattern="GLOBAL SUCCESS.*")
+    if shouldBeSuccessfull:
+        federate.addRunStep("expectFromCommand",pattern="GLOBAL SUCCESS.*")
+    else:
+        federate.addRunStep("expectFromCommand",pattern="GLOBAL ERROR.*")
+        
     federate.addRunStep("ok",federate.getFutureLastStepStatus,federate.name)    
     federate.addRunStep("terminateCommand")
     federate.addRunStep("barrier",barrierStop)
     #federate.addRunStep("barrier","All Federate(s) ended",timeout=60)
 
-addFOMFedSequence(firstFederate," -v -f TestFed.fed -n TestFed -j FOMParse1" , "RTIG started", "FOM1")
-addFOMFedSequence(FOMFed2, " -v -f RPR-FOM.fed -n FederationName -j FOMFed2 -o PhysicalEntity -a DamageState","FOM1","FOM2")
-addFOMFedSequence(FOMFed3, " -v -f RPR-FOM.fed -n FederationName","FOM2","All Federate(s) ended")
+addFOMFedSequence(True,firstFederate," -v -f TestFed.fed -n TestFed -j FOMParse1" , "RTIG started", "FOM1")
+addFOMFedSequence(True,FOMFed2, " -v -f RPR-FOM.fed -n FederationName -j FOMFed2 -o PhysicalEntity -a DamageState","FOM1","FOM2")
+addFOMFedSequence(True,FOMFed3, " -v -f RPR-FOM.fed -n FederationName -j FOMFed2 -o BaseEntity.PhysicalEntity -a DamageState","FOM2","FOM3")
+addFOMFedSequence(True,FOMFed4, " -v -f aviationsimnetV3.1.xml -n AviationSimNet -j FOMFed4 -o Federate -a FederateType","FOM3","FOM4")
+addFOMFedSequence(True,FOMFed5, " -v -f aviationsimnetV3.1.xml -n AviationSimNet -j FOMFed4 -o Manager.Federate -a FederateType","FOM4","FOM5")
+addFOMFedSequence(False,FOMFed6, " -v -f BuggyFed -n BuggyFed","FOM5","All Federate(s) ended")
 
 def goTest():
     myDTestMaster = dtest.DTestMaster("HLA test test_FOMParse Starts","Launch RTIG + several test_FOMParse federates for testing several FOM file parsing.")
@@ -132,6 +149,9 @@ def goTest():
     myDTestMaster.register(firstFederate)
     myDTestMaster.register(FOMFed2)
     myDTestMaster.register(FOMFed3)
+    myDTestMaster.register(FOMFed4)
+    myDTestMaster.register(FOMFed5)    
+    myDTestMaster.register(FOMFed6)
     myDTestMaster.startTestSequence()
     myDTestMaster.waitTestSequenceEnd()
     
