@@ -167,7 +167,7 @@ public:
 
 	bool
 	getInteractionHandles(std::string className, std::string parameterName) {
-		bool retval = false;
+		bool retval = true;
 
 		if (verbose) {
 			cout << "Getting interaction handles..." <<endl;
