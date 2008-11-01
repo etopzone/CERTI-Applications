@@ -82,9 +82,14 @@ FOMFed4 = dtest.DTester("test_FOMParse-aviationsimnetV3.1.xml-flat",
 FOMFed5 = dtest.DTester("test_FOMParse-aviationsimnetV3.1.xml-hierarchical",
                         session=dtest.SSHSessionHandler(federate_param['user'],host=federate_param['host']))
 
-FOMFed6 = dtest.DTester("test_FOMParse-BuggyFed",
+FOMFed6 = dtest.DTester("test_FOMParse-Hierarchical-fed-flat",
                         session=dtest.SSHSessionHandler(federate_param['user'],host=federate_param['host']))
 
+FOMFed7 = dtest.DTester("test_FOMParse-Hierarchical-fed-hierarchical",
+                        session=dtest.SSHSessionHandler(federate_param['user'],host=federate_param['host']))
+
+FOMFed8 = dtest.DTester("test_FOMParse-BuggyFed",
+                        session=dtest.SSHSessionHandler(federate_param['user'],host=federate_param['host']))
 
 # you may change the default time out value
 rtig.timeout = 40
@@ -138,8 +143,10 @@ addFOMFedSequence(True,firstFederate," -v -f TestFed.fed -n TestFed -j FOMParse1
 addFOMFedSequence(True,FOMFed2, " -v -f RPR-FOM.fed -n FederationName -j FOMFed2 -o PhysicalEntity -a DamageState","FOM1","FOM2")
 addFOMFedSequence(True,FOMFed3, " -v -f RPR-FOM.fed -n FederationName -j FOMFed2 -o BaseEntity.PhysicalEntity -a DamageState","FOM2","FOM3")
 addFOMFedSequence(True,FOMFed4, " -v -f aviationsimnetV3.1.xml -n AviationSimNet -j FOMFed4 -o Federate -a FederateType -i Federate -p Federate","FOM3","FOM4")
-addFOMFedSequence(True,FOMFed5, " -v -f aviationsimnetV3.1.xml -n AviationSimNet -j FOMFed4 -o Manager.Federate -a FederateType -i Manager.Federate -p Federate","FOM4","FOM5")
-addFOMFedSequence(False,FOMFed6, " -v -f BuggyFed -n BuggyFed","FOM5","All Federate(s) ended")
+addFOMFedSequence(True,FOMFed5, " -v -f aviationsimnetV3.1.xml -n AviationSimNet -j FOMFed5 -o Manager.Federate -a FederateType -i Manager.Federate -p Federate","FOM4","FOM5")
+addFOMFedSequence(True,FOMFed6, " -v -f Hierarchical.fed -n Hierarchical -j FOMFed6 -o L2 -a attL1_1 -i IL2 -p paramIL1_1","FOM5","FOM6")
+addFOMFedSequence(True,FOMFed7, " -v -f Hierarchical.fed -n Hierarchical -j FOMFed6 -o L1.L2 -a attL1_1 -i IL1.IL2 -p paramIL1_1","FOM6","FOM7")
+addFOMFedSequence(False,FOMFed8, " -v -f BuggyFed -n BuggyFed","FOM7","All Federate(s) ended")
 
 def goTest():
     myDTestMaster = dtest.DTestMaster("HLA test test_FOMParse Starts","Launch RTIG + several test_FOMParse federates for testing several FOM file parsing.")
@@ -152,6 +159,8 @@ def goTest():
     myDTestMaster.register(FOMFed4)
     myDTestMaster.register(FOMFed5)    
     myDTestMaster.register(FOMFed6)
+    myDTestMaster.register(FOMFed7)
+    myDTestMaster.register(FOMFed8)    
     myDTestMaster.startTestSequence()
     myDTestMaster.waitTestSequenceEnd()
     
