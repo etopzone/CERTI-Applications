@@ -113,7 +113,7 @@ nbfederate = 1
 
 # Describe a generic successful FOM sequence federate run steps
 def addFOMFedSequence(shouldBeSuccessfull,federate, specificLaunchParameters,barrierStart,barrierStop):
-    federate.timeout = globals()['nbfederate']*20
+    federate.timeout = globals()['nbfederate']*10
     globals()['nbfederate']  += 1
     federate.stdout  = file(federate.name + ".out",'w+')
     federate.stdin   = file(federate.name + ".in",'w+')
@@ -137,16 +137,16 @@ def addFOMFedSequence(shouldBeSuccessfull,federate, specificLaunchParameters,bar
 addFOMFedSequence(True,firstFederate," -v -f TestFed.fed -n TestFed -j FOMParse1" , "RTIG started", "FOM1")
 addFOMFedSequence(True,FOMFed2, " -v -f RPR-FOM.fed -n FederationName -j FOMFed2 -o PhysicalEntity -a DamageState","FOM1","FOM2")
 addFOMFedSequence(True,FOMFed3, " -v -f RPR-FOM.fed -n FederationName -j FOMFed2 -o BaseEntity.PhysicalEntity -a DamageState","FOM2","FOM3")
-addFOMFedSequence(True,FOMFed4, " -v -f aviationsimnetV3.1.xml -n AviationSimNet -j FOMFed4 -o Federate -a FederateType","FOM3","FOM4")
-addFOMFedSequence(True,FOMFed5, " -v -f aviationsimnetV3.1.xml -n AviationSimNet -j FOMFed4 -o Manager.Federate -a FederateType","FOM4","FOM5")
+addFOMFedSequence(True,FOMFed4, " -v -f aviationsimnetV3.1.xml -n AviationSimNet -j FOMFed4 -o Federate -a FederateType -i Federate -p Federate","FOM3","FOM4")
+addFOMFedSequence(True,FOMFed5, " -v -f aviationsimnetV3.1.xml -n AviationSimNet -j FOMFed4 -o Manager.Federate -a FederateType -i Manager.Federate -p Federate","FOM4","FOM5")
 addFOMFedSequence(False,FOMFed6, " -v -f BuggyFed -n BuggyFed","FOM5","All Federate(s) ended")
 
 def goTest():
     myDTestMaster = dtest.DTestMaster("HLA test test_FOMParse Starts","Launch RTIG + several test_FOMParse federates for testing several FOM file parsing.")
-    myDTestMaster.timeout = globals()['nbfederate']*20+30
-    rtig.timeout = globals()['nbfederate']*20
+    myDTestMaster.timeout = globals()['nbfederate']*10+30
+    rtig.timeout = globals()['nbfederate']*10
     myDTestMaster.register(rtig)
-    myDTestMaster.register(firstFederate)
+    myDTestMaster.register(firstFederate) 
     myDTestMaster.register(FOMFed2)
     myDTestMaster.register(FOMFed3)
     myDTestMaster.register(FOMFed4)
