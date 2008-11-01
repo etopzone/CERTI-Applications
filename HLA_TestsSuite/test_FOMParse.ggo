@@ -3,18 +3,18 @@
 package		"FOMParse"
 version		"0.1"
 purpose		"test FOM parsing"
-usage		"test_FOMParse -f <fedfile> -n <FederationName> [-v]"
+usage		"test_FOMParse [-v] -f <fedfile> -n <FederationName> [-o <ObjectClassName> [-a <AttributeName>]] [-i <InteractionClassName> [-p <ParameterName]]"
 description	"A FOM parse test which is part of the CERTI HLA TestsSuite"
 
 # gengetopt options
 args "-F test_FOMParse_cmdline -G"
 
 # Options
-option "fedfile"      f "The FED file (XML or FED) to be used" 						string required
-option "fedname"      n "The Federation name" 										string required
-option "joinname"     j "The federate name used to join the federation" 			string optional
-option "objectclass"  o "The object class to subscribe to (or publish)" 			string optional
-option "attribute"    a "The attribute name to subscribe to (or publish)" 			string optional
-option "interaction"  i "The interaction class name to subscribe to (or publish)" 	string optional
-option "parameter"    p "The parameter name to subscribe to (or publish)" 			string optional
-option "verbose"  	  v "verbose mode" 												flag   off
+option "fedfile"      f "The FED file (XML or FED) to be used" 											string required
+option "fedname"      n "The Federation name" 															string required
+option "joinname"     j "The federate name used to join the federation"						 			string optional
+option "objectclass"  o "The object class for which you want to know the handle" 						string optional
+option "attribute"    a "The attribute name (needs -o) for which you want to know the handle" 			string optional
+option "interaction"  i "The interaction class for which you want to know the handle"				 	string optional
+option "parameter"    p "The parameter name (needs -i) for which you want to know the handle" 			string optional
+option "verbose"  	  v "verbose mode" 																	flag   off
