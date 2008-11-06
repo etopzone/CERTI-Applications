@@ -13,7 +13,7 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.4.4)
 # Use CERTI specific CMake modules first
 # You should set CERTI_HOME env var to appropriate value
 # or put here the full path to the directory
-# containing FindCERTI.cmake
+# containing FindRTI.cmake
 # Use CERTI_HOME env var if it is defined
 IF ("$ENV{CERTI_HOME}" STRGREATER "")
     FILE(TO_CMAKE_PATH "$ENV{CERTI_HOME}" CERTI_HOME_TEMP)
@@ -56,9 +56,11 @@ SET(PACKAGE_BUGREPORT "christianstenzel@gmx.net")
 MESSAGE(STATUS "Configuring ${PACKAGE_NAME} version ${PACKAGE_VERSION}")
 
 #########################################################################
-# Call i.e. INCLUDE the CERTI usage configuration
+# Call i.e. FIND RTI
 #########################################################################
-INCLUDE(UseCERTI)
+FIND_PACKAGE(RTI REQUIRED)
+INCLUDE_DIRECTORIES(${RTI_INCLUDE_DIR})
+ADD_DEFINITIONS(${RTI_DEFINITIONS})
 
 #########################################################################
 # CPack specific Configuration
@@ -120,7 +122,7 @@ SET(SRC_LIST controllerFederate.cc DisplayServiceExplanation.cc)
 # Generic CMake executable target
 ###################################
 ADD_EXECUTABLE(${EXE_NAME} ${SRC_LIST})
-TARGET_LINK_LIBRARIES (${EXE_NAME} ${CERTI_LIBRARIES})
+TARGET_LINK_LIBRARIES (${EXE_NAME} ${RTI_LIBRARIES})
 INSTALL(TARGETS ${EXE_NAME} 
         RUNTIME DESTINATION bin)
 
@@ -136,7 +138,7 @@ SET(SRC_LIST processFederate.cc DisplayServiceExplanation.cc)
 # Generic CMake executable target
 ###################################
 ADD_EXECUTABLE(${EXE_NAME} ${SRC_LIST})
-TARGET_LINK_LIBRARIES (${EXE_NAME} ${CERTI_LIBRARIES})
+TARGET_LINK_LIBRARIES (${EXE_NAME} ${RTI_LIBRARIES})
 INSTALL(TARGETS ${EXE_NAME} 
         RUNTIME DESTINATION bin)
 
