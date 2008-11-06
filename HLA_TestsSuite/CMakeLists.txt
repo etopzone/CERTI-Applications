@@ -112,7 +112,7 @@ SET(CPACK_PACKAGE_VERSION_MINOR ${PACKAGE_VERSION_MINOR})
 SET(CPACK_PACKAGE_VERSION_PATCH ${PACKAGE_VERSION_PATCH})
 
 INCLUDE(CPack)
-INCLUDE(${CMAKE_SOURCE_DIR}/HLATestsSuiteTools.cmake)
+INCLUDE(HLATestsSuiteTools)
 
 #########################################################################
 # ADD TEST ELEMENTARY PROGRAM
