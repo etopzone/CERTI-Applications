@@ -11,7 +11,7 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # Lesser General Public License for more details.
 #
-# $Id: array.py,v 1.2 2008/10/13 17:15:39 gotthardp Exp $
+# $Id: array.py,v 1.3 2008/11/06 08:12:18 gotthardp Exp $
 
 from hla._omt import *
 from basic import *
@@ -75,7 +75,7 @@ class HLAvariableArray:
 
         for element in value:
             buffer += padding(len(buffer), self.elementType.octetBoundary)*'\0'
-            buffer = self.elementType.pack(element)
+            buffer += self.elementType.pack(element)
 
         return buffer
 
@@ -92,4 +92,4 @@ class HLAvariableArray:
 
         return value, size
 
-# $Id: array.py,v 1.2 2008/10/13 17:15:39 gotthardp Exp $
+# $Id: array.py,v 1.3 2008/11/06 08:12:18 gotthardp Exp $
