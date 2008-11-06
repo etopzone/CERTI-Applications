@@ -1,0 +1,35 @@
+(FED
+(Federation X_Plane_CERTI)
+(FEDversion v1.3)
+ (spaces 
+ )
+ (objects 
+    (class ObjectRoot 
+     (attribute privilegeToDelete  reliable timestamp)
+     (class RTIprivate)
+
+	(class Aircraft
+     (attribute aircraftType reliable timestamp)
+     (attribute latitude reliable timestamp)
+     (attribute longitude reliable timestamp)
+     (attribute altitudeMSL reliable timestamp)
+     (attribute altitudeAGL reliable timestamp)
+	  (attribute trueHeading reliable timestamp)
+	  (attribute pitch reliable timestamp)
+	  (attribute roll reliable timestamp)
+	  (attribute groundSpeed reliable timestamp)
+	  (attribute trueAirSpeed reliable timestamp)
+	)
+	(class Flight
+     (attribute aircraftType reliable timestamp)  ;; type aeronef
+	)
+	(class PhiDjet
+     (attribute angulaire reliable timestamp)
+     (attribute curseur reliable timestamp)
+     (attribute genIR reliable timestamp)	
+	)
+  )
+ )
+ (interactions 
+ )
+)

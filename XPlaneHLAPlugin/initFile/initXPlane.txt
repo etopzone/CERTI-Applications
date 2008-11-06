@@ -1,0 +1,21 @@
+#Dictionary to match AviationSimNet FOM3.1 to XPlane
+#Modify this file to add/delete all attributs to publish
+#[#] comments
+#§class
+#Format!FomAttribut=XPlaneAttribut
+#Format= {B,I,D,F} (Byte,Integer,Double,Float) XXX size
+#Class Aircraft--------------------------------------------
+§Aircraft
+B040!aircraftType=sim/aircraft/view/acf_ICAO
+D001!latitude=sim/flightmodel/position/latitude
+D001!longitude=sim/flightmodel/position/longitude
+D001!altitudeMSL=sim/flightmodel/position/elevation
+F001!altitudeAGL=sim/flightmodel/position/y_agl
+F001!trueHeading=sim/flightmodel/position/psi
+F001!pitch=sim/flightmodel/position/theta
+F001!roll=sim/flightmodel/position/phi
+F001!groundSpeed=sim/flightmodel/position/groundspeed
+F001!trueAirSpeed=sim/flightmodel/position/true_airspeed
+#Class Flight----------------------------------------------
+§Flight
+B040!aircraftType=sim/aircraft/view/acf_ICAO

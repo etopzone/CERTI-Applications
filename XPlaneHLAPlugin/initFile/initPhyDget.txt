@@ -1,0 +1,12 @@
+#Dictionary to match AviationSimNet FOM3.1 to XPlane
+#Modify this file to add/delete all attributs to publish
+#[#] comments
+#§class
+#Format!PhyDJetName=XPlaneAttribut
+#Format= {B,I,D,F} (Byte,Integer,Double,Float) XXX size
+#Class PhiDjet--------------------------------------------
+§PhiDjet
+F008!curseur=sim/flightmodel/engine/ENGN_thro
+F001!genIR=sim/cockpit/autopilot/heading
+F001!angulaire=sim/graphics/view/pilots_head_psi
+
