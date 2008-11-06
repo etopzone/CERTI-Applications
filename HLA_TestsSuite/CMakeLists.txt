@@ -10,6 +10,8 @@
 # any RTI.
 #########################################################################
 PROJECT(HLA_TestsSuite CXX)
+# enabling C is needed if you want to compile C files.
+ENABLE_LANGUAGE(C)
 
 #########################################################################
 # Setup reasonable default CMake behavior
@@ -19,8 +21,6 @@ PROJECT(HLA_TestsSuite CXX)
 CMAKE_MINIMUM_REQUIRED(VERSION 2.4.4)
 INCLUDE(${CMAKE_ROOT}/Modules/Dart.cmake)
 MARK_AS_ADVANCED(TCL_TCLSH DART_ROOT)
-
-# Use CERTI specific CMake modules first
 
 # Use CERTI_HOME env var if it is defined
 IF ("$ENV{CERTI_HOME}" STRGREATER "")
@@ -70,9 +70,11 @@ SET(PACKAGE_BUGREPORT "certi-devel@nongnu.org")
 MESSAGE(STATUS "Configuring ${PACKAGE_NAME} version ${PACKAGE_VERSION}")
 
 #########################################################################
-# Call i.e. INCLUDE the CERTI usage configuration
+# FIND RTI (CERTI, MAK, Pitch, ...)
 #########################################################################
-INCLUDE(UseCERTI)
+FIND_PACKAGE(RTI REQUIRED)
+INCLUDE_DIRECTORIES(${RTI_INCLUDE_DIR})
+ADD_DEFINITIONS(${RTI_DEFINITIONS})
 
 #########################################################################
 # CPack specific Configuration
@@ -110,13 +112,7 @@ SET(CPACK_PACKAGE_VERSION_MINOR ${PACKAGE_VERSION_MINOR})
 SET(CPACK_PACKAGE_VERSION_PATCH ${PACKAGE_VERSION_PATCH})
 
 INCLUDE(CPack)
-
-INCLUDE(HLATestsSuiteTools)
-IF(BUILD_TESTING)
-  SET(BUILDNAME "${BUILDNAME}" CACHE STRING "Debian SID x86_64")
-  MARK_AS_ADVANCED(BUILDNAME)
-ENDIF(BUILD_TESTING)
-
+INCLUDE(${CMAKE_SOURCE_DIR}/HLATestsSuiteTools.cmake)
 
 #########################################################################
 # ADD TEST ELEMENTARY PROGRAM
@@ -188,6 +184,7 @@ HLATestsSuite_ADD_TEST(test_FOMParse
                       FED_FILE TestFed.fed BuggyFed.fed Hierarchical.fed RPR-FOM.fed aviationsimnetV3.1.xml
                       SOURCE_FILES test_FOMParse.cc test_FOMParse_cmdline.h test_FOMParse_cmdline.c
                       DTEST_SCRIPT dtest_test_FOMParse.py 
-                      COMMENTS "A FOM parsing test")
+                      COMMENTS "A FOM parsing test"
+                      )
 
 MESSAGE(STATUS "*** ${CMAKE_PROJECT_NAME} has been successfully configured ***")
