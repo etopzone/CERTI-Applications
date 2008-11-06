@@ -11,8 +11,9 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # Lesser General Public License for more details.
 #
-# $Id: __init__.py,v 1.2 2008/10/13 17:15:39 gotthardp Exp $
+# $Id: __init__.py,v 1.3 2008/11/06 08:17:28 gotthardp Exp $
 
+import types
 import xml.sax.handler
 
 from hla._omt import *
@@ -44,7 +45,11 @@ class TypeParser(xml.sax.handler.ContentHandler):
     	    self.enumEnumerators += [(attributes["name"],int(attributes["values"]))]
 
         elif name == "arrayData":
-            if(attributes["cardinality"].lower() == "dynamic"):
+            # do not overwrite default datatypes
+            if attributes["name"] in ["HLAASCIIstring"]:
+                return
+
+            if attributes["cardinality"].lower() == "dynamic":
                 cardinality = None
             else:
                 cardinality = attributes["cardinality"]
@@ -110,16 +115,13 @@ class HLAencoding:
     def __init__(self, representation, typeParameters = None):
         self.representation = representation
         self.typeParameters = typeParameters
-        self._encoding = None
 
     @property
     def encoding(self):
-        if(self._encoding == None):
-            if(self.typeParameters == None):
-                self._encoding = globals()[self.representation]
-            else:
-                self._encoding = globals()[self.representation](self.typeParameters)
-        return self._encoding;
+        if self.parameters == None:
+            return globals()[self.representation]
+        else:
+            return globals()[self.representation](*self.typeParameters)
 
     @property
     def octetBoundary(self):
@@ -138,4 +140,4 @@ def HLAuse(filename):
     parser.setContentHandler(handler)
     parser.parse(filename)
 
-# $Id: __init__.py,v 1.2 2008/10/13 17:15:39 gotthardp Exp $
+# $Id: __init__.py,v 1.3 2008/11/06 08:17:28 gotthardp Exp $

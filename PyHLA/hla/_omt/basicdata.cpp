@@ -11,7 +11,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  *
- * $Id: basicdata.cpp,v 1.2 2008/10/12 13:31:13 gotthardp Exp $
+ * $Id: basicdata.cpp,v 1.3 2008/11/06 08:17:28 gotthardp Exp $
  */
 
 // note: you must include Python.h before any standard headers are included
@@ -128,7 +128,7 @@ struct __swap<T,8>
 
 template<class T>
 const T*
-getUnpackBuffer(PyObject *args)
+getUnpackBuffer(PyObject *args, size_t *length = NULL)
 {
     const char *buffer;
     int size;
@@ -139,6 +139,8 @@ getUnpackBuffer(PyObject *args)
         PyErr_Format(PyExc_TypeError, "need at least %d bytes", offset+sizeof(T));
         return NULL;
     }
+    if(length != NULL)
+        *length = size-offset;
 
     return (T*)(buffer+offset);
 }
@@ -459,6 +461,81 @@ static PyMethodDef HLAfloat64LE_methods[] =
     {NULL} // sentinel
 };
 
+/*
+ *  HLAoctet
+ */
+static PyObject *
+HLAoctet_pack(PyObject *self, PyObject *args)
+{
+    char buffer;
+    if(!PyArg_ParseTuple(args, "c", &buffer))
+        return NULL;
+    return PyString_FromStringAndSize(&buffer, sizeof(char));
+}
+
+static PyObject *
+HLAoctet_unpack(PyObject *self, PyObject *args)
+{
+    const char *buffer = getUnpackBuffer<char>(args);
+    if(buffer == NULL)
+        return NULL;
+    return createObjectSizeTuple(PyString_FromStringAndSize(buffer, sizeof(char)), sizeof(char));
+}
+
+static PyMethodDef HLAoctet_methods[] =
+{
+    {"pack", (PyCFunction)HLAoctet_pack, METH_VARARGS, NULL},
+    {"unpack", (PyCFunction)HLAoctet_unpack, METH_VARARGS, NULL},
+    {NULL} // sentinel
+};
+
+/*
+ *  HLAASCIIstring
+ */
+static PyObject *
+HLAASCIIstring_pack(PyObject *self, PyObject *args)
+{
+    const char* value;
+    int length;
+    if(!PyArg_ParseTuple(args, "s#", &value, &length))
+        return NULL;
+
+    char *buffer = (char *)malloc(sizeof(int32_t)+length);
+    *(int32_t *)buffer = BigEndian<int32_t>()(length);
+    memcpy(buffer+sizeof(int32_t), value, length);
+
+    PyObject *result = PyString_FromStringAndSize(buffer, sizeof(int32_t)+length);
+    free(buffer);
+
+    return result;
+}
+
+static PyObject *
+HLAASCIIstring_unpack(PyObject *self, PyObject *args)
+{
+    size_t size;
+    const int32_t *buffer = getUnpackBuffer<int32_t>(args, &size);
+    if(buffer == NULL)
+        return NULL;
+
+    int length = BigEndian<int32_t>()(*buffer);
+    if(size < sizeof(int32_t)+length) {
+        PyErr_Format(PyExc_TypeError, "need at least %d bytes", sizeof(int32_t)+length);
+        return NULL;
+    }
+
+    return createObjectSizeTuple(
+        PyString_FromStringAndSize((const char *)buffer+sizeof(int32_t), length),
+        sizeof(int32_t)+length);
+}
+
+static PyMethodDef HLAASCIIstring_methods[] =
+{
+    {"pack", (PyCFunction)HLAASCIIstring_pack, METH_VARARGS, NULL},
+    {"unpack", (PyCFunction)HLAASCIIstring_unpack, METH_VARARGS, NULL},
+    {NULL} // sentinel
+};
+
 typedef struct {
   const char* co_name;
   long co_size;
@@ -481,6 +558,8 @@ static PyCodingDef basic_coding[] =
 #endif
     {"HLAfloat32LE", sizeof(float), HLAfloat32LE_methods},
     {"HLAfloat64LE", sizeof(double), HLAfloat64LE_methods},
+    {"HLAoctet", sizeof(char), HLAoctet_methods},
+    {"HLAASCIIstring", sizeof(char), HLAASCIIstring_methods},
     {NULL} // sentinel
 };
 
@@ -581,4 +660,4 @@ BasicDataInitializer::on_init(PyObject *module)
         add_encoding(dict, pos->co_name, pos->co_size, pos->co_methods);
 }
 
-// $Id: basicdata.cpp,v 1.2 2008/10/12 13:31:13 gotthardp Exp $
+// $Id: basicdata.cpp,v 1.3 2008/11/06 08:17:28 gotthardp Exp $
