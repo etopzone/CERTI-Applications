@@ -1,26 +1,31 @@
 #include <iostream>
 #include <memory>
 #include <string>
+#include <map>
 
 #include "XP_Certi.h"
 
 using std::string;
-using std::auto_ptr;
 
-FILE		*fLog;						//Log File
-Federe	*FedereXPlane ;			//Ambassador
+FILE						*fLog;				//Log File
+Federe					*theFederate;		//Ambassador
+
+int						gNbClasse;			//# classes 
+int						gNbAttrib;			//# classes 
+sCLA						*CLA;					//HHLA Class core			
+sHLA						*HLA;					//HLA Attribute core			
+sXPL						*XPL;					//Xplane core			
 
 //=============================================================================MAIN
 int createFedere()
 {//Load during the first call from XPlane
-int		i;
 int		nbcar= NBCAR;
 
-fLog= fopen("FedXPlane.txt","wt");
+fLog= fopen("LogOut.txt","wt");
 
 try
 	{//Ambassador creation (and then rtia will begin)
-	FedereXPlane= new Federe();
+	theFederate= new Federe();
 	}
 	
 catch ( RTI::Exception &e) 
@@ -28,32 +33,38 @@ catch ( RTI::Exception &e)
 	fprintf(fLog,"!!Error : Can't create Ambassador %s\n",e._reason) ;
 	exit(-1);
 	}
-fprintf(fLog,"Ambassador have been created, so rtia is running\n"); fflush(fLog);
+fprintf(fLog,"Ambassador have been created : RTIa is running\n"); fflush(fLog);
 
 try{
 //=============================================================================Read Descriptor
-if (FedereXPlane->readFileInit())
+if (theFederate->readFileInit())
 	{//Read configFile : federation name, fed file, IP RTIg
-	fprintf(fLog,"Error : File initCERTI.txt \n"); fflush(fLog);
+	fprintf(fLog,"!!Error : File XPlaneOut.txt \n"); fflush(fLog);
 	exit(-1);
 	}
 
-//=============================================================================Creating Federation
+//=============================================================================CREATING FEDERATION
 fprintf(fLog,"About creating federation execution\n"); fflush(fLog);
 
-bool	is_created= FedereXPlane->createFederation();
-if (is_created )	fprintf(fLog,"Creation of federation execution right. %s\n",	FedereXPlane->getFederationName());
-else					fprintf(fLog,"Creation of federation execution failed. %s\n",	FedereXPlane->getFederationName());
+char	is_created= theFederate->createFederation();
+if (is_created < 0) 
+	{//Error : exit from plug-in
+								 fprintf(fLog,"Creation of federation execution failed. %s\n",	theFederate->getFederationName());
+	if (HLA) free(HLA); if (XPL) free(XPL);
+	exit(0xFBAD);
+	}
+else if (is_created > 0) fprintf(fLog,"Creation of federation execution right. %s\n",	theFederate->getFederationName());
+else							 fprintf(fLog,"Federation execution exists. %s\n",					theFederate->getFederationName());
 fflush(fLog);
 
 //=============================================================================Creating Federation
 bool	is_joined= false ;
 short	cpt= 0; do	
 	{
-	FedereXPlane->setFederateName("XPlane",cpt);										//Federate Name = XPlaneXXX
-	is_joined= FedereXPlane->joinFederation();
+	theFederate->setFederateName("XPlane",cpt);										//Federate Name = XPlaneXXX
+	is_joined= theFederate->joinFederation();
 	if (is_joined) 
-		fprintf(fLog,"Federate %s has joined federation %s\n",FedereXPlane->getFederateName(),FedereXPlane->getFederationName());
+		fprintf(fLog,"Federate %s has joined federation %s\n",theFederate->getFederateName(),theFederate->getFederationName());
 	else if (cpt > 0x0FFF) 
 		{//Federate no admit -> Exit
 		fprintf(fLog,"!!Error : Creation of federate failed.\n");
@@ -64,7 +75,7 @@ short	cpt= 0; do
  fflush(fLog);
  	
 //=============================================================================Publish Objet/Attributs
-FedereXPlane->registreObjAndpublishVal();
+theFederate->registreObjAndpublishVal();
 return(0);
 }
 
@@ -75,22 +86,8 @@ catch ( RTI::Exception &e)
 }	}
 //-----------------------------------------------------------------------------MAIN
 
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++Read Descriptor
-char Federe::readFileInit()
-{
-FILE	*theFile= fopen("initCERTI.txt","r"); if (theFile == NULL) return(1);
-
-fscanf(theFile,"%s\n",federationName);	//Federation name :-)
-fgets(federationDesc,259,theFile);		//Fedfile (\installed\share\federations\xxxxx.fed)
-fscanf(theFile,"%s\n",IP_RTIg);			//Server RTIG IP address
-
-short	lng= strlen(federationDesc) - 1;	//Delete "line feed" if exists
-if (federationDesc[lng] == 10) federationDesc[lng]= 0;
-return(0);
-}
-
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++Create Federation
-bool Federe::createFederation()
+char Federe::createFederation()
 // Create a federation execution name giving :
 // federationName : federation execution name
 // federationDesc : file Federation descriptor
@@ -99,12 +96,12 @@ bool Federe::createFederation()
 // Note 5 exceptions may raise : 
 // CouldNotOpenFED,RTIinternalError,ConcurrentAccessAttempted,ErrorReadingFED,FederationExecutionAlreadyExists
 {
-bool is_created= false ;
+char is_created= -1;																														//Error : Exit																	
 
-	try {
-	FedereXPlane->createFederationExecution(federationName,federationDesc);
+try {
+	theFederate->createFederationExecution(federationName,federationDesc);
 	std::cout << "federation "<<federationName <<" created."<<std::endl;
-	is_created= true ;
+																														is_created= 0 ;	//Created : OK
 	}
 catch (RTI::Exception &e)
 	{ 
@@ -117,6 +114,7 @@ catch (RTI::Exception &e)
 	else if (strcmp(e._name,"FederationExecutionAlreadyExists")==0)
 		{
 		fprintf(fLog,"!!Error : Federation : %s\n",e._reason);
+																														is_created= 1;		//Exit : OK
 		}
 	else
 		fprintf(fLog,"!!Error : %s\n",e._reason);
@@ -139,7 +137,7 @@ bool Federe::joinFederation()
 bool success= false ;
 
 	try {
-	FedereXPlane->joinFederationExecution(federateName,federationName,FedereXPlane);
+	theFederate->joinFederationExecution(federateName,federationName,theFederate);
 	fprintf(fLog,"Federation joined\n");
 	}
 catch (RTI::Exception &e)
@@ -155,8 +153,10 @@ return true;
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++Destroy Federate
 void destroyFederate()
 {//RESIGNING FEDERATION EXECUTION
-FedereXPlane->deleteObjectInstance(FedereXPlane->HObject,FedereXPlane->getFederateName());
-FedereXPlane->resignFederationExecution(RTI::DELETE_OBJECTS_AND_RELEASE_ATTRIBUTES);
+for (short j= 0; j < gNbClasse; j++)
+	theFederate->deleteObjectInstance(CLA[j].cHandle,theFederate->getFederateName());
+
+theFederate->resignFederationExecution(RTI::DELETE_OBJECTS_AND_RELEASE_ATTRIBUTES);
 fprintf(fLog,"Destroy Federate. \n"); fflush(fLog);
 }
 
@@ -165,7 +165,7 @@ void Federe::destroyFederation()
 {
 try 
 {
-FedereXPlane->destroyFederationExecution(federationName);
+theFederate->destroyFederationExecution(federationName);
 fprintf(fLog,"Federation has been destroyed.\n");
 }
 	

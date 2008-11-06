@@ -1,5 +1,5 @@
-// $Id: XPlane_DESCRIPTION.txt,v 1.1 2008/05/27 14:05:49 erk Exp $
-This is a "XPlane" Federation using CERTI (http://savannah.nongnu.org/projects/certi)
+
+This is a "XPlane" Federation using CERTI (https://savannah.nongnu.org/projects/certi)
 
                    INSTRUCTIONS FOR UNIX like system.
                    =================================

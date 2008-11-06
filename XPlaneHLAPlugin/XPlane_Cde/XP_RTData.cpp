@@ -2,7 +2,12 @@
 #include <memory>
 #include <string>
 
-#include "XP_Trace.h"
+#define	IBM		1
+#define	APL		0
+
+#include "XPLMProcessing.h"
+#include "XPLMDataAccess.h"
+#include "XPLMUtilities.h"
 
 #include "XP_Trace.h"
 
@@ -16,9 +21,14 @@ extern	int		gNbClasse;			//# classes
 extern	int		gNbAttrib;			//# classes 
 extern	sCLA		*CLA;					//HHLA Class core			
 extern	sHLA		*HLA;					//HLA Attribute core			
-//extern	sXPL		*XPL;					//Xplane core			
+extern	sPHI		*PHI;					//PhiDJet			
 
 #define	NB_DATA		1024
+
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++REFELECT ATTRIBUTE VALUE
+void tick() 
+					{ theFederate->tick();}		//Fire the possible RTI reflectAttributeValues CallBack
+
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++REFELECT ATTRIBUTE VALUE
 void Federe::reflectAttributeValues(RTI::ObjectHandle									oHandle,				//Instance
 												const RTI::AttributeHandleValuePairSet&	theAttributes,		//Attributs list
@@ -28,7 +38,7 @@ void Federe::reflectAttributeValues(RTI::ObjectHandle									oHandle,				//Inst
 															RTI::FederateInternalError)
 {
 RTI::ULong		nbVPS= theAttributes.size();
-char				bVal[NB_DATA],theString[50];
+char				bVal[NB_DATA];
 float				fVal;
 double			dVal;
 int				iVal;
@@ -43,14 +53,24 @@ for (RTI::ULong idVPS= 0; idVPS < nbVPS; idVPS++)
 	if (theS < NB_DATA)
 		{
 		for (short lVAL= 0; lVAL < gNbAttrib; lVAL++) if (theH == HLA[lVAL].aHandle)
-			{			
-			switch (HLA[lVAL].format[0])
-				{
-				case 'B': theAttributes.getValue(idVPS, (char*)&bVal, theS); printf("%s V=%s\n",		HLA[lVAL].aName,bVal); break;
-				case 'I': theAttributes.getValue(idVPS, (char*)&iVal, theS); printf("%s V=%10d\n",	HLA[lVAL].aName,iVal); break; 
-				case 'F': theAttributes.getValue(idVPS, (char*)&fVal, theS); printf("%s V=%10.3f\n",HLA[lVAL].aName,fVal); break; 
-				case 'D': theAttributes.getValue(idVPS, (char*)&dVal, theS); printf("%s V=%10.3f\n",HLA[lVAL].aName,dVal); break; 
-				}
+			{
+			XPLMDataRef	xpHandle= (XPLMDataRef)PHI[lVAL].xpHandle;
+
+			if (HLA[lVAL].format[3] == '1')		
+				switch (HLA[lVAL].format[0])
+					{
+					case 'I': theAttributes.getValue(idVPS, (char*)&iVal, theS); XPLMSetDatai(xpHandle,iVal); break;
+					case 'F': theAttributes.getValue(idVPS, (char*)&fVal, theS); XPLMSetDataf(xpHandle,fVal); break;
+					case 'D': theAttributes.getValue(idVPS, (char*)&dVal, theS); XPLMSetDatad(xpHandle,dVal); break;
+					}
+			else
+				switch (HLA[lVAL].format[0])
+					{
+					case 'B': theAttributes.getValue(idVPS, (char*)&bVal, theS); XPLMSetDatab( xpHandle,bVal,0,theS); break;
+					case 'I': theAttributes.getValue(idVPS, (char*)&iVal, theS); XPLMSetDatavi(xpHandle,&iVal,0,1); break;
+					case 'F': theAttributes.getValue(idVPS, (char*)&fVal, theS); XPLMSetDatavf(xpHandle,&fVal,0,1); break;
+					}
+			
 			break;	
 	}	}	}
 	

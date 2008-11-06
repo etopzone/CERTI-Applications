@@ -1,8 +1,6 @@
 #ifndef	XP_CERTI_H
 #define	XP_CERTI_H
 
-#define	NBDATA	6
-
 #include <RTI.hh>
 #include <fedtime.hh>
 #include <NullFederateAmbassador.hh>
@@ -10,7 +8,23 @@
 #define	NB_IP 25
 #define	NBCAR 300
 
+typedef struct structPHI
+{//Attribute Part------------------------------------------
+char			Name[NBCAR+1];						/*!< Name	*/
+char			format[5];							/*!< Format	*/
+int			xpHandle;							/*!< Handle	*/
+int			valueI;								/*!< Integer*/
+float			valueF;								/*!< Float	*/
+double		valueD;								/*!< Double	*/
+} sPHI;
+
 #include "XP_HLA.h"
+
+extern "C" 
+{
+int	createFedere();
+void	destroyFederate();
+}
 
 //-----------------------------------------------------------------------------XPluginStart
 
@@ -22,8 +36,7 @@ public:
 	~Federe() throw (RTI::FederateInternalError) {}
 	
 	void		destroyFederation	();
-	void		destroyFederate	();			//
-
+	
 	char		readFileInit		();					/*!< Description file				*/
 	char		createFederation	();					/*!< Create Fedération				*/
 	bool		joinFederation		();					/*!< Join fédération					*/
@@ -44,9 +57,9 @@ public:
    * @param[in] theTag Tag Name Federate
    * @throw RTI::ObjectNotKnown the object is unknown
    */
-	void		reflectAttributeValues(	RTI::ObjectHandle									oHandle,
-												const RTI::AttributeHandleValuePairSet&	theAttributes,
-												const char											*theTag)
+	void		reflectAttributeValues(	RTI::ObjectHandle									oHandle,				
+												const RTI::AttributeHandleValuePairSet&	theAttributes,		
+												const char											*theTag)			
 												throw (	RTI::ObjectNotKnown,				RTI::AttributeNotKnown, 
 															RTI::FederateOwnsAttributes,	RTI::InvalidFederationTime, 
 															RTI::FederateInternalError);
@@ -56,9 +69,9 @@ private:
 
 protected:
 
-char		federationDesc[NBCAR+1];				//
+char		federationDesc[NBCAR+1];
 char		federationName[NBCAR+1];
-char		dictionaryName[NBCAR+1];				//Dictionary XPlane<>FOM for activated attributes
+char		dictionaryName[NBCAR+1];				/*!< Dictionary XPlane<>FOM for activated attributes */
 char		federateName[NBCAR+1];
 char		IP_RTIg[NB_IP];
 };

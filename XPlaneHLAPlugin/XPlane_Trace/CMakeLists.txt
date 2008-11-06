@@ -1,10 +1,10 @@
 ###################################
-# Setup XPlane Trace
+# Setup XPlane_Trace Federate
 #   the executable name
 #   the source list
 ###################################
 SET(EXE_NAME XPlaneTrace)
-SET(SRC_LIST XP_Trace.cpp XP_RTData.cpp XP_Trace.h)
+SET(SRC_LIST XP_Init.cpp XP_RTData.cpp XP_File.cpp XP_Trace.h ../XPlane_Common/XP_HLA.h ../initFile/XPlaneCde.txt)
 
 ###################################
 # Generic CMake executable target
