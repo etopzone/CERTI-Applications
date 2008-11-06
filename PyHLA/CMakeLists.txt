@@ -11,7 +11,7 @@ FIND_PACKAGE(PythonInterp REQUIRED)
 
 IF(NOT PYTHON_PACKAGES_PATH)
     EXEC_PROGRAM("${PYTHON_EXECUTABLE}"
-        ARGS "-c 'from distutils.sysconfig import get_python_lib; print get_python_lib().replace(\"\\\\\",\"/\")'"
+        ARGS "${CMAKE_CURRENT_SOURCE_DIR}/GetPackagesPath.py"
         OUTPUT_VARIABLE PYTHON_PACKAGES_PATH)
     MESSAGE(STATUS "Found Python modules: ${PYTHON_PACKAGES_PATH}")
     SET(PYTHON_PACKAGES_PATH "${PYTHON_PACKAGES_PATH}"
@@ -49,4 +49,4 @@ SET(CPACK_SOURCE_IGNORE_FILES
 
 INCLUDE(CPack)
 
-# $Id: CMakeLists.txt,v 1.6 2008/10/28 21:13:19 gotthardp Exp $
+# $Id: CMakeLists.txt,v 1.7 2008/11/06 15:16:29 gotthardp Exp $
