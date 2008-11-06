@@ -11,13 +11,14 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  *
- * $Id: exceptions.h,v 1.1 2008/09/25 17:17:34 gotthardp Exp $
+ * $Id: exceptions.h,v 1.2 2008/11/06 08:15:51 gotthardp Exp $
  */
 
 #ifndef RTI_EXCEPTIONS_H
 #define RTI_EXCEPTIONS_H
 
-#include <RTI.hh>  
+#include <RTI.hh>
+#include <sstream>
 
 #include "module.h"
 
@@ -108,10 +109,36 @@ PyErr_SetFromRTIException(PyObject *type, const RTI::Exception* exception);
 template<class EXC>
 EXC SetFromPyException(PyObject *type)
 {
-    auto_decref<PyObject> strexception = PyObject_Str(PyErr_Occurred());
-    return EXC(PyString_AsString(strexception));
+    PyObject *exception, *value, *tb;
+    PyErr_Fetch(&exception, &value, &tb);
+    if (exception == NULL)
+        return EXC("unknown exception");
+
+    PyErr_NormalizeException(&exception, &value, &tb);
+    if (exception == NULL)
+        return EXC("unknown exception");
+
+    // FIXME: should be for debug only
+    PyErr_Display(exception, value, tb);
+
+    std::stringstream msg;
+    if (PyExceptionClass_Check(exception)) {
+        char* className = PyExceptionClass_Name(exception);
+        if (className != NULL)
+            msg << className;
+    }
+
+    PyObject *strvalue = PyObject_Str(value);
+    msg << ": " << PyString_AsString(strvalue);
+    Py_XDECREF(strvalue);
+
+    Py_XDECREF(exception);
+    Py_XDECREF(value);
+    Py_XDECREF(tb);
+
+    return EXC(msg.str().c_str());
 }
 
 #endif // RTI_EXCEPTIONS_H
 
-// $Id: exceptions.h,v 1.1 2008/09/25 17:17:34 gotthardp Exp $
+// $Id: exceptions.h,v 1.2 2008/11/06 08:15:51 gotthardp Exp $
