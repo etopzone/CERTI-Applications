@@ -146,7 +146,7 @@ addFOMFedSequence(True,FOMFed4, " -v -f aviationsimnetV3.1.xml -n AviationSimNet
 addFOMFedSequence(True,FOMFed5, " -v -f aviationsimnetV3.1.xml -n AviationSimNet -j FOMFed5 -o Manager.Federate -a FederateType -i Manager.Federate -p Federate","FOM4","FOM5")
 addFOMFedSequence(True,FOMFed6, " -v -f Hierarchical.fed -n Hierarchical -j FOMFed6 -o L2 -a attL1_1 -i IL2 -p paramIL1_1","FOM5","FOM6")
 addFOMFedSequence(True,FOMFed7, " -v -f Hierarchical.fed -n Hierarchical -j FOMFed6 -o L1.L2 -a attL1_1 -i IL1.IL2 -p paramIL1_1","FOM6","FOM7")
-addFOMFedSequence(False,FOMFed8, " -v -f BuggyFed -n BuggyFed","FOM7","All Federate(s) ended")
+addFOMFedSequence(False,FOMFed8, " -v -f BuggyFed.fed -n BuggyFed","FOM7","All Federate(s) ended")
 
 def goTest():
     myDTestMaster = dtest.DTestMaster("HLA test test_FOMParse Starts","Launch RTIG + several test_FOMParse federates for testing several FOM file parsing.")
