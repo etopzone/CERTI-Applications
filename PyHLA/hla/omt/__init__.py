@@ -11,7 +11,7 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # Lesser General Public License for more details.
 #
-# $Id: __init__.py,v 1.3 2008/11/06 08:17:28 gotthardp Exp $
+# $Id: __init__.py,v 1.4 2008/11/15 14:30:07 gotthardp Exp $
 
 import types
 import xml.sax.handler
@@ -118,7 +118,7 @@ class HLAencoding:
 
     @property
     def encoding(self):
-        if self.parameters == None:
+        if self.typeParameters == None:
             return globals()[self.representation]
         else:
             return globals()[self.representation](*self.typeParameters)
@@ -140,4 +140,4 @@ def HLAuse(filename):
     parser.setContentHandler(handler)
     parser.parse(filename)
 
-# $Id: __init__.py,v 1.3 2008/11/06 08:17:28 gotthardp Exp $
+# $Id: __init__.py,v 1.4 2008/11/15 14:30:07 gotthardp Exp $
