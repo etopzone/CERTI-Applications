@@ -11,7 +11,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  *
- * $Id: module.h,v 1.2 2008/10/09 16:50:58 gotthardp Exp $
+ * $Id: module.h,v 1.3 2008/11/15 14:34:06 gotthardp Exp $
  */
 
 #ifndef RTI_MODULE_H
@@ -57,12 +57,8 @@ public:
 
     static void init(PyObject *module);
     virtual void on_init(PyObject *module) = 0;
-
-private:
-    typedef std::vector<RtiInitializer *> RtiInitializerList;
-    static RtiInitializerList m_initializers;
 };
 
 #endif // RTI_MODULE_H
 
-// $Id: module.h,v 1.2 2008/10/09 16:50:58 gotthardp Exp $
+// $Id: module.h,v 1.3 2008/11/15 14:34:06 gotthardp Exp $

@@ -11,7 +11,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  *
- * $Id: basicdata.cpp,v 1.3 2008/11/06 08:17:28 gotthardp Exp $
+ * $Id: basicdata.cpp,v 1.4 2008/11/15 14:34:05 gotthardp Exp $
  */
 
 // note: you must include Python.h before any standard headers are included
@@ -635,10 +635,10 @@ add_encoding(PyObject* dict, const char *name, long size, PyMethodDef *methods)
     PyDict_SetItemString(dict, name, (PyObject *)result);
 }
 
-class BasicDataInitializer : public DataInitializer
+class BasicDataInitializer : public OmtInitializer
 {
 public:
-    BasicDataInitializer() : DataInitializer() {}
+    BasicDataInitializer() : OmtInitializer() {}
     void on_init(PyObject* module);
 };
     
@@ -660,4 +660,4 @@ BasicDataInitializer::on_init(PyObject *module)
         add_encoding(dict, pos->co_name, pos->co_size, pos->co_methods);
 }
 
-// $Id: basicdata.cpp,v 1.3 2008/11/06 08:17:28 gotthardp Exp $
+// $Id: basicdata.cpp,v 1.4 2008/11/15 14:34:05 gotthardp Exp $

@@ -11,7 +11,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  *
- * $Id: module.cpp,v 1.2 2008/10/12 13:31:13 gotthardp Exp $
+ * $Id: module.cpp,v 1.3 2008/11/15 14:34:05 gotthardp Exp $
  */
 
 // note: you must include Python.h before any standard headers are included
@@ -20,30 +20,37 @@
 
 #include "module.h"
 
-DataInitializer::DataInitializerList DataInitializer::m_initializers;
+typedef std::vector<OmtInitializer *> OmtInitializerList;
 
-DataInitializer::DataInitializer()
+// this is to avoid the "static initialization order fiasco"
+static OmtInitializerList& getOmtInitializers()
 {
-    m_initializers.push_back(this);
+    static OmtInitializerList initializers;
+    return initializers;
 }
 
-DataInitializer::~DataInitializer()
+OmtInitializer::OmtInitializer()
 {
-    for(DataInitializerList::iterator pos = m_initializers.begin();
-        pos != m_initializers.end(); pos++)
+    getOmtInitializers().push_back(this);
+}
+
+OmtInitializer::~OmtInitializer()
+{
+    for(OmtInitializerList::iterator pos = getOmtInitializers().begin();
+        pos != getOmtInitializers().end(); pos++)
     {
         if(*pos == this)
         {
-            m_initializers.erase(pos);
+            getOmtInitializers().erase(pos);
             break;
         }
     }
 }
 
-void DataInitializer::init(PyObject *module)
+void OmtInitializer::init(PyObject *module)
 {
-    for(DataInitializerList::iterator pos = m_initializers.begin();
-        pos != m_initializers.end(); pos++)
+    for(OmtInitializerList::iterator pos = getOmtInitializers().begin();
+        pos != getOmtInitializers().end(); pos++)
     {
         (*pos)->on_init(module);
     }
@@ -60,7 +67,7 @@ init_omt(void)
         "Modeling and Simulation (M&S) High Level Architecture (HLA) -- Object Model Template (OMT).");
 
     // call initializers
-    DataInitializer::init(module);
+    OmtInitializer::init(module);
 }
 
-// $Id: module.cpp,v 1.2 2008/10/12 13:31:13 gotthardp Exp $
+// $Id: module.cpp,v 1.3 2008/11/15 14:34:05 gotthardp Exp $

@@ -11,7 +11,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  *
- * $Id: module.cpp,v 1.1 2008/09/25 17:17:37 gotthardp Exp $
+ * $Id: module.cpp,v 1.2 2008/11/15 14:34:06 gotthardp Exp $
  */
 
 // note: you must include Python.h before any standard headers are included
@@ -20,30 +20,38 @@
 
 #include "module.h"
 
-RtiInitializer::RtiInitializerList RtiInitializer::m_initializers;
+typedef std::vector<RtiInitializer *> RtiInitializerList;
+
+// this is to avoid the "static initialization order fiasco"
+static RtiInitializerList& getRtiInitializers()
+{
+    static RtiInitializerList initializers;
+    return initializers;
+}
 
 RtiInitializer::RtiInitializer()
 {
-    m_initializers.push_back(this);
+    getRtiInitializers().push_back(this);
 }
 
 RtiInitializer::~RtiInitializer()
 {
-    for(RtiInitializerList::iterator pos = m_initializers.begin();
-        pos != m_initializers.end(); pos++)
+    for(RtiInitializerList::iterator pos = getRtiInitializers().begin();
+        pos != getRtiInitializers().end(); pos++)
     {
         if(*pos == this)
         {
-            m_initializers.erase(pos);
+            getRtiInitializers().erase(pos);
             break;
         }
     }
 }
 
-void RtiInitializer::init(PyObject *module)
+void
+RtiInitializer::init(PyObject *module)
 {
-    for(RtiInitializerList::iterator pos = m_initializers.begin();
-        pos != m_initializers.end(); pos++)
+    for(RtiInitializerList::iterator pos = getRtiInitializers().begin();
+        pos != getRtiInitializers().end(); pos++)
     {
         (*pos)->on_init(module);
     }
@@ -71,4 +79,4 @@ init_rti(void)
     RtiInitializer::init(module);
 }
 
-// $Id: module.cpp,v 1.1 2008/09/25 17:17:37 gotthardp Exp $
+// $Id: module.cpp,v 1.2 2008/11/15 14:34:06 gotthardp Exp $

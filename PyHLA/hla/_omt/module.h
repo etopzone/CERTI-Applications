@@ -11,30 +11,26 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  *
- * $Id: module.h,v 1.1 2008/09/25 17:17:32 gotthardp Exp $
+ * $Id: module.h,v 1.2 2008/11/15 14:34:05 gotthardp Exp $
  */
 
-#ifndef DATA_MODULE_H
-#define DATA_MODULE_H
+#ifndef OMT_MODULE_H
+#define OMT_MODULE_H
 
 #include <vector>
 
-#define MODULE_NAME "data"
+#define MODULE_NAME "omt"
 
-class DataInitializer
+class OmtInitializer
 {
 public:
-    DataInitializer();
-    virtual ~DataInitializer();
+    OmtInitializer();
+    virtual ~OmtInitializer();
 
     static void init(PyObject *module);
     virtual void on_init(PyObject *module) = 0;
-
-private:
-    typedef std::vector<DataInitializer *> DataInitializerList;
-    static DataInitializerList m_initializers;
 };
 
-#endif // DATA_MODULE_H
+#endif // OMT_MODULE_H
 
-// $Id: module.h,v 1.1 2008/09/25 17:17:32 gotthardp Exp $
+// $Id: module.h,v 1.2 2008/11/15 14:34:05 gotthardp Exp $
