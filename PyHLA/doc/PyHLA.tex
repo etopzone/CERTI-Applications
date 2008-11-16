@@ -103,6 +103,12 @@ The Python language provides several benefits
 
 \subsection{Installation Instructions}
 
+The \module{PyHLA} module requires
+\begin{itemize}
+\item Classic Python interpreter 2.4--2.6 (\ulink{CPython}{http://www.python.org/download})
+\item HLA1.3 RTI with C++ API (\ulink{CERTI}{http://www.cert.fr/CERTI}, \ulink{M\"{A}K RTI}{http://www.mak.com/products/rti.php})
+\end{itemize}
+
 \paragraph{Windows}
 
 A binary installer is provided for the latest CERTI and Python release.
@@ -113,12 +119,6 @@ When prompted for a destination folder, you should enter something like
 \file{C:/Program Files/Python2.5/Lib/site-packages}.
 
 \paragraph{Linux}
-
-The \module{PyHLA} module requires
-\begin{itemize}
-\item Classic Python interpreter (\ulink{CPython}{http://www.python.org/download})
-\item HLA1.3 RTI with C++ API (\ulink{CERTI}{http://www.cert.fr/CERTI}, \ulink{M\"{A}K RTI}{http://www.mak.com/products/rti.php})
-\end{itemize}
 
 The \module{PyHLA} source codes can be obtained from the \ulink{CERTI}{https://savannah.nongnu.org/projects/certi}
 applications repository.
@@ -156,55 +156,7 @@ Discuss the results.
 \input{rti/module}
 \input{omt/module}
 
-\section{High-Level API (NOT IMPLEMENTED)}
-High-level interace. Shall encompass the most frequently used HLA features. May not encompass all of the features.
-
-Do not hide the main loop from the user. Keep the tick() function in the Python script.
-
-Automatic entity publication and discovery.
-
-Example:
-Connect to the RTIG.
-
-connection = hla.Connection("federation", "federate", "model.fed")
-
-Publish the aircraft.
-
-\begin{verbatim}
-connection.publishedEntities["OS-001"] = aircraft
-\end{verbatim}
-
-List world coordinates of all discovered aircrafts. By default, all discovered
-entities are automatically stored in the discoveredEntities dictionary.
-
-\begin{verbatim}
-for entity in connection.discoveredEntities:
-  if type(entity) == hla.Aircraft:
-    print entity.WorldLocation
-\end{verbatim}
-
-Dynamic data types. Duck-typed.
-Notifications received as method calls in sub-classed functions.
-
-Example:
-Define a custom Aircraft class.
-
-\begin{verbatim}
-class MyAircraft(Aircraft):
-  pass
-\end{verbatim}
-
-Define a custom connection that will discover aircrafts only. Each aircraft will
-be represented by the custom Aircraft class.
-
-\begin{verbatim}
-class MyConnection(Connection):
-  def discoverObjectInstance(self, name, class):
-    if class == hla.Aircraft:
-      self.discoveredEntities[name] = MyAircraft()
-\end{verbatim}
-
 \input{PyHLA.ind}
 \end{document}
 
-% $Id: PyHLA.tex,v 1.6 2008/10/13 17:50:19 gotthardp Exp $
+% $Id: PyHLA.tex,v 1.7 2008/11/16 14:42:24 gotthardp Exp $

@@ -1,0 +1,1911 @@
+\subsection{HLA Services}
+
+The HLA services are provided by \class{FederateAmbassador} and \class{RTIAmbassador}.
+
+Service call-flows are described by Message Sequence Charts (MSC).
+
+\begin{hlamsc}{Example}
+\declinst{m1}{Federate}{A}
+\declinst{m2}{RTI}{}
+\declinst{m3}{Federate}{B}
+
+\mess{RTI Service}{m1}{m2}
+\nextlevel
+\mess{Federate Service}{m2}{m3}
+\end{hlamsc}
+
+The above call-flow references the following Python code.
+
+\begin{verbatim}
+import hla.rti as hla
+
+class MyAmbassador(hla.FederateAmbassador):
+    def Federate_Service(self, parameters):
+        ...
+
+fed = MyAmbassador()
+
+rtia = hla.RTIAmbassador()
+rtia.joinFederationExecution("python-01", "MyFederation", fed)
+
+rtia.RTI_Service(parameters)
+\end{verbatim}
+
+\subsubsection{Federation Management}
+
+\paragraph{Federation Execution}
+
+\begin{hlamsc}{Federation Execution}
+\declinst{m1}{Federate}{A}
+\declinst{m2}{RTI}{}
+\declinst{m3}{Federate}{B}
+
+\mess{createFederationExecution}{m1}{m2}
+\nextlevel
+\mess{joinFederationExecution}{m1}{m2}
+\nextlevel
+\mess{joinFederationExecution}{m3}{m2}
+\nextlevel
+\inlinestart{e1}{seq}{m1}{m3}
+\nextlevel
+\mess{tick}{m3}{m2}
+\nextlevel
+\mess{tick}{m1}{m2}
+\nextlevel
+\inlineend{e1}
+\nextlevel
+\mess{resignFederationExecution}{m3}{m2}
+\nextlevel
+\mess{resignFederationExecution}{m1}{m2}
+\nextlevel
+\mess{destroyFederationExecution}{m1}{m2}
+\nextlevel
+\end{hlamsc}
+
+\begin{methoddesc}{createFederationExecution}{executionName, FED}
+
+For example
+\begin{verbatim}
+try:
+    rtia.createFederationExecution("MyFederation", "model.fed")
+    print "Federation created."
+except hla.FederationExecutionAlreadyExists:
+    print "Federation already exists."
+\end{verbatim}
+
+May raise
+\exception{FederationExecutionAlreadyExists},
+\exception{CouldNotOpenFED},
+\exception{ErrorReadingFED},
+\exception{ConcurrentAccessAttempted}.
+\end{methoddesc}
+
+\begin{methoddesc}{destroyFederationExecution}{executionName}
+
+May raise
+\exception{FederatesCurrentlyJoined},
+\exception{FederationExecutionDoesNotExist},
+\exception{ConcurrentAccessAttempted}.
+\end{methoddesc}
+
+\begin{methoddesc}{joinFederationExecution}{yourName, executionName, ambassador}
+
+Returns a federate handle.
+
+May raise
+\exception{FederateAlreadyExecutionMember},
+\exception{FederationExecutionDoesNotExist},
+\exception{CouldNotOpenFED},
+\exception{ErrorReadingFED},
+\exception{ConcurrentAccessAttempted},
+\exception{SaveInProgress},
+\exception{RestoreInProgress}.
+\end{methoddesc}
+
+\begin{methoddesc}{resignFederationExecution}{resignAction}
+The \class{ResignAction} class provides different resign actions.
+
+\begin{tableii}{l|l}{constant}{resignAction}{Description}
+\lineii{ReleaseAttributes}
+    {The resigning federate releases control of all owned attributes.}
+\lineii{DeleteObjects}
+    {The resigning federate deletes all objects for which it holds the
+    privilege to delete.}
+\lineii{DeleteObjectsAndReleaseAttributes}
+    {The resigning federate deletes all objects for which it holds the
+    privilege to delete and then releases ownership of any remaining
+    owned attributes.}
+\lineii{NoAction}
+    {The attributes and objects owned by the federate become "orphaned".}
+\end{tableii}
+
+For example
+\begin{verbatim}
+rtia.resignFederationExecution(hla.ResignAction.DeleteObjects)
+\end{verbatim}
+
+May raise
+\exception{FederateOwnsAttributes},
+\exception{FederateNotExecutionMember},
+\exception{InvalidResignAction},
+\exception{ConcurrentAccessAttempted}.
+\end{methoddesc}
+
+\begin{methoddesc}{enableAsynchronousDelivery}{}
+
+May raise
+\exception{AsynchronousDeliveryAlreadyEnabled},
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted},
+\exception{SaveInProgress},
+\exception{RestoreInProgress}.
+\end{methoddesc}
+
+\begin{methoddesc}{disableAsynchronousDelivery}{}
+
+May raise
+\exception{AsynchronousDeliveryAlreadyDisabled},
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted},
+\exception{SaveInProgress},
+\exception{RestoreInProgress}.
+\end{methoddesc}
+
+\begin{methoddesc}{tick}{\optional{minimum, maximum}}
+Returns True or False.
+
+May raise
+\exception{SpecifiedSaveLabelDoesNotExist},
+\exception{ConcurrentAccessAttempted}.
+\end{methoddesc}
+
+\paragraph{Federation Save}
+
+\begin{hlamsc}{Federation Save}
+\declinst{m1}{Federate}{A}
+\declinst{m2}{RTI}{}
+\declinst{m3}{Federate}{B}
+
+\mess{requestFederationSave}{m1}{m2}
+\nextlevel
+\mess{initiateFederationSave}{m2}{m1}
+\mess{initiateFederationSave}{m2}{m3}
+\nextlevel
+\mess{federateSaveBegun}{m1}{m2}
+\nextlevel
+\mess{federateSaveBegun}{m3}{m2}
+\mess{federateSaveComplete}{m1}{m2}
+\nextlevel
+\mess{federateSaveComplete}{m3}{m2}
+\nextlevel
+\mess{federationSaved}{m2}{m1}
+\mess{federationSaved}{m2}{m3}
+\nextlevel
+\end{hlamsc}
+
+\begin{methoddesc}{requestFederationSave}{label\optional{, time}}
+
+May raise
+\exception{FederationTimeAlreadyPassed},
+\exception{InvalidFederationTime},
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted},
+\exception{SaveInProgress},
+\exception{RestoreInProgress}.
+\end{methoddesc}
+
+\begin{methoddesc}{initiateFederateSave}{label}
+
+May raise
+\exception{UnableToPerformSave}.
+\end{methoddesc}
+
+\begin{methoddesc}{federateSaveBegun}{}
+
+May raise
+\exception{SaveNotInitiated},
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted},
+\exception{RestoreInProgress}.
+\end{methoddesc}
+
+\begin{methoddesc}{federateSaveComplete}{}
+
+May raise
+\exception{SaveNotInitiated},
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted},
+\exception{RestoreInProgress}.
+\end{methoddesc}
+
+\begin{methoddesc}{federateSaveNotComplete}{}
+
+May raise
+\exception{SaveNotInitiated},
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted},
+\exception{RestoreInProgress}.
+\end{methoddesc}
+
+\begin{methoddesc}{federationSaved}{}
+\end{methoddesc}
+
+\begin{methoddesc}{federationNotSaved}{}
+\end{methoddesc}
+
+\paragraph{Federation Restore}
+
+\begin{hlamsc}{Federation Restore}
+\declinst{m1}{Federate}{A}
+\declinst{m2}{RTI}{}
+\declinst{m3}{Federate}{B}
+
+\mess{requestFederationRestore}{m1}{m2}
+\nextlevel
+\mess{requestFederationRestoreSucceeded}{m2}{m1}
+\nextlevel[2]
+\mess{federateRestoreBegun}{m2}{m1}
+\mess{federateRestoreBegun}{m2}{m3}
+\nextlevel
+\mess{initiateFederateRestore}{m1}{m2}
+\mess{initiateFederateRestore}{m3}{m2}
+\nextlevel
+\mess{federateRestoreComplete}{m1}{m2}
+\nextlevel
+\mess{federaterestoreComplete}{m3}{m2}
+\nextlevel
+\mess{federationRestored}{m2}{m1}
+\mess{federationRestored}{m2}{m3}
+\nextlevel
+\end{hlamsc}
+
+\begin{methoddesc}{requestFederationRestore}{label}
+
+May raise
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted},
+\exception{SaveInProgress},
+\exception{RestoreInProgress}.
+\end{methoddesc}
+
+\begin{methoddesc}{requestFederationRestoreSucceeded}{label}
+\end{methoddesc}
+
+\begin{methoddesc}{requestFederationRestoreFailed}{label, reason}
+\end{methoddesc}
+
+\begin{methoddesc}{federationRestoreBegun}{}
+\end{methoddesc}
+
+\begin{methoddesc}{initiateFederateRestore}{label, federate}
+
+May raise
+\exception{SpecifiedSaveLabelDoesNotExist},
+\exception{CouldNotRestore}.
+\end{methoddesc}
+
+\begin{methoddesc}{federateRestoreComplete}{}
+
+May raise
+\exception{RestoreNotRequested},
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted},
+\exception{SaveInProgress}.
+\end{methoddesc}
+
+\begin{methoddesc}{federateRestoreNotComplete}{}
+
+May raise
+\exception{RestoreNotRequested},
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted},
+\exception{SaveInProgress}.
+\end{methoddesc}
+
+\begin{methoddesc}{federationRestored}{}
+\end{methoddesc}
+
+\begin{methoddesc}{federationNotRestored}{}
+\end{methoddesc}
+
+\subsubsection{Declaration Management}
+
+\paragraph{Object Declaration}
+
+\begin{hlamsc}{Object Declaration}
+\declinst{m1}{Federate}{A}
+\declinst{m2}{RTI}{}
+\declinst{m3}{Federate}{B}
+
+\mess{getObjectClassHandle}{m1}{m2}
+\nextlevel
+\mess{getAttributeHandle}{m1}{m2}
+\nextlevel
+\mess{publishObjectClass}{m1}{m2}
+\nextlevel
+\mess{subscribeObjectClassAttributes}{m3}{m2}
+\nextlevel
+\mess{startRegistrationForObjectClass}{m2}{m1}
+\nextlevel
+\condition{simulation active}{m1,m2,m3}
+\nextlevel[3]
+\mess{unsubscribeObjectClass}{m3}{m2}
+\nextlevel
+\mess{stopRegistrationForObjectClass}{m2}{m1}
+\nextlevel
+\mess{unpublishObjectClass}{m1}{m2}
+\nextlevel
+\end{hlamsc}
+
+\begin{methoddesc}{getObjectClassHandle}{objectName}
+Returns object class handle.
+
+For example
+\begin{verbatim}
+aircraftHandle = rtia.getObjectClassHandle("Aircraft")
+\end{verbatim}
+
+May raise
+\exception{NameNotFound},
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted}.
+\end{methoddesc}
+
+\begin{methoddesc}{getObjectClassName}{objectClass}
+Returns object class name.
+
+May raise
+\exception{ObjectClassNotDefined},
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted}.
+\end{methoddesc}
+
+\begin{methoddesc}{getAttributeHandle}{attributeName, objectClass}
+Returns class attribute handle.
+
+For example
+\begin{verbatim}
+aircraftHandle = rtia.getObjectClassHandle("Aircraft")
+wordLocationHandle = rtia.getAttributeHandle("WorldLocation", aircraftHandle)
+\end{verbatim}
+
+May raise
+\exception{ObjectClassNotDefined},
+\exception{NameNotFound},
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted}.
+\end{methoddesc}
+
+\begin{methoddesc}{getAttributeName}{attribute, objectClass}
+Returns class attribute name.
+
+May raise
+\exception{ObjectClassNotDefined},
+\exception{AttributeNotDefined},
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted}.
+\end{methoddesc}
+
+\begin{methoddesc}{publishObjectClass}{objectClass, (attribute)}
+
+For example
+\begin{verbatim}
+wordLocationHandle = rtia.getAttributeHandle("WorldLocation", aircraftHandle)
+rtia.publishObjectClass(aircraftHandle, [wordLocationHandle])
+\end{verbatim}
+
+May raise
+\exception{ObjectClassNotDefined},
+\exception{AttributeNotDefined},
+\exception{OwnershipAcquisitionPending},
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted},
+\exception{SaveInProgress},
+\exception{RestoreInProgress}.
+\end{methoddesc}
+
+\begin{methoddesc}{unpublishObjectClass}{objectClass}
+
+May raise
+\exception{ObjectClassNotDefined},
+\exception{ObjectClassNotPublished},
+\exception{OwnershipAcquisitionPending},
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted},
+\exception{SaveInProgress},
+\exception{RestoreInProgress}.
+\end{methoddesc}
+
+\begin{methoddesc}{subscribeObjectClassAttributes}{objectClass, (attribute), active=True}
+
+For example
+\begin{verbatim}
+wordLocationHandle = rtia.getAttributeHandle("WorldLocation", aircraftHandle)
+rtia.subscribeObjectClassAttributes(aircraftHandle, [wordLocationHandle])
+\end{verbatim}
+
+May raise
+\exception{ObjectClassNotDefined},
+\exception{AttributeNotDefined},
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted},
+\exception{SaveInProgress},
+\exception{RestoreInProgress}.
+\end{methoddesc}
+
+\begin{methoddesc}{unsubscribeObjectClass}{objectClass}
+
+May raise
+\exception{ObjectClassNotDefined},
+\exception{ObjectClassNotSubscribed},
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted},
+\exception{SaveInProgress},
+\exception{RestoreInProgress}.
+\end{methoddesc}
+
+\begin{methoddesc}{startRegistrationForObjectClass}{objectClass}
+
+May raise
+\exception{ObjectClassNotPublished}.
+\end{methoddesc}
+
+\begin{methoddesc}{stopRegistrationForObjectClass}{objectClass}
+
+May raise
+\exception{ObjectClassNotPublished}.
+\end{methoddesc}
+
+\paragraph{Interaction Declaration}
+
+\begin{hlamsc}{Interaction Declaration}
+\declinst{m1}{Federate}{A}
+\declinst{m2}{RTI}{}
+\declinst{m3}{Federate}{B}
+
+\mess{getInteractionClassHandle}{m1}{m2}
+\nextlevel
+\mess{publishInteractionClass}{m1}{m2}
+\nextlevel
+\mess{subscribeInteractionClass}{m3}{m2}
+\nextlevel
+\mess{turnInteractionsOn}{m2}{m1}
+\nextlevel
+\condition{simulation active}{m1,m2,m3}
+\nextlevel[3]
+\mess{unsubscribeInteractionClass}{m3}{m2}
+\nextlevel
+\mess{turnInteractionsOff}{m2}{m1}
+\nextlevel
+\mess{unpublishInteractionClass}{m1}{m2}
+\nextlevel
+\end{hlamsc}
+
+\begin{methoddesc}{getInteractionClassHandle}{interactionName}
+Returns interaction class handle.
+
+May raise
+\exception{NameNotFound},
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted}.
+\end{methoddesc}
+
+\begin{methoddesc}{getInteractionClassName}{interactionClass}
+Returns interaction class name.
+
+May raise
+\exception{InteractionClassNotDefined},
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted}.
+\end{methoddesc}
+
+\begin{methoddesc}{publishInteractionClass}{interactionClass}
+
+May raise
+\exception{InteractionClassNotDefined},
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted},
+\exception{SaveInProgress},
+\exception{RestoreInProgress}.
+\end{methoddesc}
+
+\begin{methoddesc}{unpublishInteractionClass}{interactionClass}
+
+May raise
+\exception{InteractionClassNotDefined},
+\exception{InteractionClassNotPublished},
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted},
+\exception{SaveInProgress},
+\exception{RestoreInProgress}.
+\end{methoddesc}
+
+\begin{methoddesc}{subscribeInteractionClass}{interactionClass, active=True}
+
+May raise
+\exception{InteractionClassNotDefined},
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted},
+\exception{FederateLoggingServiceCalls},
+\exception{SaveInProgress},
+\exception{RestoreInProgress}.
+\end{methoddesc}
+
+\begin{methoddesc}{unsubscribeInteractionClass}{interactionClass}
+
+May raise
+\exception{InteractionClassNotDefined},
+\exception{InteractionClassNotSubscribed},
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted},
+\exception{SaveInProgress},
+\exception{RestoreInProgress}.
+\end{methoddesc}
+
+\begin{methoddesc}{turnInteractionsOn}{interactionClass}
+
+May raise
+\exception{InteractionClassNotPublished}.
+\end{methoddesc}
+
+\begin{methoddesc}{turnInteractionsOff}{interactionClass}
+
+May raise
+\exception{InteractionClassNotPublished}.
+\end{methoddesc}
+
+\subsubsection{Object Management}
+
+\paragraph{Object Registration}
+
+\begin{hlamsc}{Object Registration}
+\declinst{m1}{Federate}{A}
+\declinst{m2}{RTI}{}
+\declinst{m3}{Federate}{B}
+
+\mess{registerObjectInstance}{m1}{m2}
+\nextlevel
+\mess{discoverObjectInstance}{m2}{m3}
+\nextlevel
+\mess{turnUpdatesOnForObjectInstance}{m2}{m1}
+\nextlevel
+\condition{simulation active}{m1,m2,m3}
+\nextlevel[3]
+\mess{deleteObjectInstance}{m1}{m2}
+\nextlevel
+\mess{removeObjectInstance}{m2}{m3}
+\nextlevel
+\end{hlamsc}
+
+\begin{methoddesc}{registerObjectInstance}{objectClass\optional{, objectName}}
+
+Returns an object handle.
+
+May raise
+\exception{ObjectClassNotDefined},
+\exception{ObjectClassNotPublished},
+\exception{ObjectAlreadyRegistered},
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted},
+\exception{SaveInProgress},
+\exception{RestoreInProgress}.
+\end{methoddesc}
+
+\begin{methoddesc}{discoverObjectInstance}{object, objectClass, objectName}
+
+May raise
+\exception{CouldNotDiscover},
+\exception{ObjectClassNotKnown}.
+\end{methoddesc}
+
+\begin{methoddesc}{turnUpdatesOnForObjectInstance}{object, (attribute)}
+
+May raise
+\exception{ObjectNotKnown},
+\exception{AttributeNotOwned}.
+\end{methoddesc}
+
+\begin{methoddesc}{turnUpdatesOffForObjectInstance}{object, (attribute)}
+
+May raise
+\exception{ObjectNotKnown},
+\exception{AttributeNotOwned}.
+\end{methoddesc}
+
+\begin{methoddesc}{deleteObjectInstance}{object, tag\optional{, time}}
+
+Returns eventRetraction handle.
+
+May raise
+\exception{ObjectNotKnown},
+\exception{DeletePrivilegeNotHeld},
+\exception{InvalidFederationTime},
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted},
+\exception{SaveInProgress},
+\exception{RestoreInProgress}.
+\end{methoddesc}
+
+\begin{methoddesc}{removeObjectInstance}{object, tag\optional{, time, eventRetraction}}
+
+May raise
+\exception{ObjectNotKnown},
+\exception{InvalidFederationTime}.
+\end{methoddesc}
+
+\begin{methoddesc}{localDeleteObjectInstance}{object}
+
+May raise
+\exception{ObjectNotKnown},
+\exception{FederateOwnsAttributes},
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted},
+\exception{SaveInProgress},
+\exception{RestoreInProgress}.
+\end{methoddesc}
+
+\begin{methoddesc}{getObjectClass}{object}
+Returns object class handle.
+
+May raise
+\exception{ObjectNotKnown},
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted}.
+\end{methoddesc}
+
+\begin{methoddesc}{getObjectInstanceHandle}{objectName}
+Returns object handle.
+
+May raise
+\exception{ObjectNotKnown},
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted}.
+\end{methoddesc}
+
+\begin{methoddesc}{getObjectInstanceName}{object}
+Returns object name.
+
+May raise
+\exception{ObjectNotKnown},
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted}.
+\end{methoddesc}
+
+\begin{methoddesc}{getTransportationHandle}{transportationName}
+Returns transportation type handle.
+
+May raise
+\exception{NameNotFound},
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted}.
+\end{methoddesc}
+
+\begin{methoddesc}{getTransportationName}{transportation}
+Returns transportation type name.
+
+May raise
+\exception{InvalidTransportationHandle},
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted}.
+\end{methoddesc}
+
+\begin{methoddesc}{changeAttributeTransportationType}{object, (attribute), transportation}
+
+May raise
+\exception{ObjectNotKnown},
+\exception{AttributeNotDefined},
+\exception{AttributeNotOwned},
+\exception{InvalidTransportationHandle},
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted},
+\exception{SaveInProgress},
+\exception{RestoreInProgress}.
+\end{methoddesc}
+
+\paragraph{Attribute Value Update}
+
+\begin{hlamsc}{Attribute Value Update}
+\declinst{m1}{Federate}{A}
+\declinst{m2}{RTI}{}
+\declinst{m3}{Federate}{B}
+
+\mess{requestClassAttributeValueUpdate}{m3}{m2}
+\nextlevel
+\mess{provideAttributeValueUpdate}{m2}{m1}
+\nextlevel
+\mess{requestObjectAttributeValueUpdate}{m3}{m2}
+\nextlevel
+\mess{provideAttributeValueUpdate}{m2}{m1}
+\nextlevel[2]
+\mess{updateAttributeValues}{m1}{m2}
+\nextlevel
+\mess{reflectAttributeValues}{m2}{m3}
+\nextlevel
+\end{hlamsc}
+
+\begin{methoddesc}{requestObjectAttributeValueUpdate}{object, (attribute)}
+
+May raise
+\exception{ObjectNotKnown},
+\exception{AttributeNotDefined},
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted},
+\exception{SaveInProgress},
+\exception{RestoreInProgress}.
+\end{methoddesc}
+
+\begin{methoddesc}{requestClassAttributeValueUpdate}{objectClass, (attribute)}
+
+May raise
+\exception{ObjectClassNotDefined},
+\exception{AttributeNotDefined},
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted},
+\exception{SaveInProgress},
+\exception{RestoreInProgress}.
+\end{methoddesc}
+
+\begin{methoddesc}{provideAttributeValueUpdate}{object, (attribute)}
+
+May raise
+\exception{ObjectNotKnown},
+\exception{AttributeNotKnown},
+\exception{AttributeNotOwned}.
+\end{methoddesc}
+
+\begin{methoddesc}{updateAttributeValues}{object, \{attribute:value\}, tag\optional{, time}}
+
+Returns eventRetraction handle.
+
+For example
+\begin{verbatim}
+rtia.updateAttributeValues(thisObject,
+    {wordLocationHandle:fom.WorldLocationStruct.pack({"X":1,"Y":2,"Z":3})},
+    "update")
+\end{verbatim}
+
+May raise
+\exception{ObjectNotKnown},
+\exception{AttributeNotDefined},
+\exception{AttributeNotOwned},
+\exception{InvalidFederationTime},
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted},
+\exception{SaveInProgress},
+\exception{RestoreInProgress}.
+\end{methoddesc}
+
+\begin{methoddesc}{reflectAttributeValues}{object, \{attribute:value\}, tag, orderType, transportType\optional{, time, eventRetraction}}
+Received attribute values are received in a dictionary. Attribute handle is used as key.
+The value can be unpacked using the \module{hla.omt} functions.
+
+For example
+\begin{verbatim}
+def reflectAttributeValues(self, object, attributes, tag, order, transport):
+    location, size = fom.WorldLocationStruct.unpack(attributes[self.wordLocationHandle])
+    print "REFLECT", location
+\end{verbatim}
+
+May raise
+\exception{ObjectNotKnown},
+\exception{AttributeNotKnown},
+\exception{FederateOwnsAttributes},
+\exception{InvalidFederationTime}.
+\end{methoddesc}
+
+\paragraph{Exchanging Interactions}
+
+\begin{hlamsc}{Exchanging Interactions}
+\declinst{m1}{Federate}{A}
+\declinst{m2}{RTI}{}
+\declinst{m3}{Federate}{B}
+
+\mess{getParameterHandle}{m1}{m2}
+\nextlevel
+\mess{sendInteraction}{m1}{m2}
+\nextlevel
+\mess{receiveInteraction}{m2}{m3}
+\nextlevel
+\end{hlamsc}
+
+\begin{methoddesc}{getParameterHandle}{parameterName, interactionClass}
+Returns interaction parameter handle.
+
+May raise
+\exception{InteractionClassNotDefined},
+\exception{NameNotFound},
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted}.
+\end{methoddesc}
+
+\begin{methoddesc}{getParameterName}{parameter, interactionClass}
+Returns interaction parameter name.
+
+May raise
+\exception{InteractionClassNotDefined},
+\exception{InteractionParameterNotDefined},
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted}.
+\end{methoddesc}
+
+\begin{methoddesc}{sendInteraction}{interactionClass, \{parameter:value\}, tag\optional{, time}}
+
+Returns eventRetraction handle.
+
+May raise
+\exception{InteractionClassNotDefined},
+\exception{InteractionClassNotPublished},
+\exception{InteractionParameterNotDefined},
+\exception{InvalidFederationTime},
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted},
+\exception{SaveInProgress},
+\exception{RestoreInProgress}.
+\end{methoddesc}
+
+\begin{methoddesc}{receiveInteraction}{interactionClass, \{parameter:value\}, tag, orderType, transportType\optional{, time, eventRetraction}}
+
+May raise
+\exception{InteractionClassNotKnown},
+\exception{InteractionParameterNotKnown},
+\exception{InvalidFederationTime}.
+\end{methoddesc}
+
+\begin{methoddesc}{changeInteractionTransportationType}{interactionClass, transportation}
+
+May raise
+\exception{InteractionClassNotDefined},
+\exception{InteractionClassNotPublished},
+\exception{InvalidTransportationHandle},
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted},
+\exception{SaveInProgress},
+\exception{RestoreInProgress}.
+\end{methoddesc}
+
+\subsubsection{Data Distribution Management}
+
+\paragraph{Region Creation}
+
+\begin{hlamsc}{Region Creation}
+\declinst{m1}{Federate}{A}
+\declinst{m2}{RTI}{}
+\declinst{m3}{Federate}{B}
+
+\mess{getRoutingSpaceHandle}{m1}{m2}
+\nextlevel
+\mess{getDimensionHandle}{m1}{m2}
+\nextlevel
+\mess{createRegion}{m1}{m2}
+\nextlevel
+\mess{createRegion}{m3}{m2}
+\nextlevel
+\mess{notifyAboutRegionModification}{m1}{m2}
+\nextlevel
+\mess{notifyAboutRegionModification}{m3}{m2}
+\nextlevel
+\condition{simulation active}{m1,m2,m3}
+\nextlevel[3]
+\mess{deleteRegion}{m1}{m2}
+\nextlevel
+\mess{deleteRegion}{m3}{m2}
+\nextlevel
+\end{hlamsc}
+
+\begin{methoddesc}{getRoutingSpaceHandle}{spaceName}
+Returns routing space handle.
+
+May raise
+\exception{NameNotFound},
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted}.
+\end{methoddesc}
+
+\begin{methoddesc}{getRoutingSpaceName}{space}
+Returns routing space name.
+
+May raise
+\exception{SpaceNotDefined},
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted}.
+\end{methoddesc}
+
+\begin{methoddesc}{getDimensionHandle}{dimensionName, space}
+Returns routing space dimension handle.
+
+May raise
+\exception{SpaceNotDefined},
+\exception{NameNotFound},
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted}.
+\end{methoddesc}
+
+\begin{methoddesc}{getDimensionName}{dimension, space}
+Returns routing space dimension name.
+
+May raise
+\exception{SpaceNotDefined},
+\exception{DimensionNotDefined},
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted}.
+\end{methoddesc}
+
+\begin{methoddesc}{createRegion}{space, [dimension, (upper, lower)]}
+
+Returns region handle.
+
+May raise
+\exception{SpaceNotDefined},
+\exception{InvalidExtents},
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted},
+\exception{SaveInProgress},
+\exception{RestoreInProgress}.
+\end{methoddesc}
+
+\begin{methoddesc}{notifyAboutRegionModification}{region}
+
+May raise
+\exception{RegionNotKnown},
+\exception{InvalidExtents},
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted},
+\exception{SaveInProgress},
+\exception{RestoreInProgress}.
+\end{methoddesc}
+
+\begin{methoddesc}{deleteRegion}{region}
+
+May raise
+\exception{RegionNotKnown},
+\exception{RegionInUse},
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted},
+\exception{SaveInProgress},
+\exception{RestoreInProgress}.
+\end{methoddesc}
+
+\paragraph{Object Registration}
+
+\begin{hlamsc}{Object Management With Regions}
+\declinst{m1}{Federate}{A}
+\declinst{m2}{RTI}{}
+\declinst{m3}{Federate}{B}
+
+\mess{publishObjectClass}{m1}{m2}
+\nextlevel
+\mess{subscribeObjectClassAttributesWithRegion}{m3}{m2}
+\nextlevel
+\mess{startRegistrationForObjectClass}{m2}{m1}
+\nextlevel[2]
+\mess{enableAttributeRelevanceAdvisorySwitch}{m1}{m2}
+\nextlevel
+\mess{enableAttributeScopeAdvisorySwitch}{m3}{m2}
+\nextlevel[2]
+\mess{registerObjectInstanceWithRegion}{m1}{m2}
+\nextlevel
+\mess{discoverObjectInstance}{m2}{m3}
+\nextlevel
+\mess{turnUpdatesOnForObjectInstance}{m2}{m1}
+\mess{attributesInScope}{m2}{m3}
+\nextlevel
+\inlinestart{e1}{seq}{m1}{m3}
+\nextlevel
+\mess{requestClassAttributeValueUpdateWithRegion}{m3}{m2}
+\nextlevel
+\mess{provideAttributeValueUpdate}{m2}{m1}
+\nextlevel
+\mess{updateAttributeValues}{m1}{m2}
+\nextlevel
+\mess{reflectAttributeValues}{m2}{m3}
+\nextlevel
+\inlineend{e1}
+\nextlevel
+\mess{unsubscribeObjectClassWithRegion}{m3}{m2}
+\nextlevel
+\mess{stopRegistrationForObjectClass}{m2}{m1}
+\nextlevel
+\mess{turnUpdatesOffForObjectInstance}{m2}{m1}
+\nextlevel[2]
+\mess{deleteObjectInstance}{m1}{m2}
+\nextlevel
+\mess{removeObjectInstance}{m2}{m3}
+\nextlevel
+\end{hlamsc}
+
+\begin{methoddesc}{subscribeObjectClassAttributesWithRegion}{objectClass, region, (attribute), active=True}
+
+May raise
+\exception{ObjectClassNotDefined},
+\exception{AttributeNotDefined},
+\exception{RegionNotKnown},
+\exception{InvalidRegionContext},
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted},
+\exception{SaveInProgress},
+\exception{RestoreInProgress}.
+\end{methoddesc}
+
+\begin{methoddesc}{unsubscribeObjectClassWithRegion}{objectClass, region}
+
+May raise
+\exception{ObjectClassNotDefined},
+\exception{RegionNotKnown},
+\exception{ObjectClassNotSubscribed},
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted},
+\exception{SaveInProgress},
+\exception{RestoreInProgress}.
+\end{methoddesc}
+
+\begin{methoddesc}{enableClassRelevanceAdvisorySwitch}{}
+
+May raise
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted},
+\exception{SaveInProgress},
+\exception{RestoreInProgress}.
+\end{methoddesc}
+
+\begin{methoddesc}{disableClassRelevanceAdvisorySwitch}{}
+
+May raise
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted},
+\exception{SaveInProgress},
+\exception{RestoreInProgress}.
+\end{methoddesc}
+
+\begin{methoddesc}{enableAttributeRelevanceAdvisorySwitch}{}
+
+May raise
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted},
+\exception{SaveInProgress},
+\exception{RestoreInProgress}.
+\end{methoddesc}
+
+\begin{methoddesc}{disableAttributeRelevanceAdvisorySwitch}{}
+
+May raise
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted},
+\exception{SaveInProgress},
+\exception{RestoreInProgress}.
+\end{methoddesc}
+
+\begin{methoddesc}{enableAttributeScopeAdvisorySwitch}{}
+
+May raise
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted},
+\exception{SaveInProgress},
+\exception{RestoreInProgress}.
+\end{methoddesc}
+
+\begin{methoddesc}{disableAttributeScopeAdvisorySwitch}{}
+
+May raise
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted},
+\exception{SaveInProgress},
+\exception{RestoreInProgress}.
+\end{methoddesc}
+
+\begin{methoddesc}{registerObjectInstanceWithRegion}{objectClass, [(attribute, region)]\optional{, object}}
+
+Returns object handle.
+
+May raise
+\exception{ObjectClassNotDefined},
+\exception{ObjectClassNotPublished},
+\exception{AttributeNotDefined},
+\exception{AttributeNotPublished},
+\exception{RegionNotKnown},
+\exception{InvalidRegionContext},
+\exception{ObjectAlreadyRegistered},
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted},
+\exception{SaveInProgress},
+\exception{RestoreInProgress}.
+\end{methoddesc}
+
+\begin{methoddesc}{associateRegionForUpdates}{region, object, (attribute)}
+
+May raise
+\exception{ObjectNotKnown},
+\exception{AttributeNotDefined},
+\exception{InvalidRegionContext},
+\exception{RegionNotKnown},
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted},
+\exception{SaveInProgress},
+\exception{RestoreInProgress}.
+\end{methoddesc}
+
+\begin{methoddesc}{unassociateRegionForUpdates}{region, object}
+
+May raise
+\exception{ObjectNotKnown},
+\exception{InvalidRegionContext},
+\exception{RegionNotKnown},
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted},
+\exception{SaveInProgress},
+\exception{RestoreInProgress}.
+\end{methoddesc}
+
+\begin{methoddesc}{getAttributeRoutingSpaceHandle}{attribute, objectClass}
+Returns routing space handle.
+
+May raise
+\exception{ObjectClassNotDefined},
+\exception{AttributeNotDefined},
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted}.
+\end{methoddesc}
+
+\begin{methoddesc}{requestClassAttributeValueUpdateWithRegion}{objectClass, (attribute), region}
+
+May raise
+\exception{ObjectClassNotDefined},
+\exception{AttributeNotDefined},
+\exception{RegionNotKnown},
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted},
+\exception{SaveInProgress},
+\exception{RestoreInProgress}.
+\end{methoddesc}
+
+\begin{methoddesc}{attributesInScope}{object, (attribute)}
+
+May raise
+\exception{ObjectNotKnown},
+\exception{AttributeNotKnown}.
+\end{methoddesc}
+
+\begin{methoddesc}{attributesOutOfScope}{object, (attribute)}
+
+May raise
+\exception{ObjectNotKnown},
+\exception{AttributeNotKnown}.
+\end{methoddesc}
+
+\paragraph{Exchanging Interactions}
+
+\begin{hlamsc}{Exchanging Interactions With Regions}
+\declinst{m1}{Federate}{A}
+\declinst{m2}{RTI}{}
+\declinst{m3}{Federate}{B}
+
+\mess{subscribeInteractionClassWithRegion}{m1}{m2}
+\nextlevel
+\mess{turnInteractionsOn}{m2}{m3}
+\nextlevel
+\inlinestart{e1}{seq}{m1}{m3}
+\nextlevel
+\mess{sendInteractionWithRegion}{m3}{m2}
+\nextlevel
+\mess{receiveInteraction}{m2}{m1}
+\nextlevel
+\inlineend{e1}
+\nextlevel
+\mess{unsubscribeInteractionClassWithRegion}{m1}{m2}
+\nextlevel
+\mess{turnInteractionsOff}{m2}{m3}
+\nextlevel
+\end{hlamsc}
+
+\begin{methoddesc}{subscribeInteractionClassWithRegion}{interactionClass, region, active=True}
+
+May raise
+\exception{InteractionClassNotDefined},
+\exception{RegionNotKnown},
+\exception{InvalidRegionContext},
+\exception{FederateLoggingServiceCalls},
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted},
+\exception{SaveInProgress},
+\exception{RestoreInProgress}.
+\end{methoddesc}
+
+\begin{methoddesc}{unsubscribeInteractionClassWithRegion}{interactionClass, region}
+
+May raise
+\exception{InteractionClassNotDefined},
+\exception{InteractionClassNotSubscribed},
+\exception{RegionNotKnown},
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted},
+\exception{SaveInProgress},
+\exception{RestoreInProgress}.
+\end{methoddesc}
+
+\begin{methoddesc}{enableInteractionRelevanceAdvisorySwitch}{}
+
+May raise
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted},
+\exception{SaveInProgress},
+\exception{RestoreInProgress}.
+\end{methoddesc}
+
+\begin{methoddesc}{disableInteractionRelevanceAdvisorySwitch}{}
+
+May raise
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted},
+\exception{SaveInProgress},
+\exception{RestoreInProgress}.
+\end{methoddesc}
+
+\begin{methoddesc}{getInteractionRoutingSpaceHandle}{interactionClass}
+Returns routing space handle.
+
+May raise
+\exception{InteractionClassNotDefined},
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted}.
+\end{methoddesc}
+
+\begin{methoddesc}{sendInteractionWithRegion}{interactionClass, {parameter:value}, region, tag\optional{, time}}
+
+Returns eventRetraction handle.
+
+May raise
+\exception{InteractionClassNotDefined},
+\exception{InteractionClassNotPublished},
+\exception{InteractionParameterNotDefined},
+\exception{InvalidFederationTime},
+\exception{RegionNotKnown},
+\exception{InvalidRegionContext},
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted},
+\exception{SaveInProgress},
+\exception{RestoreInProgress}.
+\end{methoddesc}
+
+\subsubsection{Ownership Management}
+
+\begin{hlamsc}{Ownership Push}
+\declinst{m1}{Federate}{A}
+\declinst{m2}{RTI}{}
+\declinst{m3}{Federate}{B}
+
+\mess{negotiatedAttributeOwnershipDivestiture}{m1}{m2}
+\nextlevel
+\mess{requestAttributeOwnershipAssumption}{m2}{m3}
+\nextlevel
+\inlinestart{e1}{opt}{m1}{m2}
+\nextlevel[2]
+\mess{cancelNegotiatedAttributeOwnershipDivestiture}{m1}{m2}
+\nextlevel
+\inlineend{e1}
+\nextlevel
+\mess{attributeOwnershipAcquisition}{m3}{m2}
+\nextlevel
+\mess{attributeOwnershipDivestitureNotification}{m2}{m1}
+\nextlevel
+\mess{attributeOwnershipAcquisitionNotification}{m2}{m3}
+\nextlevel
+\end{hlamsc}
+
+\begin{methoddesc}{negotiatedAttributeOwnershipDivestiture}{object, (attributes), tag}
+
+May raise
+\exception{ObjectNotKnown},
+\exception{AttributeNotDefined},
+\exception{AttributeNotOwned},
+\exception{AttributeAlreadyBeingDivested},
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted},
+\exception{SaveInProgress},
+\exception{RestoreInProgress}.
+\end{methoddesc}
+
+\begin{methoddesc}{unconditionalAttributeOwnershipDivestiture}{object, (attribute)}
+
+May raise
+\exception{ObjectNotKnown},
+\exception{AttributeNotDefined},
+\exception{AttributeNotOwned},
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted},
+\exception{SaveInProgress},
+\exception{RestoreInProgress}.
+\end{methoddesc}
+
+\begin{methoddesc}{cancelNegotiatedAttributeOwnershipDivestiture}{object, (attribute)}
+
+May raise
+\exception{ObjectNotKnown},
+\exception{AttributeNotDefined},
+\exception{AttributeNotOwned},
+\exception{AttributeDivestitureWasNotRequested},
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted},
+\exception{SaveInProgress},
+\exception{RestoreInProgress}.
+\end{methoddesc}
+
+\begin{methoddesc}{requestAttributeOwnershipAssumption}{object, (attribute), tag}
+
+May raise
+\exception{ObjectNotKnown},
+\exception{AttributeNotKnown},
+\exception{AttributeAlreadyOwned},
+\exception{AttributeNotPublished}.
+\end{methoddesc}
+
+\begin{methoddesc}{attributeOwnershipDivestitureNotification}{object, (attribute)}
+
+May raise
+\exception{ObjectNotKnown},
+\exception{AttributeNotKnown},
+\exception{AttributeNotOwned},
+\exception{AttributeDivestitureWasNotRequested}.
+\end{methoddesc}
+
+\begin{methoddesc}{attributeOwnershipAcquisitionNotification}{object, (attribute)}
+
+May raise
+\exception{ObjectNotKnown},
+\exception{AttributeNotKnown},
+\exception{AttributeAcquisitionWasNotRequested},
+\exception{AttributeAlreadyOwned},
+\exception{AttributeNotPublished}.
+\end{methoddesc}
+
+\begin{methoddesc}{attributeOwnershipUnavailable}{object, (attribute)}
+
+May raise
+\exception{ObjectNotKnown},
+\exception{AttributeNotKnown},
+\exception{AttributeAlreadyOwned},
+\exception{AttributeAcquisitionWasNotRequested}.
+\end{methoddesc}
+
+\begin{methoddesc}{requestAttributeOwnershipRelease}{object, (attribute), tag}
+
+May raise
+\exception{ObjectNotKnown},
+\exception{AttributeNotKnown},
+\exception{AttributeNotOwned}.
+\end{methoddesc}
+
+\begin{methoddesc}{confirmAttributeOwnershipAcquisitionCancellation}{object, (attribute)}
+
+May raise
+\exception{ObjectNotKnown},
+\exception{AttributeNotKnown},
+\exception{AttributeAlreadyOwned},
+\exception{AttributeAcquisitionWasNotCanceled}.
+\end{methoddesc}
+
+\begin{methoddesc}{informAttributeOwnership}{object, attribute, federate}
+
+May raise
+\exception{ObjectNotKnown},
+\exception{AttributeNotKnown}.
+\end{methoddesc}
+
+\begin{methoddesc}{attributeIsNotOwned}{object, attribute}
+
+May raise
+\exception{ObjectNotKnown},
+\exception{AttributeNotKnown}.
+\end{methoddesc}
+
+\begin{methoddesc}{attributeOwnedByRTI}{object, attribute}
+
+May raise
+\exception{ObjectNotKnown},
+\exception{AttributeNotKnown}.
+\end{methoddesc}
+
+\begin{hlamsc}{Intrusive Ownership Pull}
+\declinst{m1}{Federate}{A}
+\declinst{m2}{RTI}{}
+\declinst{m3}{Federate}{B}
+
+\mess{attributeOwnershipAcquisition}{m1}{m2}
+\nextlevel
+\mess{requestAttributeOwnershipRelease}{m2}{m3}
+\nextlevel
+\inlinestart{e1}{opt}{m1}{m2}
+\nextlevel[2]
+\mess{cancelAttributeOwnershipAcquisition}{m1}{m2}
+\nextlevel
+\mess{ConfirmAttributeOwnershipAcquisitionCancellation}{m2}{m1}
+\nextlevel
+\inlineend{e1}
+\nextlevel
+\mess{attributeOwnershipReleaseResponse}{m3}{m2}
+\nextlevel
+\mess{attributeOwnershipAcquisitionNotification}{m2}{m1}
+\nextlevel
+\end{hlamsc}
+
+\begin{methoddesc}{attributeOwnershipAcquisition}{object, (attribute), tag}
+
+May raise
+\exception{ObjectNotKnown},
+\exception{ObjectClassNotPublished},
+\exception{AttributeNotDefined},
+\exception{AttributeNotPublished},
+\exception{FederateOwnsAttributes},
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted},
+\exception{SaveInProgress},
+\exception{RestoreInProgress}.
+\end{methoddesc}
+
+\begin{methoddesc}{cancelAttributeOwnershipAcquisition}{object, (attribute)}
+
+May raise
+\exception{ObjectNotKnown},
+\exception{AttributeNotDefined},
+\exception{AttributeAlreadyOwned},
+\exception{AttributeAcquisitionWasNotRequested},
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted},
+\exception{SaveInProgress},
+\exception{RestoreInProgress}.
+\end{methoddesc}
+
+\begin{methoddesc}{attributeOwnershipReleaseResponse}{object, (attribute)}
+
+Returns a sequence of attribute handles.
+
+May raise
+\exception{ObjectNotKnown},
+\exception{AttributeNotDefined},
+\exception{AttributeNotOwned},
+\exception{FederateWasNotAskedToReleaseAttribute},
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted},
+\exception{SaveInProgress},
+\exception{RestoreInProgress}.
+\end{methoddesc}
+
+\begin{hlamsc}{Ownership Pull Orphaned}
+\declinst{m1}{Federate}{A}
+\declinst{m2}{RTI}{}
+\declinst{m3}{Federate}{B}
+
+\mess{attributeOwnershipAcquisitionIfAvailable}{m1}{m2}
+\nextlevel
+\inlinestart{e1}{alt}{m1}{m2}
+\nextlevel[2]
+\mess{attributeOwnershipUnavailable}{m1}{m2}
+\nextlevel
+\inlineseparator{e1}
+\nextlevel
+\mess{attributeOwnershipAcquisitionNotification}{m1}{m2}
+\nextlevel
+\inlineend{e1}
+\end{hlamsc}
+
+\begin{methoddesc}{attributeOwnershipAcquisitionIfAvailable}{object, (attribute)}
+
+May raise
+\exception{ObjectNotKnown},
+\exception{ObjectClassNotPublished},
+\exception{AttributeNotDefined},
+\exception{AttributeNotPublished},
+\exception{FederateOwnsAttributes},
+\exception{AttributeAlreadyBeingAcquired},
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted},
+\exception{SaveInProgress},
+\exception{RestoreInProgress}.
+\end{methoddesc}
+
+\begin{methoddesc}{queryAttributeOwnership}{object, attribute}
+
+May raise
+\exception{ObjectNotKnown},
+\exception{AttributeNotDefined},
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted},
+\exception{SaveInProgress},
+\exception{RestoreInProgress}.
+\end{methoddesc}
+
+\begin{methoddesc}{isAttributeOwnedByFederate}{object, attribute}
+
+Returns True or False.
+
+May raise
+\exception{ObjectNotKnown},
+\exception{AttributeNotDefined},
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted},
+\exception{SaveInProgress},
+\exception{RestoreInProgress}.
+\end{methoddesc}
+
+\subsubsection{Time Management}
+
+\paragraph{Time Management Policy}
+
+\begin{hlamsc}{Time Management Policy}
+\declinst{m1}{Federate}{A}
+\declinst{m2}{RTI}{}
+\declinst{m3}{Federate}{B}
+
+\mess{enableTimeRegulation}{m1}{m2}
+\nextlevel
+\mess{timeRegulationEnabled}{m2}{m1}
+\nextlevel[2]
+\mess{enableTimeConstrained}{m1}{m2}
+\nextlevel
+\mess{timeConstrainedEnabled}{m2}{m1}
+\nextlevel
+\condition{regulating and constrained}{m1,m2}
+\nextlevel[3]
+\mess{disableTimeRegulation}{m1}{m2}
+\nextlevel
+\mess{disableTimeConstrained}{m1}{m2}
+\nextlevel
+\end{hlamsc}
+
+\begin{methoddesc}{enableTimeRegulation}{federateTime, lookahead}
+
+May raise
+\exception{TimeRegulationAlreadyEnabled},
+\exception{EnableTimeRegulationPending},
+\exception{TimeAdvanceAlreadyInProgress},
+\exception{InvalidFederationTime},
+\exception{InvalidLookahead},
+\exception{ConcurrentAccessAttempted},
+\exception{FederateNotExecutionMember},
+\exception{SaveInProgress},
+\exception{RestoreInProgress}.
+\end{methoddesc}
+
+\begin{methoddesc}{timeRegulationEnabled}{time}
+
+May raise
+\exception{InvalidFederationTime},
+\exception{EnableTimeRegulationWasNotPending}.
+\end{methoddesc}
+
+\begin{methoddesc}{timeConstrainedEnabled}{time}
+
+May raise
+\exception{InvalidFederationTime},
+\exception{EnableTimeConstrainedWasNotPending}.
+\end{methoddesc}
+
+\begin{methoddesc}{timeAdvanceGrant}{time}
+
+May raise
+\exception{InvalidFederationTime},
+\exception{TimeAdvanceWasNotInProgress}.
+\end{methoddesc}
+
+\begin{methoddesc}{requestRetraction}{eventRetraction}
+
+May raise
+\exception{EventNotKnown}.
+\end{methoddesc}
+
+\begin{methoddesc}{disableTimeRegulation}{}
+
+May raise
+\exception{TimeRegulationWasNotEnabled},
+\exception{ConcurrentAccessAttempted},
+\exception{FederateNotExecutionMember},
+\exception{SaveInProgress},
+\exception{RestoreInProgress}.
+\end{methoddesc}
+
+\begin{methoddesc}{enableTimeConstrained}{}
+
+May raise
+\exception{TimeConstrainedAlreadyEnabled},
+\exception{EnableTimeConstrainedPending},
+\exception{TimeAdvanceAlreadyInProgress},
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted},
+\exception{SaveInProgress},
+\exception{RestoreInProgress}.
+\end{methoddesc}
+
+\begin{methoddesc}{disableTimeConstrained}{}
+
+May raise
+\exception{TimeConstrainedWasNotEnabled},
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted},
+\exception{SaveInProgress},
+\exception{RestoreInProgress}.
+\end{methoddesc}
+
+\paragraph{Time Step Advancement}
+
+\begin{hlamsc}{Time Step Advancement}
+\declinst{m1}{Federate}{A}
+\declinst{m2}{RTI}{}
+\declinst{m3}{Federate}{B}
+
+\mess{timeAdvanceRequest}{m1}{m2}
+\nextlevel
+\mess{timeAdvanceGrant}{m2}{m1}
+\nextlevel
+\end{hlamsc}
+
+\begin{methoddesc}{timeAdvanceRequest}{time}
+
+May raise
+\exception{InvalidFederationTime},
+\exception{FederationTimeAlreadyPassed},
+\exception{TimeAdvanceAlreadyInProgress},
+\exception{EnableTimeRegulationPending},
+\exception{EnableTimeConstrainedPending},
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted},
+\exception{SaveInProgress},
+\exception{RestoreInProgress}.
+\end{methoddesc}
+
+\begin{methoddesc}{timeAdvanceRequestAvailable}{time}
+
+May raise
+\exception{InvalidFederationTime},
+\exception{FederationTimeAlreadyPassed},
+\exception{TimeAdvanceAlreadyInProgress},
+\exception{EnableTimeRegulationPending},
+\exception{EnableTimeConstrainedPending},
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted},
+\exception{SaveInProgress},
+\exception{RestoreInProgress}.
+\end{methoddesc}
+
+\paragraph{Event-Based Advancement}
+
+\begin{hlamsc}{Event-Based Advancement}
+\declinst{m1}{Federate}{A}
+\declinst{m2}{RTI}{}
+\declinst{m3}{Federate}{B}
+
+\mess{nextEventRequest}{m3}{m2}
+\nextlevel
+\mess{timeAdvanceGrant}{m2}{m3}
+\nextlevel
+\end{hlamsc}
+
+\begin{methoddesc}{nextEventRequest}{time}
+
+May raise
+\exception{InvalidFederationTime},
+\exception{FederationTimeAlreadyPassed},
+\exception{TimeAdvanceAlreadyInProgress},
+\exception{EnableTimeRegulationPending},
+\exception{EnableTimeConstrainedPending},
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted},
+\exception{SaveInProgress},
+\exception{RestoreInProgress}.
+\end{methoddesc}
+
+\begin{methoddesc}{nextEventRequestAvailable}{time}
+
+May raise
+\exception{InvalidFederationTime},
+\exception{FederationTimeAlreadyPassed},
+\exception{TimeAdvanceAlreadyInProgress},
+\exception{EnableTimeRegulationPending},
+\exception{EnableTimeConstrainedPending},
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted},
+\exception{SaveInProgress},
+\exception{RestoreInProgress}.
+\end{methoddesc}
+
+\paragraph{Optimistic Advancement}
+
+\begin{hlamsc}{Optimistic Advancement}
+\declinst{m1}{Federate}{A}
+\declinst{m2}{RTI}{}
+\declinst{m3}{Federate}{B}
+
+\mess{flushQueueRequest}{m3}{m2}
+\nextlevel
+\mess{timeAdvanceGrant}{m2}{m3}
+\nextlevel
+\end{hlamsc}
+
+\begin{methoddesc}{flushQueueRequest}{time}
+
+May raise
+\exception{InvalidFederationTime},
+\exception{FederationTimeAlreadyPassed},
+\exception{TimeAdvanceAlreadyInProgress},
+\exception{EnableTimeRegulationPending},
+\exception{EnableTimeConstrainedPending},
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted},
+\exception{SaveInProgress},
+\exception{RestoreInProgress}.
+\end{methoddesc}
+
+\paragraph{Time Queries}
+
+\begin{hlamsc}{Time Queries}
+\declinst{m1}{Federate}{A}
+\declinst{m2}{RTI}{}
+\declinst{m3}{Federate}{B}
+
+\mess{queryFederateTime}{m1}{m2}
+\nextlevel
+\mess{queryLookahead}{m1}{m2}
+\nextlevel
+\mess{modifyLookahead}{m1}{m2}
+\nextlevel
+\mess{queryLBTS}{m1}{m2}
+\nextlevel
+\mess{queryMinNextTimeEvent}{m1}{m2}
+\nextlevel
+\end{hlamsc}
+
+\begin{methoddesc}{queryLBTS}{}
+Returns the time.
+
+May raise
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted},
+\exception{SaveInProgress},
+\exception{RestoreInProgress}.
+\end{methoddesc}
+
+\begin{methoddesc}{queryFederateTime}{}
+Returns the time.
+
+May raise
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted},
+\exception{SaveInProgress},
+\exception{RestoreInProgress}.
+\end{methoddesc}
+
+\begin{methoddesc}{queryMinNextEventTime}{}
+Returns the time.
+
+May raise
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted},
+\exception{SaveInProgress},
+\exception{RestoreInProgress}.
+\end{methoddesc}
+
+\begin{methoddesc}{modifyLookahead}{lookahead}
+
+May raise
+\exception{InvalidLookahead},
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted},
+\exception{SaveInProgress},
+\exception{RestoreInProgress}.
+\end{methoddesc}
+
+\begin{methoddesc}{queryLookahead}{}
+Returns the time.
+
+May raise
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted},
+\exception{SaveInProgress},
+\exception{RestoreInProgress}.
+\end{methoddesc}
+
+\begin{methoddesc}{retract}{eventRetraction}
+
+May raise
+\exception{InvalidRetractionHandle},
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted},
+\exception{SaveInProgress},
+\exception{RestoreInProgress}.
+\end{methoddesc}
+
+\begin{methoddesc}{getOrderingHandle}{orderingName}
+Returns ordering handle.
+
+May raise
+\exception{NameNotFound},
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted}.
+\end{methoddesc}
+
+\begin{methoddesc}{getOrderingName}{ordering}
+Returns ordering name.
+
+May raise
+\exception{InvalidOrderingHandle},
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted}.
+\end{methoddesc}
+
+\begin{methoddesc}{changeAttributeOrderType}{object, (attribute), ordering}
+
+May raise
+\exception{ObjectNotKnown},
+\exception{AttributeNotDefined},
+\exception{AttributeNotOwned},
+\exception{InvalidOrderingHandle},
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted},
+\exception{SaveInProgress},
+\exception{RestoreInProgress}.
+\end{methoddesc}
+
+\begin{methoddesc}{changeInteractionOrderType}{interactionClass, ordering}
+
+May raise
+\exception{InteractionClassNotDefined},
+\exception{InteractionClassNotPublished},
+\exception{InvalidOrderingHandle},
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted},
+\exception{SaveInProgress},
+\exception{RestoreInProgress}.
+\end{methoddesc}
+
+\paragraph{Federation Synchronization}
+
+\begin{hlamsc}{Federation Synchronization}
+\declinst{m1}{Federate}{A}
+\declinst{m2}{RTI}{}
+\declinst{m3}{Federate}{B}
+
+\mess{registerFederationSynchronizationPoint}{m1}{m2}
+\nextlevel
+\mess{synchronizationPointRegistrationSucceeded}{m2}{m1}
+\nextlevel[2]
+\mess{announceSynchronizationPoint}{m2}{m1}
+\mess{announceSynchronizationPoint}{m2}{m3}
+\nextlevel
+\mess{synchronizationPointAchieved}{m1}{m2}
+\nextlevel
+\mess{synchronizationPointAchieved}{m3}{m2}
+\nextlevel
+\mess{federationSynchronized}{m2}{m1}
+\mess{federationSynchronized}{m2}{m3}
+\nextlevel
+\end{hlamsc}
+
+\begin{methoddesc}{registerFederationSynchronizationPoint}{label, tag\optional{, (federate)}}
+
+May raise
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted},
+\exception{SaveInProgress},
+\exception{RestoreInProgress}.
+\end{methoddesc}
+
+\begin{methoddesc}{synchronizationPointAchieved}{label}
+
+May raise
+\exception{SynchronizationPointLabelWasNotAnnounced},
+\exception{FederateNotExecutionMember},
+\exception{ConcurrentAccessAttempted},
+\exception{SaveInProgress},
+\exception{RestoreInProgress}.
+\end{methoddesc}
+
+\begin{methoddesc}{synchronizationPointRegistrationSucceeded}{label}
+\end{methoddesc}
+
+\begin{methoddesc}{synchronizationPointRegistrationFailed}{label}
+\end{methoddesc}
+
+\begin{methoddesc}{announceSynchronizationPoint}{label, tag}
+\end{methoddesc}
+
+\begin{methoddesc}{federationSynchronized}{label}
+\end{methoddesc}
+
+% $Id: services.tex,v 1.1 2008/11/16 14:42:25 gotthardp Exp $
