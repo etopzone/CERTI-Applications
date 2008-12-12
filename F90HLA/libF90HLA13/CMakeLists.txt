@@ -60,15 +60,17 @@ SET(CMAKE_BUILD_TYPE "Debug")
 SET(PACKAGE_NAME      ${CMAKE_PROJECT_NAME})
 SET(PACKAGE_VERSION_MAJOR "0")
 SET(PACKAGE_VERSION_MINOR "1")
-SET(PACKAGE_VERSION_PATCH "0")
+SET(PACKAGE_VERSION_PATCH "1")
 SET(PACKAGE_VERSION   "${PACKAGE_VERSION_MAJOR}.${PACKAGE_VERSION_MINOR}.${PACKAGE_VERSION_PATCH}")
-SET(PACKAGE_BUGREPORT "christianstenzel@gmx.net")
+SET(PACKAGE_BUGREPORT "christian.stenzel@hs-wismar.de")
 MESSAGE(STATUS "Configuring ${PACKAGE_NAME} version ${PACKAGE_VERSION}")
 
 #########################################################################
-# Call i.e. INCLUDE the CERTI usage configuration
+# FIND RTI (CERTI, MAK, Pitch, ...)
 #########################################################################
-INCLUDE(UseCERTI)
+FIND_PACKAGE(RTI REQUIRED)
+INCLUDE_DIRECTORIES(${RTI_INCLUDE_DIR})
+ADD_DEFINITIONS(${RTI_DEFINITIONS})
 
 #########################################################################
 # CPack specific Configuration
@@ -106,7 +108,7 @@ SET(SRC_LIST F90HLA13CERTIWrap.cpp)
 # Generic CMake library target
 ###################################
 ADD_LIBRARY(${LIB_NAME} ${SRC_LIST})
-TARGET_LINK_LIBRARIES (${LIB_NAME} ${CERTI_LIBRARIES})
+TARGET_LINK_LIBRARIES (${LIB_NAME} ${RTI_LIBRARIES})
 INSTALL(TARGETS ${LIB_NAME} 
         LIBRARY DESTINATION lib)
 

@@ -25,6 +25,10 @@ PROJECT(Demo_Fortran_Wrapper Fortran)
 # CERTI requires CMake 2.4.x
 CMAKE_MINIMUM_REQUIRED(VERSION 2.4.4)
 
+# You should uncomment the following line
+# if you want VERBOSE build
+#SET(CMAKE_VERBOSE_MAKEFILE OFF)
+
 EXEC_PROGRAM(rm ARGS constantsMod.mod.proxy
 		     fedSrvMod.mod.proxy
 		     rtiSrvMod.mod.proxy)
