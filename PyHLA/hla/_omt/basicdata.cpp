@@ -11,7 +11,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  *
- * $Id: basicdata.cpp,v 1.4 2008/11/15 14:34:05 gotthardp Exp $
+ * $Id: basicdata.cpp,v 1.5 2008/12/18 19:41:56 gotthardp Exp $
  */
 
 // note: you must include Python.h before any standard headers are included
@@ -31,7 +31,7 @@ typedef __int16           int16_t;
 typedef unsigned __int8   uint8_t;
 typedef __int8            int8_t;
 #else
-#include <stdint.h>
+#include <inttypes.h>
 #endif
 
 //! Swap <i> bytes of the <T> type
@@ -660,4 +660,4 @@ BasicDataInitializer::on_init(PyObject *module)
         add_encoding(dict, pos->co_name, pos->co_size, pos->co_methods);
 }
 
-// $Id: basicdata.cpp,v 1.4 2008/11/15 14:34:05 gotthardp Exp $
+// $Id: basicdata.cpp,v 1.5 2008/12/18 19:41:56 gotthardp Exp $
