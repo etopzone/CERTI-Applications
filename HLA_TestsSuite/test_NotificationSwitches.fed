@@ -1,7 +1,7 @@
 ;; TwoLevelController 
 
 (Fed
-  (Federation HugeAVPVTest)
+  (Federation NotificationServices)
   (FedVersion v1.3)
   (Federate "NotificationSwitches0" "Public")
   (Federate "NotificationSwitches1" "Public")
@@ -19,6 +19,9 @@
     (Class ObjectRoot
       (Attribute privilegeToDelete reliable timestamp)
       (Class RTIprivate)
+	(Class TestAttribute
+		(Attribute attrA RELIABLE RECEIVE)
+	)
     )
   )
   (Interactions
