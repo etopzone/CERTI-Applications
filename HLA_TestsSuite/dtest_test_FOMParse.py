@@ -30,10 +30,10 @@ import getopt, sys
 import dtest  
 
 def usage():
-    print "Usage:\n %s [--help] [--certi_home=<path>] --rtig=[[<user>@]<host>]:<rtig_path> --federate=[[<user>@]<host>]:<federate_path>" % sys.argv[0]
+    print "Usage:\n %s [--help] [--certi_home=<path>] --rtig=[[<user>@]<host>]:<rtig_path> --fom=<fom_path> --federate=[[<user>@]<host>]:<federate_path>" % sys.argv[0]
 
 try:
-    opts, args = getopt.getopt(sys.argv[1:], "hr:f:c:", ["help","rtig=", "federate=","certi_home="])
+    opts, args = getopt.getopt(sys.argv[1:], "", ["help","rtig=", "federate=","certi_home="])
 except getopt.GetoptError, err:
     print >> sys.stderr, "opt = %s, msg = %s" % (err.opt,err.msg)
     usage()
@@ -43,7 +43,6 @@ except getopt.GetoptError, err:
 certi_home_defined=False
 rtig_param = dtest.Utils.getUserHostPath("rtig")
 federate_param = dtest.Utils.getUserHostPath("test_FOMParse")
-federate_param['fom']="TestFed.fed"
     
 for o, a in opts:
     if o in ("--help"):
@@ -56,7 +55,7 @@ for o, a in opts:
     if o in ("-c", "--certi_home"):
         certi_home = a
         certi_home_defined=True
-        
+
 if not certi_home_defined:
     if os.environ.has_key("CERTI_HOME"):
         certi_home=os.environ["CERTI_HOME"]
