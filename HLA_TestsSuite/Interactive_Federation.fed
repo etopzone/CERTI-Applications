@@ -1,6 +1,6 @@
-;; Interactive_Federation
+;; Federation_Interactive
 (Fed
-  (Federation Interactive_Federation)
+  (Federation Federation_Interactive)
   (FedVersion v1.3)
   (Spaces
   )
