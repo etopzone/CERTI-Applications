@@ -164,9 +164,10 @@ HLATestsSuite_ADD_TEST(test_TRTCCallbacks
 #########################################################################
 # ADD TEST INTERACTIVE FEDERATE
 #########################################################################                   
-HLATestsSuite_ADD_TEST(Interactive_Federate
+HLATestsSuite_ADD_TEST(Interactive_Federate 
                       FED_FILE Interactive_Federation.fed
                       SOURCE_FILES Interactive_Federate.cc
+                      DTEST_SCRIPT dtest_Interactive_Federate.py
                       COMMENTS "A multi-purpose test interactive Federate")
 
 #########################################################################
