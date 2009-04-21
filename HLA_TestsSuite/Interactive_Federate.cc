@@ -3,6 +3,7 @@
 #include <NullFederateAmbassador.hh>
 
 #include <iostream>
+#include <cstdlib>
 using namespace std;
 
 
