@@ -176,6 +176,7 @@ HLATestsSuite_ADD_TEST(Interactive_Federate
 HLATestsSuite_ADD_TEST(test_NotificationSwitches
                       FED_FILE test_NotificationSwitches.fed
                       SOURCE_FILES test_NotificationSwitches.cc
+                      DTEST_SCRIPT dtest_test_NotificationSwitches.py
                       COMMENTS "A multi-purpose test interactive Federate")
 
 #########################################################################

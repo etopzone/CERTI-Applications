@@ -58,19 +58,37 @@ public:
             cout << "Press ENTER to start execution ..." << endl;
             getchar();
 
+	    this->synchronizeFederation("sync", "test1");
 
 	    // test switches	
             this->enableClassRelevanceAdvisorySwitch();
+	    cout << "enableClassRelevanceAdvisorySwitch" << endl;		
+            getchar();
             this->disableClassRelevanceAdvisorySwitch();
+	    cout << "disableClassRelevanceAdvisorySwitch" << endl;		
+            getchar();
             this->enableInteractionRelevanceAdvisorySwitch();
+	    cout << "enableInteractionRelevanceAdvisorySwitch" << endl;		
+            getchar();
             this->disableInteractionRelevanceAdvisorySwitch();
+	    cout << "disableInteractionRelevanceAdvisorySwitch" << endl;		    getchar();
             this->enableAttributeRelevanceAdvisorySwitch();
+	    cout << "enableAttributeRelevanceAdvisorySwitch" << endl;		
+            getchar();
             this->disableAttributeRelevanceAdvisorySwitch();
+	    cout << "disableAttributeRelevanceAdvisorySwitch" << endl;		
+            getchar();
             this->enableAttributeScopeAdvisorySwitch();
+	    cout << "enableAttributeScopeAdvisorySwitch" << endl;		
+            getchar();
             this->disableAttributeScopeAdvisorySwitch();
+	    cout << "disableAttributeScopeAdvisorySwitch" << endl;		
+            getchar();
 
             // publish phase            
             this->enableClassRelevanceAdvisorySwitch();
+	    cout << "enableClassRelevanceAdvisorySwitch" << endl;		
+            getchar();
 	    this->synchronizeFederation("sync", "test1");
 		
             cout << "Publish and register objects" << endl;
@@ -83,43 +101,62 @@ public:
 	    this->synchronizeFederation("sync", "test4");
 	    this->synchronizeFederation("sync", "test5");
 
+	    getchar();
 
         } else {
+
+            this->waitForSyncPoint(); // test1
+
             // test switches
             this->enableClassRelevanceAdvisorySwitch();
+	    cout << "enableClassRelevanceAdvisorySwitch" << endl;		
+            getchar();
             this->disableClassRelevanceAdvisorySwitch();
+	    cout << "disableClassRelevanceAdvisorySwitch" << endl;		
+            getchar();
             this->enableInteractionRelevanceAdvisorySwitch();
+	    cout << "enableInteractionRelevanceAdvisorySwitch" << endl;		
+            getchar();
             this->disableInteractionRelevanceAdvisorySwitch();
+	    cout << "disableInteractionRelevanceAdvisorySwitch" << endl;
+            getchar();
             this->enableAttributeRelevanceAdvisorySwitch();
+	    cout << "enableAttributeRelevanceAdvisorySwitch" << endl;
+            getchar();
             this->disableAttributeRelevanceAdvisorySwitch();
+	    cout << "disableAttributeRelevanceAdvisorySwitch" << endl;
+            getchar();
             this->enableAttributeScopeAdvisorySwitch();
+	    cout << "enableAttributeScopeAdvisorySwitch" << endl;
+            getchar();
             this->disableAttributeScopeAdvisorySwitch();
+	    cout << "disableAttributeScopeAdvisorySwitch" << endl;
+            getchar();
 
             
-            this->waitForSyncPoint(); // test1
+            this->waitForSyncPoint(); // test2
 
 	    // creator publish and register objects
 
             this->waitForSyncPoint();  // test2
 
             this->subscribeAttributes();
+	    cout << "subscribe object class" << endl;
 
             this->waitForDiscover(); 
             this->waitForSyncPoint();  // test3
 
 	    rtiamb.unsubscribeObjectClass(myhdls.TestAttribute.och);
+	    cout << "unsubscribe object class" << endl;	
 
             this->waitForSyncPoint();  // test4
 
-	    /* Resubscription causes error
-             * RTIA.cc:170: void certi::rtia::RTIA::execute(): Assertion `false' failed.
-             *
-             * ???
-             */
- 	
-            //this->subscribeAttributes();
-	    //this->waitForDiscover();	 
+            this->subscribeAttributes();
+	    cout << "resubscribe object class" << endl;	
+	    this->waitForDiscover();	 
             this->waitForSyncPoint(); // test5
+		
+	    getchar();	
 
         }
         this->resign_and_destroy();
