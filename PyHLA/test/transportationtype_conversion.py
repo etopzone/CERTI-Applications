@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import hla.rti as rti
 import hla.omt as fom
 
@@ -42,4 +43,4 @@ ASSERT(timestamp != receive)
 RAISE_NAMENOTFOUND(lambda: rtia.getOrderingHandle("HLAreliable")) # transportation
 RAISE_NAMENOTFOUND(lambda: rtia.getOrderingHandle("UNKNOWN"))
 
-# $Id: transportationtype_conversion.py,v 1.1 2008/10/28 21:13:20 gotthardp Exp $
+# $Id: transportationtype_conversion.py,v 1.2 2009/06/07 15:12:48 gotthardp Exp $
