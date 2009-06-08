@@ -11,7 +11,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  *
- * $Id: basicdata.cpp,v 1.5 2008/12/18 19:41:56 gotthardp Exp $
+ * $Id: basicdata.cpp,v 1.6 2009/06/08 15:52:01 gotthardp Exp $
  */
 
 // note: you must include Python.h before any standard headers are included
@@ -536,6 +536,100 @@ static PyMethodDef HLAASCIIstring_methods[] =
     {NULL} // sentinel
 };
 
+/*
+ *  Unsignedinteger16BE
+ */
+static PyObject *
+Unsignedinteger16BE_pack(PyObject *self, PyObject *args)
+{
+    unsigned short int value;
+    if(!PyArg_ParseTuple(args, "H", &value))
+        return NULL;
+    uint16_t buffer = BigEndian<uint16_t>()(value);
+    return PyString_FromStringAndSize((const char *)&buffer, sizeof(uint16_t));
+}
+
+static PyObject *
+Unsignedinteger16BE_unpack(PyObject *self, PyObject *args)
+{
+    const uint16_t *buffer = getUnpackBuffer<uint16_t>(args);
+    if(buffer == NULL)
+        return NULL;
+    unsigned short int value = BigEndian<uint16_t>()(*buffer);
+    return createObjectSizeTuple(PyLong_FromUnsignedLong(value), sizeof(uint16_t));
+}
+
+static PyMethodDef Unsignedinteger16BE_methods[] =
+{
+    {"pack", (PyCFunction)Unsignedinteger16BE_pack, METH_VARARGS, NULL},
+    {"unpack", (PyCFunction)Unsignedinteger16BE_unpack, METH_VARARGS, NULL},
+    {NULL} // sentinel
+};
+
+/*
+ *  Unsignedinteger32BE
+ */
+static PyObject *
+Unsignedinteger32BE_pack(PyObject *self, PyObject *args)
+{
+    unsigned long int value;
+    if(!PyArg_ParseTuple(args, "k", &value))
+        return NULL;
+    uint32_t buffer = BigEndian<uint32_t>()(value);
+    return PyString_FromStringAndSize((const char *)&buffer, sizeof(uint32_t));
+}
+
+static PyObject *
+Unsignedinteger32BE_unpack(PyObject *self, PyObject *args)
+{
+    const uint32_t *buffer = getUnpackBuffer<uint32_t>(args);
+    if(buffer == NULL)
+        return NULL;
+    unsigned long value = BigEndian<uint32_t>()(*buffer);
+    return createObjectSizeTuple(PyLong_FromUnsignedLong(value), sizeof(uint32_t));
+}
+
+static PyMethodDef Unsignedinteger32BE_methods[] =
+{
+    {"pack", (PyCFunction)Unsignedinteger32BE_pack, METH_VARARGS, NULL},
+    {"unpack", (PyCFunction)Unsignedinteger32BE_unpack, METH_VARARGS, NULL},
+    {NULL} // sentinel
+};
+
+#ifdef HAVE_LONG_LONG
+
+/*
+ *  Unsignedinteger64BE
+ */
+static PyObject *
+Unsignedinteger64BE_pack(PyObject *self, PyObject *args)
+{
+    unsigned PY_LONG_LONG value;
+    if(!PyArg_ParseTuple(args, "K", &value))
+        return NULL;
+    uint64_t buffer = BigEndian<uint64_t>()(value);
+    return PyString_FromStringAndSize((const char *)&buffer, sizeof(uint64_t));
+}
+
+static PyObject *
+Unsignedinteger64BE_unpack(PyObject *self, PyObject *args)
+{
+    const uint64_t *buffer = getUnpackBuffer<uint64_t>(args);
+    if(buffer == NULL)
+        return NULL;
+    unsigned PY_LONG_LONG value = BigEndian<uint64_t>()(*buffer);
+    return createObjectSizeTuple(PyLong_FromUnsignedLongLong(value), sizeof(uint64_t));
+}
+
+static PyMethodDef Unsignedinteger64BE_methods[] =
+{
+    {"pack", (PyCFunction)Unsignedinteger64BE_pack, METH_VARARGS, NULL},
+    {"unpack", (PyCFunction)Unsignedinteger64BE_unpack, METH_VARARGS, NULL},
+    {NULL} // sentinel
+};
+
+#endif
+
 typedef struct {
   const char* co_name;
   long co_size;
@@ -544,6 +638,7 @@ typedef struct {
 
 static PyCodingDef basic_coding[] =
 {
+    // IEEE 1516.2, Table 23: Basic data representation table
     {"HLAinteger16BE", sizeof(int16_t), HLAinteger16BE_methods},
     {"HLAinteger32BE", sizeof(int32_t), HLAinteger32BE_methods},
 #ifdef HAVE_LONG_LONG
@@ -560,6 +655,12 @@ static PyCodingDef basic_coding[] =
     {"HLAfloat64LE", sizeof(double), HLAfloat64LE_methods},
     {"HLAoctet", sizeof(char), HLAoctet_methods},
     {"HLAASCIIstring", sizeof(char), HLAASCIIstring_methods},
+    // Additional datatypes used by RPR-FOM
+    {"Unsignedinteger16BE", sizeof(uint16_t), Unsignedinteger16BE_methods},
+    {"Unsignedinteger32BE", sizeof(uint32_t), Unsignedinteger32BE_methods},
+#ifdef HAVE_LONG_LONG
+    {"Unsignedinteger64BE", sizeof(uint64_t), Unsignedinteger64BE_methods},
+#endif
     {NULL} // sentinel
 };
 
@@ -660,4 +761,4 @@ BasicDataInitializer::on_init(PyObject *module)
         add_encoding(dict, pos->co_name, pos->co_size, pos->co_methods);
 }
 
-// $Id: basicdata.cpp,v 1.5 2008/12/18 19:41:56 gotthardp Exp $
+// $Id: basicdata.cpp,v 1.6 2009/06/08 15:52:01 gotthardp Exp $
