@@ -11,7 +11,7 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # Lesser General Public License for more details.
 #
-# $Id: enumerated.py,v 1.1 2008/10/13 17:15:40 gotthardp Exp $
+# $Id: enumerated.py,v 1.2 2009/06/11 17:15:11 gotthardp Exp $
 
 # For example:
 # +------------+----------------+------------+--------+-----------+
@@ -49,7 +49,7 @@ class HLAenumerated:
 
     @property
     def octetBoundary(self):
-        return self.representation.octetBoundary()
+        return self.representation.octetBoundary
 
     def pack(self, value):
         return self.representation.pack(value)
@@ -63,4 +63,4 @@ class HLAenumerated:
         # if not found
         return value, size
 
-# $Id: enumerated.py,v 1.1 2008/10/13 17:15:40 gotthardp Exp $
+# $Id: enumerated.py,v 1.2 2009/06/11 17:15:11 gotthardp Exp $

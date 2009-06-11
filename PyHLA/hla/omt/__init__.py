@@ -11,7 +11,7 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # Lesser General Public License for more details.
 #
-# $Id: __init__.py,v 1.4 2008/11/15 14:30:07 gotthardp Exp $
+# $Id: __init__.py,v 1.5 2009/06/11 17:15:11 gotthardp Exp $
 
 import types
 import xml.sax.handler
@@ -52,7 +52,7 @@ class TypeParser(xml.sax.handler.ContentHandler):
             if attributes["cardinality"].lower() == "dynamic":
                 cardinality = None
             else:
-                cardinality = attributes["cardinality"]
+                cardinality = int(attributes["cardinality"])
 
             # name = HLAfixedArray("name", HLAinteger32LE, 3)
             globals()[attributes["name"]] = HLAencoding(attributes["encoding"],
@@ -140,4 +140,4 @@ def HLAuse(filename):
     parser.setContentHandler(handler)
     parser.parse(filename)
 
-# $Id: __init__.py,v 1.4 2008/11/15 14:30:07 gotthardp Exp $
+# $Id: __init__.py,v 1.5 2009/06/11 17:15:11 gotthardp Exp $
