@@ -1,3 +1,5 @@
+CMAKE_MINIMUM_REQUIRED(VERSION 2.6.3)
+# The FindRTI.cmake module is available since cmake 2.6.3
 FIND_PACKAGE(RTI REQUIRED)
 
 ADD_DEFINITIONS(${RTI_DEFINITIONS})
@@ -36,4 +38,4 @@ INSTALL(TARGETS _rti
     LIBRARY DESTINATION hla
     ARCHIVE DESTINATION hla)
 
-# $Id: CMakeLists.txt,v 1.3 2008/11/15 14:32:25 gotthardp Exp $
+# $Id: CMakeLists.txt,v 1.4 2009/06/21 11:26:39 gotthardp Exp $
