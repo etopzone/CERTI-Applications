@@ -20,7 +20,7 @@ SET(SRC_LIST 	PhiD_Accelero.cpp
 ###################################
 ADD_EXECUTABLE(${EXE_NAME}  ${SRC_LIST})
 TARGET_LINK_LIBRARIES (${EXE_NAME} 
-						${CERTI_LIBRARIES}  
+						${RTI_LIBRARIES}  
 						${LibPhiDget_LIBRARY} )
 INSTALL(TARGETS ${EXE_NAME} 
         RUNTIME DESTINATION bin

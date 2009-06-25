@@ -48,7 +48,9 @@ MESSAGE(STATUS "Configuring ${PACKAGE_NAME} version ${PACKAGE_VERSION}")
 #########################################################################
 # Call i.e. INCLUDE the CERTI usage configuration
 #########################################################################
-INCLUDE(UseCERTI)
+FIND_PACKAGE(RTI REQUIRED)
+INCLUDE_DIRECTORIES(${RTI_INCLUDE_DIR})
+ADD_DEFINITIONS(${RTI_DEFINITIONS})
 
 #########################################################################
 # CPack specific Configuration

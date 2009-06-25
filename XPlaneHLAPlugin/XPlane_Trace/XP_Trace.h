@@ -20,7 +20,7 @@ class Federe : public RTI::RTIambassador, public NullFederateAmbassador
 public:
 	Federe() throw (RTI::RTIinternalError) {}
 	~Federe() throw (RTI::FederateInternalError) {}
-	
+
 	void		destroyFederation	();
 	void		destroyFederate	();			//
 
@@ -33,11 +33,11 @@ public:
 											{ strcpy(federateName,nameGen);}
 
 	char*		getFederationDesc()	{ return(federationDesc);}
-	char*		getFederationName()	{ return(federationName);}	
+	char*		getFederationName()	{ return(federationName);}
 	char*		getFederateName()		{ return(federateName);}
 
   /**
-   * RAV normative API overload from FederateAmbassador. 
+   * RAV normative API overload from FederateAmbassador.
    * Will be called by the RTI when an RAV message is received by the Federate.
    * @param[in] oHandle the object handle (the instance)
    * @param[in] theAttributes Attributs list
@@ -47,10 +47,10 @@ public:
 	void		reflectAttributeValues(	RTI::ObjectHandle									oHandle,
 												const RTI::AttributeHandleValuePairSet&	theAttributes,
 												const char											*theTag)
-												throw (	RTI::ObjectNotKnown,				RTI::AttributeNotKnown, 
-															RTI::FederateOwnsAttributes,	RTI::InvalidFederationTime, 
+												throw (	RTI::ObjectNotKnown,				RTI::AttributeNotKnown,
+															RTI::FederateOwnsAttributes,
 															RTI::FederateInternalError);
-	
+
 private:
 //=============================================================================CALLBACKS
 
@@ -62,4 +62,4 @@ char		dictionaryName[NBCAR+1];				//Dictionary XPlane<>FOM for activated attribu
 char		federateName[NBCAR+1];
 char		IP_RTIg[NB_IP];
 };
-#endif 
+#endif

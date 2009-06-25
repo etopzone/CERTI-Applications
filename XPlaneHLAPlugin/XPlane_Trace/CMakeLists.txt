@@ -10,5 +10,5 @@ SET(SRC_LIST XP_Init.cpp XP_RTData.cpp XP_File.cpp XP_Trace.h ../XPlane_Common/X
 # Generic CMake executable target
 ###################################
 ADD_EXECUTABLE(${EXE_NAME}   ${SRC_LIST})
-TARGET_LINK_LIBRARIES (${EXE_NAME} ${CERTI_LIBRARIES})
+TARGET_LINK_LIBRARIES (${EXE_NAME} ${RTI_LIBRARIES})
 INSTALL(TARGETS ${EXE_NAME} RUNTIME DESTINATION bin)

@@ -15,7 +15,7 @@ SET(SRC_LIST XPlane_InitDll.cpp XPlane_RunDll.cpp XP_Init.cpp  XP_File.cpp  XP_R
 ###################################
 ADD_LIBRARY(${EXE_NAME}  ${SRC_LIST})
 TARGET_LINK_LIBRARIES (${EXE_NAME} 
-						${CERTI_LIBRARIES}  
+						${RTI_LIBRARIES}  
 						${XPLANE_LIBRARIES} )
 INSTALL(TARGETS ${EXE_NAME} 
         RUNTIME DESTINATION bin

@@ -1,3 +1,8 @@
+MACRO(MESSAGE_QUIETLY QUIET TYPE MSG)
+   IF(NOT ${QUIET})
+       MESSAGE(${TYPE} "${MSG}")
+   ENDIF(NOT ${QUIET})
+ENDMACRO(MESSAGE_QUIETLY QUIET TYPE MSG)
 #########################################################################
 #Look for Xplane.exe
 #########################################################################
