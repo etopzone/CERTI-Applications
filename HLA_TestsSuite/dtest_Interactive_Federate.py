@@ -81,7 +81,7 @@ rtig.stdin     = file(rtig.name + ".in",'w+')
 rtig.stderr    = file(rtig.name + ".err",'w+')
 
 # describe RTIG run steps
-rtig.addRunStep("ok",True,"HLA test test_Sync Starts.")
+rtig.addRunStep("ok",True,"HLA test Zero Lookahead (InteractiveFederate) Starts.")
 dtest.ReusableSequences.addConditionalRunShellScript(rtig,c_shell_cmd="source "+certi_home+"/share/scripts/myCERTI_env.csh "+rtig_param['host'],
                                bourne_shell_cmd="source "+certi_home+"/share/scripts/myCERTI_env.sh "+rtig_param['host'])
 rtig.addRunStep("runCommand",command=rtig_param['path'])
@@ -90,7 +90,7 @@ rtig.addRunStep("barrier","RTIG started")
 rtig.addRunStep("barrier","All Federate(s) ended")
 rtig.addRunStep("terminateCommand")
 rtig.addRunStep("waitCommandTermination")
-rtig.addRunStep("ok",True,"HLA test Interactive Federate Ends.")
+rtig.addRunStep("ok",True,"HLA test Zero Lookahead (InteractiveFederate) Ends.")
 
 #dtest.DTester.logger.setLevel(level=logging.DEBUG)
 
@@ -187,6 +187,7 @@ otherFederate.addRunStep("barrier","After TAR and TARA")
 
 otherFederate.addRunStep("sendToCommand",string="ql\n")
 otherFederate.addRunStep("expectFromCommand",pattern="Lookahead=0.0001")
+#otherFederate.addRunStep("expectFromCommand",pattern="Lookahead=0.00\r")
 otherFederate.addRunStep("ok",otherFederate.getFutureLastStepStatus,otherFederate.name+" has Lookahead > 0")
 otherFederate.addRunStep("barrier","Wait before an interaction exchange")
 
@@ -201,7 +202,7 @@ otherFederate.addRunStep("sendToCommand",string="t\n")
 otherFederate.addRunStep("expectFromCommand",pattern="timeAdvanceGrant")
 otherFederate.addRunStep("ok",otherFederate.getFutureLastStepStatus,otherFederate.name+" time advance granted")
 otherFederate.addRunStep("sendToCommand",string="ql\n")
-otherFederate.addRunStep("expectFromCommand",pattern="Lookahead=0")
+otherFederate.addRunStep("expectFromCommand",pattern="Lookahead=0\r")
 otherFederate.addRunStep("ok",otherFederate.getFutureLastStepStatus,otherFederate.name+" lookahead back to 0")
 
 otherFederate.addRunStep("expectFromCommand",pattern="Choisissez une action :")
@@ -218,7 +219,7 @@ otherFederate.addRunStep("terminateCommand")
 otherFederate.addRunStep("barrier","All Federate(s) ended")
 
 def goTest():
-    myDTestMaster = dtest.DTestMaster("HLA test Interactive Federate Starts","Launch RTIG + two interactive federates for testing ...")
+    myDTestMaster = dtest.DTestMaster("HLA Test Zero Lookahead","Launch RTIG + two interactive federates for testing zero lookahead")
     myDTestMaster.timeout = 40
     myDTestMaster.register(rtig)
     myDTestMaster.register(firstFederate)
