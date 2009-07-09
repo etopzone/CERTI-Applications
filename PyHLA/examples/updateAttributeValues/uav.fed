@@ -1,0 +1,19 @@
+(FED
+  (Federation TestFed)
+  (FEDversion v1.3)
+  (spaces
+  )
+  (objects
+    (class ObjectRoot
+      (attribute privilegeToDelete reliable timestamp)
+      (class RTIprivate)
+      (class SampleClass
+        (attribute TextAttribute reliable timestamp)
+        (attribute StructAttribute reliable timestamp)
+        (attribute FOMAttribute reliable timestamp)
+      )
+    )
+  )
+  (interactions
+  )
+)
