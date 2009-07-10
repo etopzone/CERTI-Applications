@@ -15,7 +15,14 @@ FIND_PROGRAM(PYTHON_MKHOWTO
 
 IF (PYTHON_MKHOWTO)
 
-    SET(MKHOWTO_SOURCES
+    SET(HOWTO_HTML_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../manual")
+
+    ADD_CUSTOM_TARGET(howto
+        DEPENDS ${HOWTO_HTML_DIR}/PyHLA.html PyHLA.dvi PyHLA.pdf
+    )
+
+    # PyHLA.tex requires msc.sty from http://satoss.uni.lu/mscpackage
+    SET(HOWTO_SOURCES
         PyHLA.tex
         omt/module.tex
         rti/module.tex
@@ -24,33 +31,37 @@ IF (PYTHON_MKHOWTO)
         rti/services.tex
     )
 
-    ADD_CUSTOM_TARGET(PyHLA.html
+    ADD_CUSTOM_COMMAND(
+        OUTPUT ${HOWTO_HTML_DIR}/PyHLA.html
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}     
-        COMMAND ${PYTHON_MKHOWTO} --html --dir ${CMAKE_CURRENT_SOURCE_DIR}/../manual PyHLA.tex
-        SOURCES ${MKHOWTO_SOURCES}
+        COMMAND ${PYTHON_MKHOWTO} --html --dir ${HOWTO_HTML_DIR} PyHLA.tex
+        DEPENDS ${HOWTO_SOURCES}
     )
 
-    ADD_CUSTOM_TARGET(PyHLA.dvi
+    ADD_CUSTOM_COMMAND(
+        OUTPUT PyHLA.dvi
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
         COMMAND ${PYTHON_MKHOWTO} --a4 --dvi PyHLA.tex
-        SOURCES ${MKHOWTO_SOURCES}
+        DEPENDS ${HOWTO_SOURCES}
     )
     
     # This is currently not working
-    #ADD_CUSTOM_TARGET(PyHLA.pdf
+    #ADD_CUSTOM_COMMAND(
+    #    OUTPUT PyHLA.pdf
     #    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}         
     #    COMMAND ${PYTHON_MKHOWTO} --a4 --pdf PyHLA.tex
+    #    DEPENDS ${HOWTO_SOURCES}
     #)
     
-    ADD_CUSTOM_TARGET(PyHLA.pdf
+    ADD_CUSTOM_COMMAND(
+        OUTPUT PyHLA.pdf
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}         
         COMMAND dvipdf PyHLA.dvi
+        DEPENDS PyHLA.dvi
     )
-
-    ADD_DEPENDENCIES(PyHLA.pdf PyHLA.dvi)
 
 ELSE(PYTHON_MKHOWTO)
     MESSAGE("Cannot find Python mkhowto rules for generating doc not added.")
 ENDIF(PYTHON_MKHOWTO)
 
-# $Id: CMakeLists.txt,v 1.3 2009/07/10 17:03:40 gotthardp Exp $
+# $Id: CMakeLists.txt,v 1.4 2009/07/10 20:35:23 gotthardp Exp $
