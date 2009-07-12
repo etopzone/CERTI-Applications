@@ -21,7 +21,12 @@ IF (PYTHON_MKHOWTO)
         DEPENDS ${HOWTO_HTML_DIR}/PyHLA.html PyHLA.dvi PyHLA.pdf
     )
 
-    # PyHLA.tex requires msc.sty from http://satoss.uni.lu/mscpackage
+    # download msc.sty from http://satoss.uni.lu/mscpackage
+    ADD_CUSTOM_COMMAND(
+        OUTPUT msc.sty
+        COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_SOURCE_DIR}/GetMscStyle.cmake
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+
     SET(HOWTO_SOURCES
         PyHLA.tex
         omt/module.tex
@@ -64,4 +69,4 @@ ELSE(PYTHON_MKHOWTO)
     MESSAGE("Cannot find Python mkhowto rules for generating doc not added.")
 ENDIF(PYTHON_MKHOWTO)
 
-# $Id: CMakeLists.txt,v 1.4 2009/07/10 20:35:23 gotthardp Exp $
+# $Id: CMakeLists.txt,v 1.5 2009/07/12 19:30:05 gotthardp Exp $

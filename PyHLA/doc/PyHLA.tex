@@ -143,6 +143,35 @@ cmake . -DCMAKE_INSTALL_PREFIX=/usr/lib/python2.5/site-packages
 make install
 \end{verbatim}
 
+\subsection{Building the PyHLA documentation}
+The \module{PyHLA} documentation may be find online at
+\ulink{http://www.nongnu.org/certi/PyHLA/manual}{http://www.nongnu.org/certi/PyHLA/manual}
+however you may rebuild the documentation from the PyHLA source itself, in order
+to generate either PDF, HTML or DVI format.
+
+The documentation of \module{PyHLA} uses standard Python documentation
+system, in particular the python mkhowto script.
+For generating the documentation from source you need:
+\begin{itemize}
+  \item a working python installation with mkhowto script
+  \item a working latex compiler
+  \item a specific latex style called \texttt{msc.sty} which is used
+        to draw Message Sequence Chart in the documentation.
+        If you do not have the \texttt{msc.sty} installed you may
+        let CMake retrieve the file for you from:        
+        \ulink{http://satoss.uni.lu/mscpackage}{http://satoss.uni.lu/mscpackage}.
+\end{itemize}
+
+The procedure for generating the documentation is simple,
+go the \module{PyHLA} source directory and then:
+\begin{verbatim}
+make msc.sty
+make howto
+\end{verbatim}
+
+The \texttt{msc.sty} step is optional and necessary only if you don't have
+\texttt{msc.sty} installed.
+
 \subsection{Performance}
 
 Discuss the performance penalty. Use the DFSS/DMAIC methodology.
@@ -159,4 +188,4 @@ Discuss the results.
 \input{PyHLA.ind}
 \end{document}
 
-% $Id: PyHLA.tex,v 1.8 2009/04/24 09:36:38 gotthardp Exp $
+% $Id: PyHLA.tex,v 1.9 2009/07/12 19:30:06 gotthardp Exp $

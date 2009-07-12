@@ -753,15 +753,64 @@ May raise
 \exception{AttributeNotOwned}.
 \end{methoddesc}
 
-\begin{methoddesc}{updateAttributeValues}{object, \{attribute:value\}, tag\optional{, time}}
-
+\begin{methoddesc}[rtia]{updateAttributeValues}{object, \{attribute:value\},
+tag\optional{, time}}
+\begin{description}
+\item \var{object} is the object instance handle obtained from
+\method{rtia.registerObjectInstance}
+\item \var{\{attribute:value\}} is a python dictionary whose key are attribute
+handles with associated values.
+\item \var{tag} is a string
+\item \var{time} may be a timestamp
+\end{description}
 Returns eventRetraction handle.
 
 For example
 \begin{verbatim}
 rtia.updateAttributeValues(thisObject,
+            {textAttributeHandle:"text"},
+            "update")
+    
+rtia.updateAttributeValues(thisObject,
+            {structAttributeHandle:struct.pack('hhl', 1, 2, 3)}
+            "update")
+            
+rtia.updateAttributeValues(thisObject,
     {wordLocationHandle:fom.WorldLocationStruct.pack({"X":1,"Y":2,"Z":3})},
-    "update")
+    "update")            
+            
+rtia.updateAttributeValues(thisObject,
+            {textAttributeHandle:"text",
+            structAttributeHandle:struct.pack('hhl', 1, 2, 3),           
+            wordLocationHandle:fom.WorldLocationStruct.pack({"X":1,"Y":2,"Z":3})},
+            "update")            
+\end{verbatim}
+
+Several methods may be used to encode the data before sending the update.
+The first one use text encoding, the second uses the python builtin
+struct encoding  
+\ulink{http://docs.python.org/library/struct.html}{http://docs.python.org/library/struct.html}
+and the last one uses the builtin \module{PyHLA} FOM encoding using
+IEEE-1516 standard encoding. The \texttt{fom} object used in this
+example is the result of something like:
+\begin{verbatim}
+import hla.omt as fom
+
+#Include RPR-FOM data types
+fom.HLAuse('rpr2-d18.xml')
+\end{verbatim}
+The previous code should have defined the RPR-FOM datatype
+\texttt{WorldLocationStruct} used in the previous example.
+Note however that you may use the predefined builtin IEEE-1516
+types without loading any FOM data type file.
+This is shown in the following example:
+\begin{verbatim}
+import hla.omt as fom
+
+...
+rtia.updateAttributeValues(thisObject,
+            {attributeHandle:fom.HLAfloat32BE.pack(3.14)},
+            "update")
 \end{verbatim}
 
 May raise
@@ -778,6 +827,16 @@ May raise
 \begin{methoddesc}{reflectAttributeValues}{object, \{attribute:value\}, tag, orderType, transportType\optional{, time, eventRetraction}}
 Received attribute values are received in a dictionary. Attribute handle is used as key.
 The value can be unpacked using the \module{hla.omt} functions.
+\begin{description}
+\item \var{object} is an object instance handle 
+\item \item \var{\{attribute:value\}} is a python dictionary whose key are attribute
+handles with associated values.
+\item \var{tag} is a string
+\item \var{orderType}
+\item \var{transportType}
+\item \var{time} may be a timestamp
+\item \var{eventRetraction}
+\end{description}
 
 For example
 \begin{verbatim}
@@ -1908,4 +1967,4 @@ May raise
 \begin{methoddesc}{federationSynchronized}{label}
 \end{methoddesc}
 
-% $Id: services.tex,v 1.2 2009/06/07 15:12:48 gotthardp Exp $
+% $Id: services.tex,v 1.3 2009/07/12 19:30:07 gotthardp Exp $
