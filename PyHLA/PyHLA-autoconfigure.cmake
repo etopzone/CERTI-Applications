@@ -55,12 +55,29 @@ execute_process(COMMAND ${CMAKE_COMMAND} .
                 RESULT_VARIABLE CONFIG_RES
                 OUTPUT_VARIABLE CONFIG_OUT
                 ERROR_VARIABLE CONFIG_ERR
+                TIMEOUT 200
                 )
-                              
-message(STATUS "Building with ${CMAKE_BUILD_TOOL}...")
-# CMAKE_BUILD_TOOL is not defined in scripting (-P) mode
 
-execute_process(COMMAND make                 
+# CMAKE_BUILD_TOOL is not defined in scripting (-P) mode
+# so we have to build a sample project for knowing it
+file(MAKE_DIRECTORY "TestProj")                              
+file(WRITE TestProj/CMakeLists.txt 
+    "
+PROJECT(GETBT C CXX)
+MESSAGE(STATUS \"BT=\${CMAKE_BUILD_TOOL}==\")
+    "
+     )     
+execute_process(COMMAND  ${CMAKE_COMMAND} .
+                WORKING_DIRECTORY  ./TestProj      
+                OUTPUT_VARIABLE BT
+                TIMEOUT 100
+                ERROR_QUIET)
+file(REMOVE_RECURSE  "TestProj")                           
+string(REGEX MATCH "^-- .*=(.*)==.*" TEMP ${BT})
+set(BUILD_TOOL ${CMAKE_MATCH_1})           
+           
+message(STATUS "Building with ${BUILD_TOOL}...")
+execute_process(COMMAND ${BUILD_TOOL}        
                 WORKING_DIRECTORY ${PYHLA_FILE_PREFIX}
                 RESULT_VARIABLE CONFIG_RES
                 OUTPUT_VARIABLE CONFIG_OUT
