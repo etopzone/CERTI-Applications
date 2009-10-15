@@ -160,7 +160,7 @@ HLATestsSuite_ADD_TEST(test_TRTCCallbacks
                       FED_FILE test_TRTCCallbacks.fed
                       SOURCE_FILES test_TRTCCallbacks.cc
                       MORELIBS ${LIBHLA}
-                      DTEST_SCRIPT dtest_test_TRTCCallbacks.py                      
+                      DTEST_SCRIPT dtest_test_TRTCCallbacks.py dtest_test_TRTCCallbacks-withLateFederate.py                      
                       COMMENTS "Test HLA TimeRegulating and TimeConstrained Callbacks") 
                       
 #########################################################################
