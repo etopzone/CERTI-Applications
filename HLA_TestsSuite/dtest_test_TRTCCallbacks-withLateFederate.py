@@ -70,6 +70,9 @@ rtig = dtest.DTester("RTIG",
 firstFederate = dtest.DTester("test_TRTCCallbacks_First",
                                session=dtest.SSHSessionHandler(federate_param['user'],host=federate_param['host']))
 
+lateFederate = dtest.DTester("test_TRTCCallbacks_LateJoiner",
+                               session=dtest.SSHSessionHandler(federate_param['user'],host=federate_param['host']))
+
 # you may change the default time out value
 rtig.timeout = 40
 # you add want to save the output of your dtester to a file.
@@ -118,20 +121,62 @@ firstFederate.addRunStep("expectFromCommand",pattern="Time Constrained Enabled, 
 firstFederate.addRunStep("ok",firstFederate.getFutureLastStepStatus,"TimeConstrainedEnabled received - "+firstFederate.name)
 firstFederate.addRunStep("sendToCommand",string="\n")
 
-for i in range(1,firstFederate.nbTAR):
+for i in range(1,firstFederate.nbTAR-1):
     firstFederate.addRunStep("expectFromCommand",pattern="TIME_ADVANCE_GRANT")
     firstFederate.addRunStep("ok",firstFederate.getFutureLastStepStatus,"TAG received - "+firstFederate.name)
     firstFederate.addRunStep("sendToCommand",string="\n")
     time.sleep(1)
+
+firstFederate.addRunStep("barrier","Waiting lateFederate")
+firstFederate.addRunStep("barrier","Going on")
+firstFederate.addRunStep("expectFromCommand",pattern="TIME_ADVANCE_GRANT")
+firstFederate.addRunStep("ok",firstFederate.getFutureLastStepStatus,"TAG received - "+firstFederate.name)
+firstFederate.addRunStep("sendToCommand",string="\n")
+        
 firstFederate.addRunStep("barrier","TRTC Sequence end.")
 firstFederate.addRunStep("terminateCommand")
 firstFederate.addRunStep("barrier","All Federate(s) ended")
+
+# describe late federate run steps
+lateFederate.timeout = 20
+lateFederate.nbTAR   = 5
+lateFederate.stdout  = file(lateFederate.name + ".out",'w+')
+lateFederate.stdin   = file(lateFederate.name + ".in",'w+')
+lateFederate.stderr  = file(lateFederate.name + ".err",'w+')
+lateFederate.addRunStep("barrier","RTIG started")
+dtest.ReusableSequences.addConditionalRunShellScript(lateFederate,c_shell_cmd="source "+certi_home+"/share/scripts/myCERTI_env.csh "+rtig_param['host'],
+                               bourne_shell_cmd="source "+certi_home+"/share/scripts/myCERTI_env.sh "+rtig_param['host'])
+lateFederate.addRunStep("barrier","Waiting lateFederate")
+lateFederate.addRunStep("runCommand",command=federate_param['path'] + " "+str(lateFederate.nbTAR))
+lateFederate.addRunStep("expectFromCommand",pattern="Joined federation.*")
+lateFederate.addRunStep("ok",lateFederate.getFutureLastStepStatus,"Late Federate started and has joined federation")
+
+lateFederate.addRunStep("expectFromCommand",pattern="Time Regulation Enabled, press ENTER to continue")
+lateFederate.addRunStep("ok",lateFederate.getFutureLastStepStatus,"TimeRegulationEnabled received - "+lateFederate.name)
+lateFederate.addRunStep("sendToCommand",string="\n")
+
+lateFederate.addRunStep("expectFromCommand",pattern="Time Constrained Enabled, press ENTER to continue")
+lateFederate.addRunStep("ok",lateFederate.getFutureLastStepStatus,"TimeConstrainedEnabled received - "+lateFederate.name)
+lateFederate.addRunStep("sendToCommand",string="\n")
+
+lateFederate.addRunStep("barrier","Going on")
+
+for i in range(1,lateFederate.nbTAR):
+    lateFederate.addRunStep("expectFromCommand",pattern="TIME_ADVANCE_GRANT")
+    lateFederate.addRunStep("ok",lateFederate.getFutureLastStepStatus,"TAG received - "+lateFederate.name)
+    lateFederate.addRunStep("sendToCommand",string="\n")
+    time.sleep(1)
+        
+lateFederate.addRunStep("barrier","TRTC Sequence end.")
+lateFederate.addRunStep("terminateCommand")
+lateFederate.addRunStep("barrier","All Federate(s) ended")
 
 def goTest():
     myDTestMaster = dtest.DTestMaster("HLA test test_TRTCCallbacks Starts","Launch RTIG + 1 federate for testing TimeRegulated and TimeConstrained callbacks,...")
     myDTestMaster.timeout = 40
     myDTestMaster.register(rtig)
     myDTestMaster.register(firstFederate)
+    myDTestMaster.register(lateFederate)
     myDTestMaster.startTestSequence()
     myDTestMaster.waitTestSequenceEnd()
     
