@@ -19,6 +19,10 @@
     (Class ObjectRoot
       (Attribute privilegeToDelete reliable timestamp)
       (Class RTIprivate)
+      (Class UpdateMe  
+         (Attribute PingMe  reliable timestamp)
+         (Attribute Counter reliable timestamp)
+      )
     )
   )
   (Interactions
