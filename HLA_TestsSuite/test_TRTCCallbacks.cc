@@ -100,6 +100,8 @@ public:
 			nbTARstepsToDo--;
 		}
 
+		cout << "Press ENTER to STOP execution ..." << endl;
+		getchar();
 		this->resign_and_destroy();
 		return 0;
 	};
@@ -172,7 +174,7 @@ public:
 			RTI::FederateInternalError) {
 		TIME_ADVANCE_GRANT = true;
 		mytime = newTime;
-		cout << "TIME_ADVANCE_GRANT" << endl;
+		cout << "TIME_ADVANCE_GRANT = "<< mytime.getTime() << endl;
 	}
 
 private:
@@ -382,6 +384,7 @@ private:
 
 	void
 	advanceTime(const RTIfedTime& time) {
+		unsigned long tick=0;
 		try {
 			rtiamb.timeAdvanceRequest(time);
 		} catch ( RTI::Exception &e ) {
@@ -390,7 +393,11 @@ private:
 		} catch ( ... ) {
 			cerr << "Error: unknown non-RTI exception." << endl;
 		}
-		while (!TIME_ADVANCE_GRANT) this->tickRTI();
+		while (!TIME_ADVANCE_GRANT) {
+			this->tickRTI(0.1,0.0);
+			tick++;
+		}
+		cout << "Ticked <"<<tick<<"> times." << endl;
 		TIME_ADVANCE_GRANT = false;
 		getchar();
 	}
@@ -402,7 +409,7 @@ private:
 			RTI::EnableTimeRegulationWasNotPending,
 			RTI::FederateInternalError) {
 		cout << "Time Regulation Enabled, press ENTER to continue..." << endl;
-		cout << static_cast<RTIfedTime>(theTime).getTime() << endl;
+		cout << "TRE = " << static_cast<RTIfedTime>(theTime).getTime() << " =" << endl;
 		TIME_REGULATION_ENABLED = true;
 		getchar();
 	}
@@ -413,7 +420,7 @@ private:
 			RTI::EnableTimeConstrainedWasNotPending,
 			RTI::FederateInternalError) {
 		cout << "Time Constrained Enabled, press ENTER to continue..." << endl;
-		cout << static_cast<RTIfedTime>(theTime).getTime() << endl;
+		cout << "TCE = " << static_cast<RTIfedTime>(theTime).getTime() << " = "<< endl;
 		TIME_CONSTRAINED_ENABLED = true;
 		getchar();
 	}

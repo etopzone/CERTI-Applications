@@ -117,6 +117,9 @@ firstFederate.addRunStep("expectFromCommand",pattern="Time Constrained Enabled, 
 firstFederate.addRunStep("ok",firstFederate.getFutureLastStepStatus,"TimeConstrainedEnabled received - "+firstFederate.name)
 firstFederate.addRunStep("sendToCommand",string="\n")
 
+firstFederate.addRunStep("expectFromCommand",pattern="Press ENTER to STOP execution")
+firstFederate.addRunStep("sendToCommand",string="\n")
+
 firstFederate.addRunStep("barrier","TRTC Sequence end.")
 firstFederate.addRunStep("terminateCommand")
 firstFederate.addRunStep("barrier","All Federate(s) ended")
