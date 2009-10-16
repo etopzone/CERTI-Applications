@@ -174,7 +174,7 @@ public:
 			RTI::FederateInternalError) {
 		TIME_ADVANCE_GRANT = true;
 		mytime = newTime;
-		cout << "TIME_ADVANCE_GRANT = "<< mytime.getTime() << endl;
+		cout << "TIME_ADVANCE_GRANT to "<< mytime.getTime() << endl;
 	}
 
 private:
@@ -337,7 +337,7 @@ private:
 	void
 	enableTimeReg(void) {
 		try {
-			rtiamb.enableTimeRegulation(RTIfedTime(10), RTIfedTime(5));
+			rtiamb.enableTimeRegulation(RTIfedTime(3), myLookahead);
 		} catch ( RTI::Exception &e ) {
 			cerr << "RTI exception: " << e._name << " ["
 					<< (e._reason ? e._reason : "undefined") << "]." << endl;
@@ -386,6 +386,7 @@ private:
 	advanceTime(const RTIfedTime& time) {
 		unsigned long tick=0;
 		try {
+			cout << "Federate [" << federateName << "] TAR to " << time.getTime() << endl;
 			rtiamb.timeAdvanceRequest(time);
 		} catch ( RTI::Exception &e ) {
 			cerr << "RTI exception: " << e._name << " ["
