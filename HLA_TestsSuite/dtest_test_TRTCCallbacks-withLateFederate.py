@@ -27,7 +27,11 @@ import os
 import time
 import threading
 import getopt, sys
-import dtest  
+import dtest
+
+def mywait(dtester, *args, **kwargs):
+    time.sleep(10)
+    return
 
 def usage():
     print "Usage:\n %s [--help] [--certi_home=<path>] --rtig=[[<user>@]<host>]:<rtig_path> --federate=[[<user>@]<host>]:<federate_path>" % sys.argv[0]
@@ -148,7 +152,7 @@ lateFederate.stderr  = file(lateFederate.name + ".err",'w+')
 lateFederate.addRunStep("barrier","RTIG started")
 dtest.ReusableSequences.addConditionalRunShellScript(lateFederate,c_shell_cmd="source "+certi_home+"/share/scripts/myCERTI_env.csh "+rtig_param['host'],
                                bourne_shell_cmd="source "+certi_home+"/share/scripts/myCERTI_env.sh "+rtig_param['host'])
-lateFederate.addRunStep("runCommand",command="sleep 10")
+lateFederate.addRunStep(mywait)
 lateFederate.addRunStep("barrier","Waiting lateFederate")
 lateFederate.addRunStep("runCommand",command=federate_param['path'] + " "+str(lateFederate.nbTAR))
 lateFederate.addRunStep("expectFromCommand",pattern="Joined federation.*")
