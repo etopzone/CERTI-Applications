@@ -10,10 +10,12 @@ PROJECT(XPlaneHLAPlugin CXX)
 # CERTI requires CMake 2.4.x
 CMAKE_MINIMUM_REQUIRED(VERSION 2.4.4)
 
-# Use CERTI specific CMake modules first
-# You should set CERTI_HOME env var to appropriate value or put here the full path to the directory containing FindCERTI.cmake
-FILE(TO_CMAKE_PATH "$ENV{CERTI_HOME}" CERTI_PATH_HOME)
-LIST(APPEND CMAKE_MODULE_PATH ${CERTI_PATH_HOME}/share/scripts)
+# Detect the CERTI installation, http://www.cert.fr/CERTI
+IF ("$ENV{CERTI_HOME}" STRGREATER "")
+    # note: the CERTI_PATH_HOME is used to install the .fed file
+    FILE(TO_CMAKE_PATH "$ENV{CERTI_HOME}" CERTI_PATH_HOME)
+    LIST(APPEND CMAKE_MODULE_PATH ${CERTI_PATH_HOME}/share/scripts)
+ENDIF()
 
 # You should uncomment the following line if you want VERBOSE build
 #SET(CMAKE_VERBOSE_MAKEFILE ON)
@@ -46,8 +48,10 @@ SET(PACKAGE_BUGREPORT "jean-michel.mathe@onecert.fr")
 MESSAGE(STATUS "Configuring ${PACKAGE_NAME} version ${PACKAGE_VERSION}")
 
 #########################################################################
-# Call i.e. INCLUDE the CERTI usage configuration
+# Call i.e. INCLUDE the HLA RTI usage configuration
 #########################################################################
+CMAKE_MINIMUM_REQUIRED(VERSION 2.6.3)
+# The FindRTI.cmake module is available since cmake 2.6.3
 FIND_PACKAGE(RTI REQUIRED)
 INCLUDE_DIRECTORIES(${RTI_INCLUDE_DIR})
 ADD_DEFINITIONS(${RTI_DEFINITIONS})
@@ -55,7 +59,7 @@ ADD_DEFINITIONS(${RTI_DEFINITIONS})
 #########################################################################
 # CPack specific Configuration
 #########################################################################
-SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "XPlane Federation using CERTI")
+SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "XPlane Federation using M&S HLA")
 SET(CPACK_PACKAGE_VENDOR "ONERA, CT/TIS, JMMathé")
 SET(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/XPlane_DESCRIPTION.txt")
 SET(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/COPYING")
