@@ -1,6 +1,7 @@
 #include <iostream>
 #include <memory>
 #include <string>
+#include <limits>
 
 #include "XP_Trace.h"
 
@@ -72,9 +73,7 @@ theFederate->subscribeAttVal();
 
 while (1)
 	{
-	Sleep(900); 
-	theFederate->tick();		//Accès aux 2 Classes
-	theFederate->tick();
+	theFederate->tick(1,10);
 	}
 
 theFederate->destroyFederate();
