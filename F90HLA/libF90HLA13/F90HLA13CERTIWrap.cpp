@@ -34,6 +34,8 @@
 #include <sstream>
 #include <string>
 #include <netinet/in.h>
+#include <stdlib.h>
+#include <memory>
 
 #include <RTI.hh>
 #include <fedtime.hh>
@@ -92,47 +94,47 @@
 
 // federation management
 
-#define _F90syncPointRegSucceeded __fedsrvmod__syncpointregsucceeded
-#define _F90syncPointRegFailed __fedsrvmod__syncpointregfailed
-#define _F90announceSyncPoint __fedsrvmod__announcesyncpoint
-#define _F90fedSync __fedsrvmod__fedsync
-#define _F90initiateFedSave __fedsrvmod__initiatefedsave
-#define _F90fedSaved __fedsrvmod__fedsaved
-#define _F90fedNotSaved __fedsrvmod__fednotsaved
-#define _F90requestFedResSucceeded __fedsrvmod__requestfedressucceeded
-#define _F90requestFedResFailed __fedsrvmod__requestfedresfailed
-#define _F90fedResBegun __fedsrvmod__fedresbegun
-#define _F90initiateFedRestore __fedsrvmod__initiatefedrestore
-#define _F90fedRestored __fedsrvmod__fedrestored
-#define _F90fedNotRestored __fedsrvmod__fednotrestored
+#define _F90syncPointRegSucceeded __fedsrvmod_MOD_syncpointregsucceeded
+#define _F90syncPointRegFailed __fedsrvmod_MOD_syncpointregfailed
+#define _F90announceSyncPoint __fedsrvmod_MOD_announcesyncpoint
+#define _F90fedSync __fedsrvmod_MOD_fedsync
+#define _F90initiateFedSave __fedsrvmod_MOD_initiatefedsave
+#define _F90fedSaved __fedsrvmod_MOD_fedsaved
+#define _F90fedNotSaved __fedsrvmod_MOD_fednotsaved
+#define _F90requestFedResSucceeded __fedsrvmod_MOD_requestfedressucceeded
+#define _F90requestFedResFailed __fedsrvmod_MOD_requestfedresfailed
+#define _F90fedResBegun __fedsrvmod_MOD_fedresbegun
+#define _F90initiateFedRestore __fedsrvmod_MOD_initiatefedrestore
+#define _F90fedRestored __fedsrvmod_MOD_fedrestored
+#define _F90fedNotRestored __fedsrvmod_MOD_fednotrestored
 
 // declaration management
 
-#define _F90startRegForObjClass __fedsrvmod__startregforobjclass
-#define _F90stopRegforObjClass  __fedsrvmod__stopregforobjclass
-#define _F90turnInteractOn __fedsrvmod__turninteracton
-#define _F90turnInteractOff __fedsrvmod__turninteractoff
+#define _F90startRegForObjClass __fedsrvmod_MOD_startregforobjclass
+#define _F90stopRegforObjClass  __fedsrvmod_MOD_stopregforobjclass
+#define _F90turnInteractOn __fedsrvmod_MOD_turninteracton
+#define _F90turnInteractOff __fedsrvmod_MOD_turninteractoff
 
 // object management
 
-#define _F90objInstNameResSucceeded __fedsrvmod__objinstnameressucceeded
-#define _F90objInstNameResFailed __fedsrvmod__objinstnameresfailed
-#define _F90discoverObjInst __fedsrvmod__discoverobjinst
-#define _F90reflectAttrVal __fedsrvmod__reflectattrval
-#define _F90receiveInteract __fedsrvmod__receiveinteract
-#define _F90removeObjInst __fedsrvmod__removeobjinst
-#define _F90attrInScope __fedsrvmod__attrinscope
-#define _F90attrOutOfScope __fedsrvmod__attroutofscope
-#define _F90provideAttrValUp __fedsrvmod__provideattrvalup
-#define _F90turnUpdatesOnForObjInst __fedsrvmod__turnUpdatesOnForObjInst
-#define _F90turnUpdatesOffForObjInst __fedsrvmod__turnUpdatesOffForObjInst
+#define _F90objInstNameResSucceeded __fedsrvmod_MOD_objinstnameressucceeded
+#define _F90objInstNameResFailed __fedsrvmod_MOD_objinstnameresfailed
+#define _F90discoverObjInst __fedsrvmod_MOD_discoverobjinst
+#define _F90reflectAttrVal __fedsrvmod_MOD_reflectattrval
+#define _F90receiveInteract __fedsrvmod_MOD_receiveinteract
+#define _F90removeObjInst __fedsrvmod_MOD_removeobjinst
+#define _F90attrInScope __fedsrvmod_MOD_attrinscope
+#define _F90attrOutOfScope __fedsrvmod_MOD_attroutofscope
+#define _F90provideAttrValUp __fedsrvmod_MOD_provideattrvalup
+#define _F90turnUpdatesOnForObjInst __fedsrvmod_MOD_turnUpdatesOnForObjInst
+#define _F90turnUpdatesOffForObjInst __fedsrvmod_MOD_turnUpdatesOffForObjInst
 
 // time management
 
-#define _F90timeRegEnabled __fedsrvmod__timeregenabled
-#define _F90timeConsEnabled __fedsrvmod__timeconsenabled
-#define _F90timeAdvGrant __fedsrvmod__timeadvgrant
-#define _F90requestRetr __fedsrvmod__requestretr
+#define _F90timeRegEnabled __fedsrvmod_MOD_timeregenabled
+#define _F90timeConsEnabled __fedsrvmod_MOD_timeconsenabled
+#define _F90timeAdvGrant __fedsrvmod_MOD_timeadvgrant
+#define _F90requestRetr __fedsrvmod_MOD_requestretr
 
 #endif
 
@@ -510,6 +512,7 @@ using std::cout;
 using std::cerr;
 using std::endl;
 using std::auto_ptr;
+
 
 /////////////////////////////////////
 // conversions			   //
