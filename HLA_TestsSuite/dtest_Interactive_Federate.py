@@ -151,7 +151,6 @@ firstFederate.addRunStep("sendToCommand",string="dfe\n")
 firstFederate.addRunStep("expectFromCommand",pattern="federation detruite")
 firstFederate.addRunStep("ok",firstFederate.getFutureLastStepStatus,firstFederate.name+" has quit federation")
 
-firstFederate.addRunStep("expectFromCommand",pattern="RTIA:: End execution.")
 firstFederate.addRunStep("sendToCommand",string="q\n")
 
 firstFederate.addRunStep("terminateCommand")
