@@ -19,6 +19,7 @@ bool timeConstrained = false;
 
 class Federe_Interactif : public RTI::RTIambassador, public NullFederateAmbassador
 {
+
 public:
   Federe_Interactif() {}
   virtual ~Federe_Interactif() throw (RTI::FederateInternalError) {}
@@ -83,7 +84,9 @@ private:
   {
     std::cout << std::endl << "     <----- receiveInteraction" << std::endl;
   }
+
 };
+
 
 void print_menu (void);
 void callTICK (void);
@@ -128,8 +131,10 @@ int main(int argc, char **argv)
   while(1)
   {
     cout <<"Voulez-vous un preambule automatique [y/n]" << endl;
-    scanf("%c", &c);
-    scanf("%c", &entree);
+    //scanf("%c", &c);
+    cin >> c;
+    //scanf("%c", &entree);
+    cin >> entree;
     if (c=='y' || c=='n') break;
     cout <<"Vous devez entrer 'y' ou 'n'" << endl;
   }

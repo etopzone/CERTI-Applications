@@ -171,6 +171,14 @@ HLATestsSuite_ADD_TEST(Interactive_Federate
                       SOURCE_FILES Interactive_Federate.cc
                       DTEST_SCRIPT dtest_Interactive_Federate.py
                       COMMENTS "A multi-purpose test interactive Federate")
+                      
+#########################################################################
+# ADD TEST INTERACTIVE FEDERATE 1516
+#########################################################################                   
+HLATestsSuite_ADD_TEST1516(Interactive_Federate1516 
+                      FED_FILE Interactive_Federation.fed 01.xml Certi-Test-02.xml
+                      SOURCE_FILES Interactive_Federate1516.cc
+                      COMMENTS "A multi-purpose test interactive Federate 1516")
 
 #########################################################################
 # ADD TEST Notification SWITCH FEDERATE 
