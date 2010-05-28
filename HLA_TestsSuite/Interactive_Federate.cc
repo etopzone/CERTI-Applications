@@ -132,9 +132,9 @@ int main(int argc, char **argv)
   {
     cout <<"Voulez-vous un preambule automatique [y/n]" << endl;
     //scanf("%c", &c);
-    cin >> c;
     //scanf("%c", &entree);
-    cin >> entree;
+    cin >> c;
+
     if (c=='y' || c=='n') break;
     cout <<"Vous devez entrer 'y' ou 'n'" << endl;
   }
