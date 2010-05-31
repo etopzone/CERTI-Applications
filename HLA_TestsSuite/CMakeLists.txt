@@ -198,5 +198,39 @@ HLATestsSuite_ADD_TEST(test_FOMParse
                       DTEST_SCRIPT dtest_test_FOMParse.py 
                       COMMENTS "A FOM parsing test"
                       )
+#########################################################################
+# IEEE-1516 unit and integration tests 
+#########################################################################                                         
+HLATestsSuite_ADD_TEST1516(01-FederationExecutionTest 
+                      FED_FILE 01.xml 01.fed
+                      SOURCE_FILES  01-FederationExecutionTest.cc 01-FederationExecutionTest.hh ReturnCodes.hh
+                      COMMENTS "01-FederationExecutionTest (1516)")
+                      
+HLATestsSuite_ADD_TEST1516(02-HandlesAndNamesTest 
+                      FED_FILE Certi-Test-02.xml
+                      SOURCE_FILES  02-HandlesAndNamesTest.cc 02-HandlesAndNamesTest.hh ReturnCodes.hh
+                      COMMENTS "02-HandlesAndNamesTest (1516)")
+
+HLATestsSuite_ADD_TEST1516(03-PublishingTest 
+                      FED_FILE Certi-Test-03.xml
+                      SOURCE_FILES  03-PublishingTest.cc 03-PublishingTest.hh ReturnCodes.hh
+                      COMMENTS "03-PublishingTest (1516)")
+                      
+HLATestsSuite_ADD_TEST1516(04-NameReservation 
+                      FED_FILE Certi-Test-04.xml
+                      SOURCE_FILES  04-NameReservation.cc 04-NameReservation.hh ReturnCodes.hh
+                      COMMENTS "04-NameReservation (1516)")
+
+HLATestsSuite_ADD_TEST1516(05-ObjectManagementTest                       
+                      SOURCE_FILES  05-ObjectManagementTest.cc 05-ObjectManagementTest.hh ReturnCodes.hh
+                      COMMENTS "05-ObjectManagementTest (1516)")
+
+HLATestsSuite_ADD_TEST1516(05-ObjectManagementCallbackTest                       
+                      SOURCE_FILES  05-ObjectManagementCallbackTest.cc 05-ObjectManagementCallbackTest.hh ReturnCodes.hh
+                      COMMENTS "05-ObjectManagementCallbackTest (1516)")
+                                           
+HLATestsSuite_ADD_TEST1516(06-TimeEncodingTest                       
+                      SOURCE_FILES  06-TimeEncodingTest.cc 06-TimeEncodingTest.hh ReturnCodes.hh
+                      COMMENTS "06-TimeEncodingTest (1516)")
 
 MESSAGE(STATUS "*** ${CMAKE_PROJECT_NAME} has been successfully configured ***")
