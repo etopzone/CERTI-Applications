@@ -1,7 +1,7 @@
 #include "03-PublishingTest.hh"
 #include "ReturnCodes.hh"
 
-#include <RTI/certiRTI1516.h>
+#include <RTI/RTI1516.h>
 #include <RTI/Enums.h>
 #include <iostream>
 #include <sstream>
