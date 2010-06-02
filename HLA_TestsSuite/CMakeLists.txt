@@ -175,10 +175,11 @@ HLATestsSuite_ADD_TEST(Interactive_Federate
 #########################################################################
 # ADD TEST INTERACTIVE FEDERATE 1516
 #########################################################################                   
-HLATestsSuite_ADD_TEST1516(Interactive_Federate1516 
+HLATestsSuite_ADD_TEST(Interactive_Federate1516 
                       FED_FILE Interactive_Federation.fed 01.xml Certi-Test-02.xml
                       SOURCE_FILES Interactive_Federate1516.cc
-                      COMMENTS "A multi-purpose test interactive Federate 1516")
+                      COMMENTS "A multi-purpose test interactive Federate 1516"
+                      HLA1516)
 
 #########################################################################
 # ADD TEST Notification SWITCH FEDERATE 
@@ -201,36 +202,43 @@ HLATestsSuite_ADD_TEST(test_FOMParse
 #########################################################################
 # IEEE-1516 unit and integration tests 
 #########################################################################                                         
-HLATestsSuite_ADD_TEST1516(01-FederationExecutionTest 
+HLATestsSuite_ADD_TEST(01-FederationExecutionTest 
                       FED_FILE 01.xml 01.fed
                       SOURCE_FILES  01-FederationExecutionTest.cc 01-FederationExecutionTest.hh ReturnCodes.hh
-                      COMMENTS "01-FederationExecutionTest (1516)")
+                      COMMENTS "01-FederationExecutionTest (1516)"
+                      HLA1516)
                       
-HLATestsSuite_ADD_TEST1516(02-HandlesAndNamesTest 
+HLATestsSuite_ADD_TEST(02-HandlesAndNamesTest 
                       FED_FILE Certi-Test-02.xml
                       SOURCE_FILES  02-HandlesAndNamesTest.cc 02-HandlesAndNamesTest.hh ReturnCodes.hh
-                      COMMENTS "02-HandlesAndNamesTest (1516)")
+                      COMMENTS "02-HandlesAndNamesTest (1516)"
+                      HLA1516)
 
-HLATestsSuite_ADD_TEST1516(03-PublishingTest 
+HLATestsSuite_ADD_TEST(03-PublishingTest 
                       FED_FILE Certi-Test-03.xml
                       SOURCE_FILES  03-PublishingTest.cc 03-PublishingTest.hh ReturnCodes.hh
-                      COMMENTS "03-PublishingTest (1516)")
+                      COMMENTS "03-PublishingTest (1516)"
+                      HLA1516)
                       
-HLATestsSuite_ADD_TEST1516(04-NameReservation 
+HLATestsSuite_ADD_TEST(04-NameReservation 
                       FED_FILE Certi-Test-04.xml
                       SOURCE_FILES  04-NameReservation.cc 04-NameReservation.hh ReturnCodes.hh
-                      COMMENTS "04-NameReservation (1516)")
+                      COMMENTS "04-NameReservation (1516)"
+                      HLA1516)
 
-HLATestsSuite_ADD_TEST1516(05-ObjectManagementTest                       
+HLATestsSuite_ADD_TEST(05-ObjectManagementTest                       
                       SOURCE_FILES  05-ObjectManagementTest.cc 05-ObjectManagementTest.hh ReturnCodes.hh
-                      COMMENTS "05-ObjectManagementTest (1516)")
+                      COMMENTS "05-ObjectManagementTest (1516)"
+                      HLA1516)
 
-HLATestsSuite_ADD_TEST1516(05-ObjectManagementCallbackTest                       
+HLATestsSuite_ADD_TEST(05-ObjectManagementCallbackTest                       
                       SOURCE_FILES  05-ObjectManagementCallbackTest.cc 05-ObjectManagementCallbackTest.hh ReturnCodes.hh
-                      COMMENTS "05-ObjectManagementCallbackTest (1516)")
+                      COMMENTS "05-ObjectManagementCallbackTest (1516)"
+                      HLA1516)                      
                                            
-HLATestsSuite_ADD_TEST1516(06-TimeEncodingTest                       
+HLATestsSuite_ADD_TEST(06-TimeEncodingTest                       
                       SOURCE_FILES  06-TimeEncodingTest.cc 06-TimeEncodingTest.hh ReturnCodes.hh
-                      COMMENTS "06-TimeEncodingTest (1516)")
+                      COMMENTS "06-TimeEncodingTest (1516)"
+                      HLA1516)
 
 MESSAGE(STATUS "*** ${CMAKE_PROJECT_NAME} has been successfully configured ***")
