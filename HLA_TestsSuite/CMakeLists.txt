@@ -63,8 +63,8 @@ SET(CMAKE_BUILD_TYPE "Debug")
 #########################################################################
 SET(PACKAGE_NAME      ${CMAKE_PROJECT_NAME})
 SET(PACKAGE_VERSION_MAJOR "0")
-SET(PACKAGE_VERSION_MINOR "3")
-SET(PACKAGE_VERSION_PATCH "2cvs")
+SET(PACKAGE_VERSION_MINOR "4")
+SET(PACKAGE_VERSION_PATCH "0cvs")
 SET(PACKAGE_VERSION   "${PACKAGE_VERSION_MAJOR}.${PACKAGE_VERSION_MINOR}.${PACKAGE_VERSION_PATCH}")
 SET(PACKAGE_BUGREPORT "certi-devel@nongnu.org")
 MESSAGE(STATUS "Configuring ${PACKAGE_NAME} version ${PACKAGE_VERSION}")
@@ -197,7 +197,7 @@ HLATestsSuite_ADD_TEST(test_FOMParse
                       SOURCE_FILES test_FOMParse.cc test_FOMParse_cmdline.h test_FOMParse_cmdline.c
                       DTEST_SCRIPT dtest_test_FOMParse.py 
                       COMMENTS "A FOM parsing test"
-                      )
+                      )                                                   
 #########################################################################
 # IEEE-1516 unit and integration tests 
 #########################################################################                                         
