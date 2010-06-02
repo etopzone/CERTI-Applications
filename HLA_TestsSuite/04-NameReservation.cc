@@ -10,7 +10,7 @@
 #include <cstdio>
 #include <cstring>
 
-#include <RTI1516fedTime.h>
+#include <RTI/RTI1516fedTime.h>
 /***************************************
  * This file is part of the Unit testing done for the HLA1516
  * functionality in CERTI.

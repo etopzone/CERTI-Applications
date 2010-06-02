@@ -2,7 +2,7 @@
 #include "ReturnCodes.hh"
 
 #include <RTI/certiRTI1516.h>
-#include <RTI1516fedTime.h>
+#include <RTI/RTI1516fedTime.h>
 #include <RTI/Enums.h>
 #include <iostream>
 #include <sstream>

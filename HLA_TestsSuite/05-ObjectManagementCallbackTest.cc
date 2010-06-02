@@ -12,7 +12,7 @@
 #include <ctime>
 #include <cstdio>
 
-#include <RTI1516fedTime.h>
+#include <RTI/RTI1516fedTime.h>
 
 int main(int argc, char** argv)
 {
