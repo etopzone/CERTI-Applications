@@ -1,20 +1,17 @@
-/*
- alias ; certi_run ; clear ;
-
- */
-
-
-
-//#include <RTI/certiRTI1516.h>
+#include <RTI/certiRTI1516.h>
 #include <RTI/RTI1516.h>
 #include <RTI/Enums.h>
 #include <RTI/NullFederateAmbassador.h>
+#include <RTI/RTI1516fedTime.h>
+
+
 
 #include <iostream>
 #include <stdio.h>
 #include <string.h>
 #include <cstdlib>
 #include <sstream>
+
 using namespace std;
 
 namespace rti1516
@@ -22,32 +19,26 @@ namespace rti1516
 	class RTIambassador;
 }
 
-// VARIABLES GLOBALES
-
-//temps
+//Logical Time
 std::auto_ptr<rti1516::LogicalTimeFactory> temps = rti1516::LogicalTimeFactoryFactory::makeLogicalTimeFactory(L"CERTI");
 std::auto_ptr< rti1516::LogicalTime > tps(temps->makeLogicalTime());
 
-//RTIfedTime* temps = new RTIfedTime(0.0);
-//RTIfedTime* lookahead = new RTIfedTime(1.0);
-//RTIfedTime ft;
-
-//RTIfedTime* temps = new RTIfedTime(0.0);
-
-
+//Variables
 bool timeRegulation = false;
 bool timeConstrained = false;
 
 
-//Class Federe_Interactif
+//Classe Federe_Interactif
 class Federe_Interactif : public rti1516::NullFederateAmbassador
 {
+
 	public:
 		Federe_Interactif()
 			throw ();
 		~Federe_Interactif()
 			throw ();
 
+		void callTICK();
 		void callGetObjClassHandle();
 		void callGetObjClassName();
 		void callGetAttrHandle();
@@ -76,23 +67,85 @@ class Federe_Interactif : public rti1516::NullFederateAmbassador
 		void callROI();
 		void callUAV();
 		void callSI();
-
-
+		void callETR();
+		void callETC();
+		void callTAR();
 		void callCIOT();
+
+
+		// CALLBACKS
+		void timeRegulationEnabled(rti1516::LogicalTime const & theTime)
+		    throw (  rti1516::InvalidLogicalTime,
+		    		 rti1516::NoRequestToEnableTimeRegulationWasPending,
+		    		 rti1516::FederateInternalError)
+		  {
+		     wcout << endl << "callback timeRegulationEnabled pour l'instant " << theTime.toString() << endl;
+		     timeRegulation = true;
+		  }
+
+
+		  void timeConstrainedEnabled(rti1516::LogicalTime const & theTime)
+		    throw ( rti1516::InvalidLogicalTime,
+		    		rti1516::NoRequestToEnableTimeConstrainedWasPending,
+		    		rti1516::FederateInternalError)
+		  {
+		     wcout << endl << "callback timeRegulationConstrained pour l'instant " << theTime.toString() << endl;
+		     timeConstrained = true;
+		  }
+
+
+		void receiveInteraction (   rti1516::InteractionClassHandle theInteraction,
+									rti1516::ParameterHandleValueMap const & theParameterValues,
+									rti1516::LogicalTime const & theTime,
+									rti1516::VariableLengthData const & theUserSuppliedTag,
+									rti1516::MessageRetractionHandle theHandle)
+		  throw ( rti1516::InteractionClassNotRecognized,
+				  rti1516::InteractionParameterNotRecognized,
+				  rti1516::InvalidLogicalTime,
+				  rti1516::FederateInternalError)
+		  {
+		    wcout << endl << "t=" << theTime.toString() << " : <----- receiveInteraction(" << theTime.toString() << ")"
+		    		//<< theUserSuppliedTag
+		    		<< endl;
+		  }
+
+
+		  void receiveInteraction (   rti1516::InteractionClassHandle theInteraction,
+									  rti1516::ParameterHandleValueMap const & theParameterValues,
+									  rti1516::VariableLengthData const & theUserSuppliedTag)
+		  throw ( rti1516::InteractionClassNotRecognized,
+				  rti1516::InteractionParameterNotRecognized,
+				  rti1516::FederateInternalError)
+		  {
+		    wcout << endl << "     <----- receiveInteraction" << endl;
+		  }
+
+		  void timeAdvanceGrant(rti1516::LogicalTime const & theTime)
+	          throw (	  rti1516::InvalidLogicalTime,
+						  rti1516::JoinedFederateIsNotInTimeAdvancingState,
+						  rti1516::FederateInternalError)
+	      {
+			  this->theTime = theTime;
+		      wcout << endl << "t=" << theTime.toString() << " : <----- timeAdvanceGrant(" << theTime.toString() << ")"<< std::endl << std::endl;
+	      }
+
+
+
 
 	private:
 		rti1516::RTIambassador *rtiAmb;
 		rti1516::FederateHandle fedHandle;
-
-
-
+		RTI1516fedTime theTime;
+		RTI1516fedTimeInterval lookahead;
 	};
+
+
 
 
 //méthode
 Federe_Interactif::Federe_Interactif() throw()
 		: rtiAmb(0)
-		, fedHandle()
+		, fedHandle(),	theTime(0.0), lookahead(1.0)
 {
 
 }
@@ -108,7 +161,6 @@ Federe_Interactif::~Federe_Interactif() throw()
 void print_menu (void);
 
 
-//VARIABLE
 Federe_Interactif* myInteractifFederate = new Federe_Interactif();
 
 
@@ -136,11 +188,7 @@ int main(int argc, char **argv)
 
   if (c=='y')
   {
-	//Ambassador
-	//myInteractifFederate->callambF();
-
     //CREER
-    //callCFE ();
 	myInteractifFederate->callCFE();
 
     //REJOINDRE
@@ -153,12 +201,11 @@ int main(int argc, char **argv)
 	myInteractifFederate->callSIC();
 
     //DECLARER REGULATEUR ET CONTRAINT
-    //callETR ();
-    //callETC ();
+    //myInteractifFederate->callETR ();
+    //myInteractifFederate->callETC ();
   }
 
   //MENU PRINCIPAL
-
   while(1)
   {
 	  i++;
@@ -167,7 +214,7 @@ int main(int argc, char **argv)
 
       if (commande=="q" || commande=="quit") break;
       else if (commande=="h" || commande=="help") print_menu();
-      //else if (commande=="t") callTICK();
+      else if (commande=="t") myInteractifFederate->callTICK();//*
       else if (commande=="getoch") myInteractifFederate->callGetObjClassHandle();
       else if (commande=="getocn") myInteractifFederate->callGetObjClassName();
       else if (commande=="getah") myInteractifFederate->callGetAttrHandle();
@@ -189,32 +236,35 @@ int main(int argc, char **argv)
       else if (commande=="pic") myInteractifFederate->callPIC();
       else if (commande=="uic") myInteractifFederate->callUIC();
       else if (commande=="soca") myInteractifFederate->callSOCA();
-      else if (commande=="usuboc") myInteractifFederate->callUsubOC(); //*
-      else if (commande=="usuboca") myInteractifFederate->callUsubOCA(); //*
+      else if (commande=="usuboc") myInteractifFederate->callUsubOC();
+      else if (commande=="usuboca") myInteractifFederate->callUsubOCA();
       else if (commande=="sic") myInteractifFederate->callSIC();
-      else if (commande=="usubic") myInteractifFederate->callUsubIC(); //*
-      else if (commande=="roi") myInteractifFederate->callROI(); //*
-      else if (commande=="uav") myInteractifFederate->callUAV(); //*
+      else if (commande=="usubic") myInteractifFederate->callUsubIC();
+      else if (commande=="roi") myInteractifFederate->callROI();
+      else if (commande=="uav") myInteractifFederate->callUAV();
       else if (commande=="si") myInteractifFederate->callSI();
-      //else if (commande=="etr") callETR();
-      //else if (commande=="etc") callETC();
-      //else if (commande=="tar") callTAR();
-      //else if (commande=="tara") callTARA();
-      //else if (commande=="ner") callNER();
-      //else if (commande=="nera") callNERA();
-      //else if (commande=="ead") callEAD();
-      //else if (commande=="dad") callDAD();
-      //else if (commande=="qlbts") callQLBTS();
-      //else if (commande=="qmnet") callQMNET();
-      //else if (commande=="ml") callML();
-      //else if (commande=="ql") callQL();
+      else if (commande=="etr") myInteractifFederate->callETR();//*
+      else if (commande=="etc") myInteractifFederate->callETC();//*
+      else if (commande=="tar") myInteractifFederate->callTAR();//*
+      //else if (commande=="etr") myInteractifFederate->callETR();
+      //else if (commande=="etc") myInteractifFederate->callETC();
+      //else if (commande=="tar") myInteractifFederate->callTAR();
+      //else if (commande=="tara") myInteractifFederate->callTARA();
+      //else if (commande=="ner") myInteractifFederate->callNER();
+      //else if (commande=="nera") myInteractifFederate->callNERA();
+      //else if (commande=="ead") myInteractifFederate->callEAD();
+      //else if (commande=="dad") myInteractifFederate->callDAD();
+      //else if (commande=="qlbts") myInteractifFederate->callQLBTS();
+      //else if (commande=="qmnet") myInteractifFederate->callQMNET();
+      //else if (commande=="ml") myInteractifFederate->callML();
+      //else if (commande=="ql") myInteractifFederate->callQL();
       //else if (commande=="ciot") myInteractifFederate->callCIOT();
       else cout << " commande inconnue " << endl;
   }
-
   exit(1);
 }
 
+//Menu d'aide
 void print_menu (void)
 {
 	bool menu = true;
@@ -283,19 +333,7 @@ void print_menu (void)
 
 			case 5 :
 				cout <<"\t5- Time Management\n"<< endl;
-				cout <<"etr   => tick"<< endl;
-				cout <<"etc   => Get Object Class Handle"<< endl;
-				cout <<"tar   => Get Object Class Name"<< endl;
-				cout <<"tara  => Get Attribute Handle"<< endl;
-				cout <<"ner   => Get Attribute Handle Name"<< endl;
-				cout <<"nera  => Get Interaction Class Handle"<< endl;
-				cout <<"ead   => Get Interaction Class Name"<< endl;
-				cout <<"dad   => Get Parameter Handle"<< endl;
-				cout <<"glbts => Get Parameter Handle Name"<< endl;
-				cout <<"gmnet => Get Object Instance Handle"<< endl;
-				cout <<"ml    => Get Object Instance Handle Name\n\n"<< endl;
-				cout <<"gl    => Get Parameter Handle"<< endl;
-				cout <<"ciot  => Get Parameter Handle Name"<< endl;
+				cout <<".. => ..."<< endl;
 			break;
 
 		default :
@@ -306,15 +344,19 @@ void print_menu (void)
 	}//fin while
 }//fin print_menu
 
+
 /*************************************************************************************************
-********************************** COMMANDES UTILITAIRE *******************************************
+********************************** COMMANDES UTILITAIRE ******************************************
 *************************************************************************************************/
 
-/*void callTICK (void)
+//evokeCallback (TICK)
+void Federe_Interactif::callTICK()
 {
-    cout << endl << "t=" << temps->getTime() << " : -----> tick" << endl;
-    myFedere_Interactif->tick(0.1, 0.2);
-}*/
+
+	wcout << endl << "t=" << tps->toString() << " : -----> tick" << endl;
+	rtiAmb->evokeCallback(0.1);
+	//rtiAmb->evokeMultipleCallbacks(0.0, 1.0);
+}
 
 //getObjectClassHandle
 void Federe_Interactif::callGetObjClassHandle()
@@ -720,9 +762,9 @@ void Federe_Interactif::callCFE()
     }
 
     if (test)
-       std::cout << "* Federation créée\n" << std::endl;
+       std::cout << "Federation creee" << std::endl;
     else
-       std::cout << "* Federation non créée\n" << std::endl;
+       std::cout << "* Federation non creee\n" << std::endl;
 }
 
 //deleteFederationExecution
@@ -745,7 +787,7 @@ void Federe_Interactif::callDFE()
 
 
 	if (test==0)
-		cout << "* Fédération détruite\n" <<endl;
+		cout << "Federation detruite\n" <<endl;
 	else if (test==1)
 		cout << "* No federation to destroy\n" <<endl;
 	else
@@ -771,7 +813,7 @@ void Federe_Interactif::callJFE(char *name)
 	}
 
     if (test)
-       std::cout << "* Federation rejointe\n" << std::endl;
+       std::cout << "Federation rejointe\n" << std::endl;
     else
        std::cout << "* Federation non rejointe\n" << std::endl;
 
@@ -792,9 +834,9 @@ void Federe_Interactif::callRFE()
 	}
 
     if (test)
-       std::cout << "* federation quittee\n" << std::endl;
+       std::cout << "federation quittee\n" << std::endl;
     else
-       std::cout << "* federation non quittee\n" << std::endl;
+       std::cout << "federation non quittee\n" << std::endl;
 
 }
 
@@ -826,9 +868,9 @@ void Federe_Interactif::callPOCA ()
 	}
 
     if (test)
-       std::cout << "* OK\n" << std::endl;
+       std::cout << "* Object class attributes published\n" << std::endl;
     else
-       std::cout << "* Pas OK\n" << std::endl;
+       std::cout << "* can't publish object class attributes\n" << std::endl;
 }
 
 //unpublishObjectClass
@@ -850,9 +892,9 @@ void Federe_Interactif::callUOC ()
 	}
 
     if (test)
-       std::cout << "* OK\n" << std::endl;
+       std::cout << "* Object class unpublished\n" << std::endl;
     else
-       std::cout << "* Pas OK\n" << std::endl;
+       std::cout << "* can't unpublish object class\n" << std::endl;
 }
 
 //unpublishObjectClassAttributes
@@ -879,9 +921,9 @@ void Federe_Interactif::callUOCA ()
 	}
 
     if (test)
-       std::cout << "* OK\n" << std::endl;
+       std::cout << "* Object class attributes unpublished\n" << std::endl;
     else
-       std::cout << "* Pas OK\n" << std::endl;
+       std::cout << "* can't unpublish object class attributes\n" << std::endl;
 }
 
 // publishInteractionClass
@@ -923,9 +965,9 @@ void Federe_Interactif::callUIC ()
 	}
 
 	if (test)
-		std::cout << "* OK" << std::endl;
+		std::cout << "* Interaction class unpublished" << std::endl;
 	else
-		std::cout << "* PAS OK" << std::endl;
+		std::cout << "* can't unpublish interaction class" << std::endl;
 }
 // subscribeObjectClassAttributes
 void Federe_Interactif::callSOCA ()
@@ -951,9 +993,9 @@ void Federe_Interactif::callSOCA ()
 	}
 
 	if (test)
-		std::cout << "* OK\n" << std::endl;
+		std::cout << "* Object class attributes subscribed\n" << std::endl;
 	else
-		std::cout << "* PAS OK\n" << std::endl;
+		std::cout << "* can't subscribe object class attributes\n" << std::endl;
 }
 
 // unsubscribeObjectClass
@@ -975,9 +1017,9 @@ void Federe_Interactif::callUsubOC ()
 	}
 
 if (test)
-	std::cout << "* OK\n" << std::endl;
+	std::cout << "* Object class unsubscribed\n" << std::endl;
 else
-	std::cout << "* PAS OK\n" << std::endl;
+	std::cout << "* can't unsubscribe object class\n" << std::endl;
 }
 
 // unsubscribeObjectClassAttributes
@@ -1003,9 +1045,9 @@ void Federe_Interactif::callUsubOCA ()
 	}
 
 	if (test)
-			std::cout << "* OK\n" << std::endl;
+			std::cout << "* object class attributes unsubscribed\n" << std::endl;
 	else
-		std::cout << "* PAS OK\n" << std::endl;
+		std::cout << "* can't unsubscribe object class attributes\n" << std::endl;
 }
 
 // subscribeInteractionClass
@@ -1048,9 +1090,9 @@ void Federe_Interactif::callUsubIC ()
 	}
 
 	if (test)
-		std::cout << "* OK\n" << std::endl;
+		std::cout << "* Interaction class unsubscribed\n" << std::endl;
 	else
-		std::cout << "* PAS OK\n" << std::endl;
+		std::cout << "* can't unsubscribe interaction class\n" << std::endl;
 }
 
 /*************************************************************************************************
@@ -1076,11 +1118,11 @@ void Federe_Interactif::callROI ()
 
 		if ( instance.isValid() )
 		{
-			std::cout << "* OK\n" << std::endl;
+			std::cout << "* Object instance registered\n" << std::endl;
 		}
 		else
 		{
-			std::cout << "* PAS OK\n" << std::endl;
+			std::cout << "* can't register object instance\n" << std::endl;
 		}
 	}
 	catch (rti1516::Exception &e)
@@ -1156,7 +1198,6 @@ void Federe_Interactif::callUAV ()
 			std::cout << "* error\n" << std::endl;
 		}
 	}
-
 }
 
 
@@ -1178,9 +1219,9 @@ void Federe_Interactif::callSI ()
 	cout << "\t-> getInteractionClassHandle" << endl;
     paramHandle = rtiAmb->getParameterHandle(iclassHandle,L"MsgData");
     cout << "\t-> getParameterHandle" << endl;
-    //paramValue = ... A CONSTRUIRE
+    //paramValue = A COMPLETER
 
-	phvm[paramHandle] = paramValue;
+	//phvm[paramHandle] = paramValue;
 
     while(1)
     {
@@ -1195,8 +1236,7 @@ void Federe_Interactif::callSI ()
         wcout << endl << "t=" << tps->toString() << " : Donner la valeur de l'estampille voulue : ";
         cin >> d;
 
-        std::auto_ptr<rti1516::LogicalTimeFactory> SItemps = rti1516::LogicalTimeFactoryFactory::makeLogicalTimeFactory(L"CERTI");
-        std::auto_ptr< rti1516::LogicalTime > SItps(SItemps->makeLogicalTime());
+		RTI1516fedTime fedTime(d);
 
     	try
     	{
@@ -1219,7 +1259,7 @@ void Federe_Interactif::callSI ()
     {
     	try
     	{
-    	    rtiAmb->sendInteraction(iclassHandle, phvm, tag);
+    	    //rtiAmb->sendInteraction(iclassHandle, phvm, tag);
 		}
 
     	catch (rti1516::Exception &e)
@@ -1239,57 +1279,66 @@ void Federe_Interactif::callSI ()
 ************************************* TIME MANAGEMENT ********************************************
 *************************************************************************************************/
 
-/*// enableTimeRegulation
-void callETR (void)
+// enableTimeRegulation
+void Federe_Interactif::callETR()
 {
-    try {
-       myFedere_Interactif->enableTimeRegulation(*temps,*lookahead);
+    try
+    {
+    	rtiAmb->enableTimeRegulation(lookahead);
     }
-    catch (rti1516::Exception& e) {
-        cout << "catch " << e._name << " reason " << e._reason << endl;
+    catch (rti1516::Exception& e)
+    {
+        cout << "erreur" << endl;
     }
     while (!timeRegulation)
     {
-        myFedere_Interactif->tick(0.1, 0.2);
+    	rtiAmb->evokeCallback(0.1);
     }
     cout << "federe regulateur" << endl;
-}*/
+}
 
-/*// enableTimeConstrained
-void callETC (void)
+// enableTimeConstrained
+void Federe_Interactif::callETC()
 {
-    try {
-       myFedere_Interactif->enableTimeConstrained();
+
+    try
+    {
+       rtiAmb->enableTimeConstrained();
     }
-    catch (rti1516::Exception& e) {
-        cout << "catch " << e._name << " reason " << e._reason << endl;
+    catch (rti1516::Exception& e)
+    {
+        cout << "erreur" << endl;
     }
     while (!timeConstrained)
     {
-        myFedere_Interactif->tick(0.1, 0.2);
+    	rtiAmb->evokeCallback(0.1);
 
     }
     cout << "federe contraint" << endl;
-}*/
+}
 
-/*// timeAdvanceRequest
-void callTAR (void) {
+// timeAdvanceRequest
+void Federe_Interactif::callTAR()
+{
     float d;
-    int test = 1;
-    cout << endl << "t=" << temps->getTime() << " : Donner la date a laquelle vous souhaitez avancer : ";
+    bool test = true;
+    wcout << endl << "t=" << tps->toString() << " : Donner la date a laquelle vous souhaitez avancer : ";
     cin >> d;
-    try {
-       myFedere_Interactif->timeAdvanceRequest(*(new RTIfedTime(d)));
+    RTI1516fedTime fedTime(d);
+    try
+    {
+       rtiAmb->timeAdvanceRequest(fedTime);
     }
-    catch (rti1516::Exception& e) {
-        test = 0;
-        cout << "catch " << e._name << " reason " << e._reason << endl;
+    catch (rti1516::Exception& e)
+    {
+        test = false;
     }
+
     if (test)
-       cout << endl << "t=" << temps->getTime() << " timeAdvanceRequest(" << d << ")" << endl;
+       wcout << endl << "t=" << tps->toString()<< " timeAdvanceRequest(" << d << ")" << endl;
     else
        cout << "timeAdvanceRequest a echoue" << endl;
-}*/
+}
 
 /*// timeAdvanceRequestAvailable
 void callTARA (void) {
@@ -1478,10 +1527,6 @@ void Federe_Interactif::callCIOT ()
     else
        cout << "changeInteractionOrderType" << endl;
 }*/
-
-
-
-
 
 
 
