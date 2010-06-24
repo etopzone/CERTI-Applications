@@ -178,6 +178,7 @@ HLATestsSuite_ADD_TEST(Interactive_Federate
 HLATestsSuite_ADD_TEST(Interactive_Federate1516 
                       FED_FILE Interactive_Federation.fed 01.xml Certi-Test-02.xml
                       SOURCE_FILES Interactive_Federate1516.cc
+                      DTEST_SCRIPT dtest_Interactive_Federate1516.py
                       COMMENTS "A multi-purpose test interactive Federate 1516"
                       HLA1516)
 
