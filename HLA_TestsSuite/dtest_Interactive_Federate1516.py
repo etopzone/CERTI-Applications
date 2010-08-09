@@ -96,7 +96,7 @@ rtig.addRunStep("ok",True,"HLA (InteractiveFederate1516) Ends.")
 #dtest.DTester.logger.setLevel(level=logging.DEBUG)
 
 # describe first federate run steps
-firstFederate.timeout = 20
+firstFederate.timeout = 35
 firstFederate.stdout  = file(firstFederate.name + ".out",'w+')
 firstFederate.stdin   = file(firstFederate.name + ".in",'w+')
 firstFederate.stderr  = file(firstFederate.name + ".err",'w+')
@@ -115,6 +115,7 @@ firstFederate.addRunStep("ok",firstFederate.getFutureLastStepStatus,"ACTION"+fir
 firstFederate.addRunStep("sendToCommand",string="cfe\n")
 firstFederate.addRunStep("expectFromCommand",pattern="Federation creee")
 firstFederate.addRunStep("ok",firstFederate.getFutureLastStepStatus,firstFederate.name+" has create federation")
+firstFederate.addRunStep("barrier","wait creation from first")
 
 #join federation
 firstFederate.addRunStep("expectFromCommand",pattern="Choisissez une action :")
@@ -144,7 +145,7 @@ firstFederate.addRunStep("terminateCommand")
 firstFederate.addRunStep("barrier","All Federate(s) ended")
 
 # other federate
-otherFederate.timeout = 20
+otherFederate.timeout = 35
 otherFederate.stdout  = file(otherFederate.name + ".out",'w+')
 otherFederate.stdin   = file(otherFederate.name + ".in",'w+')
 otherFederate.stderr  = file(otherFederate.name + ".err",'w+')
@@ -160,33 +161,34 @@ otherFederate.addRunStep("barrier","Wait others...")
 
 #create federation
 otherFederate.addRunStep("expectFromCommand",pattern="Choisissez une action :")
-otherFederate.addRunStep("ok",firstFederate.getFutureLastStepStatus,"ACTION"+firstFederate.name)
+otherFederate.addRunStep("ok",otherFederate.getFutureLastStepStatus,"ACTION"+otherFederate.name)
+otherFederate.addRunStep("barrier","wait creation from first")
 otherFederate.addRunStep("sendToCommand",string="cfe\n")
 otherFederate.addRunStep("expectFromCommand",pattern="Federation non creee")
-otherFederate.addRunStep("ok",firstFederate.getFutureLastStepStatus,firstFederate.name+" federation already exists")
+otherFederate.addRunStep("ok",otherFederate.getFutureLastStepStatus,otherFederate.name+" federation already exists")
 
 #join federation
 otherFederate.addRunStep("expectFromCommand",pattern="Choisissez une action :")
-otherFederate.addRunStep("ok",firstFederate.getFutureLastStepStatus,"ACTION"+firstFederate.name)
+otherFederate.addRunStep("ok",otherFederate.getFutureLastStepStatus,"ACTION"+otherFederate.name)
 otherFederate.addRunStep("sendToCommand",string="jfe\n")
 otherFederate.addRunStep("expectFromCommand",pattern="Federation rejointe")
-otherFederate.addRunStep("ok",firstFederate.getFutureLastStepStatus,firstFederate.name+" has join federation")
+otherFederate.addRunStep("ok",otherFederate.getFutureLastStepStatus,otherFederate.name+" has join federation")
 otherFederate.addRunStep("barrier","Wait others2...")
 
 #resign federation
 otherFederate.addRunStep("expectFromCommand",pattern="Choisissez une action :")
-otherFederate.addRunStep("ok",firstFederate.getFutureLastStepStatus,"ACTION"+firstFederate.name)
+otherFederate.addRunStep("ok",otherFederate.getFutureLastStepStatus,"ACTION"+otherFederate.name)
 otherFederate.addRunStep("sendToCommand",string="rfe\n")
 otherFederate.addRunStep("expectFromCommand",pattern="federation quittee")
-otherFederate.addRunStep("ok",firstFederate.getFutureLastStepStatus,firstFederate.name+" has resign federation")
+otherFederate.addRunStep("ok",otherFederate.getFutureLastStepStatus,otherFederate.name+" has resign federation")
 otherFederate.addRunStep("barrier","Wait others3...")
 
 #destroy federation
 otherFederate.addRunStep("expectFromCommand",pattern="Choisissez une action :")
-otherFederate.addRunStep("ok",firstFederate.getFutureLastStepStatus,"ACTION"+firstFederate.name)
-otherFederate.addRunStep("sendToCommand",string="cfe\n")
+otherFederate.addRunStep("ok",otherFederate.getFutureLastStepStatus,"ACTION"+otherFederate.name)
+otherFederate.addRunStep("sendToCommand",string="dfe\n")
 otherFederate.addRunStep("expectFromCommand",pattern="No federation to destroy")
-otherFederate.addRunStep("ok",firstFederate.getFutureLastStepStatus,firstFederate.name+" no federation to destroy")
+otherFederate.addRunStep("ok",otherFederate.getFutureLastStepStatus,otherFederate.name+" no federation to destroy")
 
 #otherFederate.addRunStep("expectFromCommand",pattern="Choisissez une action :")
 #otherFederate.addRunStep("ok",otherFederate.getFutureLastStepStatus,"ACTION"+otherFederate.name)
@@ -200,8 +202,8 @@ otherFederate.addRunStep("terminateCommand")
 otherFederate.addRunStep("barrier","All Federate(s) ended")
 
 def goTest():
-    myDTestMaster = dtest.DTestMaster("HLA Test Zero Lookahead","Launch RTIG + two interactive federates for testing zero lookahead")
-    myDTestMaster.timeout = 40
+    myDTestMaster = dtest.DTestMaster("HLA Interactive-1516","Launch RTIG + two interactive federates for testing zero lookahead")
+    myDTestMaster.timeout = 50
     myDTestMaster.register(rtig)
     myDTestMaster.register(firstFederate)
     myDTestMaster.register(otherFederate)
