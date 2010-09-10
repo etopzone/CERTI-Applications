@@ -11,7 +11,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  *
- * $Id: handles.cpp,v 1.4 2008/10/09 16:50:58 gotthardp Exp $
+ * $Id: handles.cpp,v 1.5 2010/09/10 21:04:29 gotthardp Exp $
  */
 
 // note: you must include Python.h before any standard headers are included
@@ -193,6 +193,8 @@ AttributeHandleSet_FromPython(PyObject *value, RTI::AttributeHandleSet **result)
         }
 
         (*result)->add(((RtiULongHandleObject *)item)->ob_ival);
+
+        Py_DECREF(item);
     }
 
     Py_DECREF(iter);
@@ -243,6 +245,8 @@ AttributeHandleValuePairSet_FromPython(PyObject *value, RTI::AttributeHandleValu
             return 0; // failure
 
         (*result)->add(theHandle, valueData, valueSize);
+
+        Py_DECREF(item);
     }
 
     Py_DECREF(iter);
@@ -305,6 +309,8 @@ ParameterHandleValuePairSet_FromPython(PyObject *value, RTI::ParameterHandleValu
             return 0; // failure
 
         (*result)->add(theHandle, valueData, valueSize);
+
+        Py_DECREF(item);
     }
 
     Py_DECREF(iter);
@@ -923,4 +929,4 @@ HandlesInitializer::on_init(PyObject* module)
     PyModule_AddObject(module, "DimensionHandle", (PyObject *)&RtiDimensionHandleType);
 }
 
-// $Id: handles.cpp,v 1.4 2008/10/09 16:50:58 gotthardp Exp $
+// $Id: handles.cpp,v 1.5 2010/09/10 21:04:29 gotthardp Exp $
