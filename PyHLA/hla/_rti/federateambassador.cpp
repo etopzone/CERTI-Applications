@@ -11,7 +11,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  *
- * $Id: federateambassador.cpp,v 1.5 2008/11/04 08:32:36 gotthardp Exp $
+ * $Id: federateambassador.cpp,v 1.6 2010/10/01 19:56:39 gotthardp Exp $
  */
 
 // note: you must include Python.h before any standard headers are included
@@ -77,8 +77,11 @@ throw (RTI::FederateInternalError)
     if(func == NULL)
         return; // callback not defined
 
-    PyObject_CallFunction(func, "s",
+    PyObject *res = PyObject_CallFunction(func, "s",
         label);
+    if(res != NULL)
+      Py_XDECREF(res); // ignore the result
+
     Py_XDECREF(func);
 
     if(PyObject *exception = PyErr_Occurred()) {
@@ -95,7 +98,10 @@ throw (RTI::FederateInternalError)
     if(func == NULL)
         return; // callback not defined
 
-    PyObject_CallFunction(func, "s", label);
+    PyObject *res = PyObject_CallFunction(func, "s", label);
+    if(res != NULL)
+      Py_XDECREF(res); // ignore the result
+
     Py_XDECREF(func);
 
     if(PyObject *exception = PyErr_Occurred()) {
@@ -112,7 +118,10 @@ throw (RTI::FederateInternalError)
     if(func == NULL)
         return; // callback not defined
 
-    PyObject_CallFunction(func, "ss", label, tag);
+    PyObject *res = PyObject_CallFunction(func, "ss", label, tag);
+    if(res != NULL)
+      Py_XDECREF(res); // ignore the result
+
     Py_XDECREF(func);
 
     if(PyObject *exception = PyErr_Occurred()) {
@@ -129,7 +138,10 @@ throw (RTI::FederateInternalError)
     if(func == NULL)
         return; // callback not defined
 
-    PyObject_CallFunction(func, "s", label);
+    PyObject *res = PyObject_CallFunction(func, "s", label);
+    if(res != NULL)
+      Py_XDECREF(res); // ignore the result
+
     Py_XDECREF(func);
 
     if(PyObject *exception = PyErr_Occurred()) {
@@ -146,7 +158,10 @@ throw (RTI::UnableToPerformSave, RTI::FederateInternalError)
     if(func == NULL)
         return; // callback not defined
 
-    PyObject_CallFunction(func, "s", label);
+    PyObject *res = PyObject_CallFunction(func, "s", label);
+    if(res != NULL)
+      Py_XDECREF(res); // ignore the result
+
     Py_XDECREF(func);
 
     if(PyObject *exception = PyErr_Occurred()) {
@@ -164,7 +179,10 @@ throw (RTI::FederateInternalError)
     if(func == NULL)
         return; // callback not defined
 
-    PyObject_CallFunction(func, NULL);
+    PyObject *res = PyObject_CallFunction(func, NULL);
+    if(res != NULL)
+      Py_XDECREF(res); // ignore the result
+
     Py_XDECREF(func);
 
     if(PyObject *exception = PyErr_Occurred()) {
@@ -181,7 +199,10 @@ throw (RTI::FederateInternalError)
     if(func == NULL)
         return; // callback not defined
 
-    PyObject_CallFunction(func, NULL);
+    PyObject *res = PyObject_CallFunction(func, NULL);
+    if(res != NULL)
+      Py_XDECREF(res); // ignore the result
+
     Py_XDECREF(func);
 
     if(PyObject *exception = PyErr_Occurred()) {
@@ -198,7 +219,10 @@ throw (RTI::FederateInternalError)
     if(func == NULL)
         return; // callback not defined
 
-    PyObject_CallFunction(func, "s", label);
+    PyObject *res = PyObject_CallFunction(func, "s", label);
+    if(res != NULL)
+      Py_XDECREF(res); // ignore the result
+
     Py_XDECREF(func);
 
     if(PyObject *exception = PyErr_Occurred()) {
@@ -215,7 +239,10 @@ throw (RTI::FederateInternalError)
     if(func == NULL)
         return; // callback not defined
 
-    PyObject_CallFunction(func, "ss", label, reason);
+    PyObject *res = PyObject_CallFunction(func, "ss", label, reason);
+    if(res != NULL)
+      Py_XDECREF(res); // ignore the result
+
     Py_XDECREF(func);
 
     if(PyObject *exception = PyErr_Occurred()) {
@@ -232,7 +259,10 @@ throw (RTI::FederateInternalError)
     if(func == NULL)
         return; // callback not defined
 
-    PyObject_CallFunction(func, NULL);
+    PyObject *res = PyObject_CallFunction(func, NULL);
+    if(res != NULL)
+      Py_XDECREF(res); // ignore the result
+
     Py_XDECREF(func);
 
     if(PyObject *exception = PyErr_Occurred()) {
@@ -249,9 +279,12 @@ throw (RTI::SpecifiedSaveLabelDoesNotExist, RTI::CouldNotRestore, RTI::FederateI
     if(func == NULL)
         return; // callback not defined
 
-    PyObject_CallFunction(func, "sO&",
+    PyObject *res = PyObject_CallFunction(func, "sO&",
         label,
         RtiFederateHandle_ToPython, &handle);
+    if(res != NULL)
+      Py_XDECREF(res); // ignore the result
+
     Py_XDECREF(func);
 
     if(PyObject *exception = PyErr_Occurred()) {
@@ -270,7 +303,10 @@ throw (RTI::FederateInternalError)
     if(func == NULL)
         return; // callback not defined
 
-    PyObject_CallFunction(func, NULL);
+    PyObject *res = PyObject_CallFunction(func, NULL);
+    if(res != NULL)
+      Py_XDECREF(res); // ignore the result
+
     Py_XDECREF(func);
 
     if(PyObject *exception = PyErr_Occurred()) {
@@ -287,7 +323,10 @@ throw (RTI::FederateInternalError)
     if(func == NULL)
         return; // callback not defined
 
-    PyObject_CallFunction(func, NULL);
+    PyObject *res = PyObject_CallFunction(func, NULL);
+    if(res != NULL)
+      Py_XDECREF(res); // ignore the result
+
     Py_XDECREF(func);
 
     if(PyObject *exception = PyErr_Occurred()) {
@@ -306,8 +345,11 @@ throw (RTI::ObjectClassNotPublished, RTI::FederateInternalError)
     if(func == NULL)
         return; // callback not defined
 
-    PyObject_CallFunction(func, "O&",
+    PyObject *res = PyObject_CallFunction(func, "O&",
         RtiObjectClassHandle_ToPython, &theClass);
+    if(res != NULL)
+      Py_XDECREF(res); // ignore the result
+
     Py_XDECREF(func);
 
     if(PyObject *exception = PyErr_Occurred()) {
@@ -325,8 +367,11 @@ throw (RTI::ObjectClassNotPublished, RTI::FederateInternalError)
     if(func == NULL)
         return; // callback not defined
 
-    PyObject_CallFunction(func, "O&",
+    PyObject *res = PyObject_CallFunction(func, "O&",
         RtiObjectClassHandle_ToPython, &theClass);
+    if(res != NULL)
+      Py_XDECREF(res); // ignore the result
+
     Py_XDECREF(func);
 
     if(PyObject *exception = PyErr_Occurred()) {
@@ -344,8 +389,11 @@ throw (RTI::InteractionClassNotPublished, RTI::FederateInternalError)
     if(func == NULL)
         return; // callback not defined
 
-    PyObject_CallFunction(func, "O&",
+    PyObject *res = PyObject_CallFunction(func, "O&",
         RtiInteractionClassHandle_ToPython, &theHandle);
+    if(res != NULL)
+      Py_XDECREF(res); // ignore the result
+
     Py_XDECREF(func);
 
     if(PyObject *exception = PyErr_Occurred()) {
@@ -363,8 +411,11 @@ throw (RTI::InteractionClassNotPublished, RTI::FederateInternalError)
     if(func == NULL)
         return; // callback not defined
 
-    PyObject_CallFunction(func, "O&",
+    PyObject *res = PyObject_CallFunction(func, "O&",
         RtiInteractionClassHandle_ToPython, &theHandle);
+    if(res != NULL)
+      Py_XDECREF(res); // ignore the result
+
     Py_XDECREF(func);
 
     if(PyObject *exception = PyErr_Occurred()) {
@@ -385,10 +436,13 @@ throw (RTI::CouldNotDiscover, RTI::ObjectClassNotKnown, RTI::FederateInternalErr
     if(func == NULL)
         return; // callback not defined
 
-    PyObject_CallFunction(func, "O&O&s",
+    PyObject *res = PyObject_CallFunction(func, "O&O&s",
         RtiObjectHandle_ToPython, &theObject,
         RtiObjectClassHandle_ToPython, &theObjectClass,
         theObjectName);
+    if(res != NULL)
+      Py_XDECREF(res); // ignore the result
+
     Py_XDECREF(func);
 
     if(PyObject *exception = PyErr_Occurred()) {
@@ -413,7 +467,7 @@ throw (RTI::ObjectNotKnown, RTI::AttributeNotKnown, RTI::FederateOwnsAttributes,
     if(func == NULL)
         return; // callback not defined
 
-    PyObject_CallFunction(func, "O&O&sOOdO&",
+    PyObject *res = PyObject_CallFunction(func, "O&O&sOOdO&",
         RtiObjectHandle_ToPython, &theObject,
         AttributeHandleValuePairSet_ToPython, &theAttributes,
         theTag,
@@ -421,6 +475,9 @@ throw (RTI::ObjectNotKnown, RTI::AttributeNotKnown, RTI::FederateOwnsAttributes,
         RtiULongHandle_FromULong(&RtiTransportationHandleType, theAttributes.getTransportType(0)),
         time.getTime(),
         EventRetractionHandle_ToPython, &theHandle);
+    if(res != NULL)
+      Py_XDECREF(res); // ignore the result
+
     Py_XDECREF(func);
 
     if(PyObject *exception = PyErr_Occurred()) {
@@ -443,12 +500,15 @@ throw (RTI::ObjectNotKnown, RTI::AttributeNotKnown, RTI::FederateOwnsAttributes,
     if(func == NULL)
         return; // callback not defined
 
-    PyObject_CallFunction(func, "O&O&sOO",
+    PyObject *res = PyObject_CallFunction(func, "O&O&sOO",
         RtiObjectHandle_ToPython, &theObject,
         AttributeHandleValuePairSet_ToPython, &theAttributes,
         theTag,
         RtiULongHandle_FromULong(&RtiOrderingHandleType, theAttributes.getOrderType(0)),
         RtiULongHandle_FromULong(&RtiTransportationHandleType, theAttributes.getTransportType(0)));
+    if(res != NULL)
+      Py_XDECREF(res); // ignore the result
+
     Py_XDECREF(func);
 
     if(PyObject *exception = PyErr_Occurred()) {
@@ -475,7 +535,7 @@ throw (RTI::InteractionClassNotKnown, RTI::InteractionParameterNotKnown,
     if(func == NULL)
         return; // callback not defined
 
-    PyObject_CallFunction(func, "O&O&sOOdO&",
+    PyObject *res = PyObject_CallFunction(func, "O&O&sOOdO&",
         RtiInteractionClassHandle_ToPython, &theInteraction,
         ParameterHandleValuePairSet_ToPython, &theParameters,
         theTag,
@@ -483,6 +543,9 @@ throw (RTI::InteractionClassNotKnown, RTI::InteractionParameterNotKnown,
         RtiULongHandle_FromULong(&RtiTransportationHandleType, theParameters.getTransportType()),
         time.getTime(),
         EventRetractionHandle_ToPython, &theHandle);
+    if(res != NULL)
+      Py_XDECREF(res); // ignore the result
+
     Py_XDECREF(func);
 
     if(PyObject *exception = PyErr_Occurred()) {
@@ -504,12 +567,15 @@ throw (RTI::InteractionClassNotKnown, RTI::InteractionParameterNotKnown,
     if(func == NULL)
         return; // callback not defined
 
-    PyObject_CallFunction(func, "O&O&sOO",
+    PyObject *res = PyObject_CallFunction(func, "O&O&sOO",
         RtiInteractionClassHandle_ToPython, &theInteraction,
         ParameterHandleValuePairSet_ToPython, &theParameters,
         theTag,
         RtiULongHandle_FromULong(&RtiOrderingHandleType, theParameters.getOrderType()),
         RtiULongHandle_FromULong(&RtiTransportationHandleType, theParameters.getTransportType()));
+    if(res != NULL)
+      Py_XDECREF(res); // ignore the result
+
     Py_XDECREF(func);
 
     if(PyObject *exception = PyErr_Occurred()) {
@@ -531,11 +597,14 @@ throw (RTI::ObjectNotKnown, RTI::InvalidFederationTime, RTI::FederateInternalErr
     if(func == NULL)
         return; // callback not defined
 
-    PyObject_CallFunction(func, "O&sdO&",
+    PyObject *res = PyObject_CallFunction(func, "O&sdO&",
         RtiObjectHandle_ToPython, &theObject,
         theTag,
         time.getTime(),
         EventRetractionHandle_ToPython, &theHandle);
+    if(res != NULL)
+      Py_XDECREF(res); // ignore the result
+
     Py_XDECREF(func);
 
     if(PyObject *exception = PyErr_Occurred()) {
@@ -554,9 +623,12 @@ throw (RTI::ObjectNotKnown, RTI::FederateInternalError)
     if(func == NULL)
         return; // callback not defined
 
-    PyObject_CallFunction(func, "O&s",
+    PyObject *res = PyObject_CallFunction(func, "O&s",
         RtiObjectHandle_ToPython, &theObject,
         theTag);
+    if(res != NULL)
+      Py_XDECREF(res); // ignore the result
+
     Py_XDECREF(func);
 
     if(PyObject *exception = PyErr_Occurred()) {
@@ -574,9 +646,12 @@ throw (RTI::ObjectNotKnown, RTI::AttributeNotKnown, RTI::FederateInternalError)
     if(func == NULL)
         return; // callback not defined
 
-    PyObject_CallFunction(func, "O&O&",
+    PyObject *res = PyObject_CallFunction(func, "O&O&",
         RtiObjectHandle_ToPython, &theObject,
         AttributeHandleSet_ToPython, &theAttributes);
+    if(res != NULL)
+      Py_XDECREF(res); // ignore the result
+
     Py_XDECREF(func);
 
     if(PyObject *exception = PyErr_Occurred()) {
@@ -595,9 +670,12 @@ throw (RTI::ObjectNotKnown, RTI::AttributeNotKnown, RTI::FederateInternalError)
     if(func == NULL)
         return; // callback not defined
 
-    PyObject_CallFunction(func, "O&O&",
+    PyObject *res = PyObject_CallFunction(func, "O&O&",
         RtiObjectHandle_ToPython, &theObject,
         AttributeHandleSet_ToPython, &theAttributes);
+    if(res != NULL)
+      Py_XDECREF(res); // ignore the result
+
     Py_XDECREF(func);
 
     if(PyObject *exception = PyErr_Occurred()) {
@@ -617,9 +695,12 @@ throw (RTI::ObjectNotKnown, RTI::AttributeNotKnown, RTI::AttributeNotOwned,
     if(func == NULL)
         return; // callback not defined
 
-    PyObject_CallFunction(func, "O&O&",
+    PyObject *res = PyObject_CallFunction(func, "O&O&",
         RtiObjectHandle_ToPython, &theObject,
         AttributeHandleSet_ToPython, &theAttributes);
+    if(res != NULL)
+      Py_XDECREF(res); // ignore the result
+
     Py_XDECREF(func);
 
     if(PyObject *exception = PyErr_Occurred()) {
@@ -639,9 +720,12 @@ throw (RTI::ObjectNotKnown, RTI::AttributeNotOwned, RTI::FederateInternalError)
     if(func == NULL)
         return; // callback not defined
 
-    PyObject_CallFunction(func, "O&O&",
+    PyObject *res = PyObject_CallFunction(func, "O&O&",
         RtiObjectHandle_ToPython, &theObject,
         AttributeHandleSet_ToPython, &theAttributes);
+    if(res != NULL)
+      Py_XDECREF(res); // ignore the result
+
     Py_XDECREF(func);
 
     if(PyObject *exception = PyErr_Occurred()) {
@@ -660,9 +744,12 @@ throw (RTI::ObjectNotKnown, RTI::AttributeNotOwned, RTI::FederateInternalError)
     if(func == NULL)
         return; // callback not defined
 
-    PyObject_CallFunction(func, "O&O&",
+    PyObject *res = PyObject_CallFunction(func, "O&O&",
         RtiObjectHandle_ToPython, &theObject,
         AttributeHandleSet_ToPython, &theAttributes);
+    if(res != NULL)
+      Py_XDECREF(res); // ignore the result
+
     Py_XDECREF(func);
 
     if(PyObject *exception = PyErr_Occurred()) {
@@ -685,10 +772,13 @@ throw (RTI::ObjectNotKnown, RTI::AttributeNotKnown, RTI::AttributeAlreadyOwned,
     if(func == NULL)
         return; // callback not defined
 
-    PyObject_CallFunction(func, "O&O&s",
+    PyObject *res = PyObject_CallFunction(func, "O&O&s",
         RtiObjectHandle_ToPython, &theObject,
         AttributeHandleSet_ToPython, &offeredAttributes,
         theTag);
+    if(res != NULL)
+      Py_XDECREF(res); // ignore the result
+
     Py_XDECREF(func);
 
     if(PyObject *exception = PyErr_Occurred()) {
@@ -711,9 +801,12 @@ throw (RTI::ObjectNotKnown, RTI::AttributeNotKnown, RTI::AttributeNotOwned,
     if(func == NULL)
         return; // callback not defined
 
-    PyObject_CallFunction(func, "O&O&",
+    PyObject *res = PyObject_CallFunction(func, "O&O&",
         RtiObjectHandle_ToPython, &theObject,
         AttributeHandleSet_ToPython, &releasedAttributes);
+    if(res != NULL)
+      Py_XDECREF(res); // ignore the result
+
     Py_XDECREF(func);
 
     if(PyObject *exception = PyErr_Occurred()) {
@@ -736,9 +829,12 @@ throw (RTI::ObjectNotKnown, RTI::AttributeNotKnown, RTI::AttributeAcquisitionWas
     if(func == NULL)
         return; // callback not defined
 
-    PyObject_CallFunction(func, "O&O&",
+    PyObject *res = PyObject_CallFunction(func, "O&O&",
         RtiObjectHandle_ToPython, &theObject,
         AttributeHandleSet_ToPython, &securedAttributes);
+    if(res != NULL)
+      Py_XDECREF(res); // ignore the result
+
     Py_XDECREF(func);
 
     if(PyObject *exception = PyErr_Occurred()) {
@@ -761,9 +857,12 @@ throw (RTI::ObjectNotKnown, RTI::AttributeNotKnown, RTI::AttributeAlreadyOwned,
     if(func == NULL)
         return; // callback not defined
 
-    PyObject_CallFunction(func, "O&O&",
+    PyObject *res = PyObject_CallFunction(func, "O&O&",
         RtiObjectHandle_ToPython, &theObject,
         AttributeHandleSet_ToPython, &theAttributes);
+    if(res != NULL)
+      Py_XDECREF(res); // ignore the result
+
     Py_XDECREF(func);
 
     if(PyObject *exception = PyErr_Occurred()) {
@@ -786,10 +885,13 @@ throw (RTI::ObjectNotKnown, RTI::AttributeNotKnown, RTI::AttributeNotOwned,
     if(func == NULL)
         return; // callback not defined
 
-    PyObject_CallFunction(func, "O&O&s",
+    PyObject *res = PyObject_CallFunction(func, "O&O&s",
         RtiObjectHandle_ToPython, &theObject,
         AttributeHandleSet_ToPython, &candidateAttribute,
         theTag);
+    if(res != NULL)
+      Py_XDECREF(res); // ignore the result
+
     Py_XDECREF(func);
 
     if(PyObject *exception = PyErr_Occurred()) {
@@ -811,9 +913,12 @@ throw (RTI::ObjectNotKnown, RTI::AttributeNotKnown, RTI::AttributeAlreadyOwned,
     if(func == NULL)
         return; // callback not defined
 
-    PyObject_CallFunction(func, "O&O&",
+    PyObject *res = PyObject_CallFunction(func, "O&O&",
         RtiObjectHandle_ToPython, &theObject,
         AttributeHandleSet_ToPython, &theAttributes);
+    if(res != NULL)
+      Py_XDECREF(res); // ignore the result
+
     Py_XDECREF(func);
 
     if(PyObject *exception = PyErr_Occurred()) {
@@ -835,10 +940,13 @@ throw (RTI::ObjectNotKnown, RTI::AttributeNotKnown, RTI::FederateInternalError)
     if(func == NULL)
         return; // callback not defined
 
-    PyObject_CallFunction(func, "O&O&O&",
+    PyObject *res = PyObject_CallFunction(func, "O&O&O&",
         RtiObjectHandle_ToPython, &theObject,
         RtiAttributeHandle_ToPython, &theAttribute,
         RtiFederateHandle_ToPython, &theOwner);
+    if(res != NULL)
+      Py_XDECREF(res); // ignore the result
+
     Py_XDECREF(func);
 
     if(PyObject *exception = PyErr_Occurred()) {
@@ -857,9 +965,12 @@ throw (RTI::ObjectNotKnown, RTI::AttributeNotKnown, RTI::FederateInternalError)
     if(func == NULL)
         return; // callback not defined
 
-    PyObject_CallFunction(func, "O&O&",
+    PyObject *res = PyObject_CallFunction(func, "O&O&",
         RtiObjectHandle_ToPython, &theObject,
         RtiAttributeHandle_ToPython, &theAttribute);
+    if(res != NULL)
+      Py_XDECREF(res); // ignore the result
+
     Py_XDECREF(func);
 
     if(PyObject *exception = PyErr_Occurred()) {
@@ -878,9 +989,12 @@ throw (RTI::ObjectNotKnown, RTI::AttributeNotKnown, RTI::FederateInternalError)
     if(func == NULL)
         return; // callback not defined
 
-    PyObject_CallFunction(func, "O&O&",
+    PyObject *res = PyObject_CallFunction(func, "O&O&",
         RtiObjectHandle_ToPython, &theObject,
         RtiAttributeHandle_ToPython, &theAttribute);
+    if(res != NULL)
+      Py_XDECREF(res); // ignore the result
+
     Py_XDECREF(func);
 
     if(PyObject *exception = PyErr_Occurred()) {
@@ -903,8 +1017,11 @@ throw (RTI::InvalidFederationTime, RTI::EnableTimeRegulationWasNotPending, RTI::
     if(func == NULL)
         return; // callback not defined
 
-    PyObject_CallFunction(func, "d",
+    PyObject *res = PyObject_CallFunction(func, "d",
         time.getTime());
+    if(res != NULL)
+      Py_XDECREF(res); // ignore the result
+
     Py_XDECREF(func);
 
     if(PyObject *exception = PyErr_Occurred()) {
@@ -925,8 +1042,11 @@ throw (RTI::InvalidFederationTime, RTI::EnableTimeConstrainedWasNotPending, RTI:
     if(func == NULL)
         return; // callback not defined
 
-    PyObject_CallFunction(func, "d",
+    PyObject *res = PyObject_CallFunction(func, "d",
         time.getTime());
+    if(res != NULL)
+      Py_XDECREF(res); // ignore the result
+
     Py_XDECREF(func);
 
     if(PyObject *exception = PyErr_Occurred()) {
@@ -947,8 +1067,11 @@ throw (RTI::InvalidFederationTime, RTI::TimeAdvanceWasNotInProgress, RTI::Federa
     if(func == NULL)
         return; // callback not defined
 
-    PyObject_CallFunction(func, "d",
+    PyObject *res = PyObject_CallFunction(func, "d",
         time.getTime());
+    if(res != NULL)
+      Py_XDECREF(res); // ignore the result
+
     Py_XDECREF(func);
 
     if(PyObject *exception = PyErr_Occurred()) {
@@ -967,8 +1090,11 @@ throw (RTI::EventNotKnown, RTI::FederateInternalError)
     if(func == NULL)
         return; // callback not defined
 
-    PyObject_CallFunction(func, "O&",
+    PyObject *res = PyObject_CallFunction(func, "O&",
         EventRetractionHandle_ToPython, &theHandle);
+    if(res != NULL)
+      Py_XDECREF(res); // ignore the result
+
     Py_XDECREF(func);
 
     if(PyObject *exception = PyErr_Occurred()) {
@@ -1051,4 +1177,4 @@ FederateAmbassadorInitializer::on_init(PyObject* module)
     PyModule_AddObject(module, "FederateAmbassador", (PyObject *)&FederateAmbassadorObjectType);
 }
 
-// $Id: federateambassador.cpp,v 1.5 2008/11/04 08:32:36 gotthardp Exp $
+// $Id: federateambassador.cpp,v 1.6 2010/10/01 19:56:39 gotthardp Exp $
