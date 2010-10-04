@@ -57,11 +57,12 @@ SET(CPACK_PACKAGE_VERSION_MINOR ${PACKAGE_VERSION_MINOR})
 SET(CPACK_PACKAGE_VERSION_PATCH ${PACKAGE_VERSION_PATCH})
 
 SET(CPACK_SOURCE_IGNORE_FILES
-    "~" ".pdf" ".pyc" ".so" ".dll" ".zip" ".tar.gz" ".rpm"
+    "~" ".log" ".pdf" ".dvi" ".pyc" ".so" ".dll" ".zip" ".tar.gz" ".rpm"
     ".comFedRTI."
     "/.cvsignore" "/Makefile" "/CMakeCache.txt" "/cmake_install.cmake" "/CPack.*.cmake"
+    "/Testing"
     "/CVS/" "/CMakeFiles/" "/_CPack_Packages/")
 
 INCLUDE(CPack)
 
-# $Id: CMakeLists.txt,v 1.10 2010/10/04 20:26:45 gotthardp Exp $
+# $Id: CMakeLists.txt,v 1.11 2010/10/04 20:56:19 gotthardp Exp $
