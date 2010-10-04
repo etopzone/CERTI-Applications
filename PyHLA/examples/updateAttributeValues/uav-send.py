@@ -17,6 +17,9 @@ class MyAmbassador(hla.rti.FederateAmbassador):
             [self.textAttributeHandle, self.structAttributeHandle, self.fomAttributeHandle])
         self.myObject = rtia.registerObjectInstance(self.classHandle, "HAF")
 
+    def terminate(self):
+        rtia.deleteObjectInstance(self.myObject, "HAF")
+
     # RTI callbacks
     def startRegistrationForObjectClass(*params):
         print "START", params
@@ -49,6 +52,8 @@ try:
         rtia.tick(1.0, 1.0)
 except KeyboardInterrupt:
     pass
+
+mya.terminate()
 
 rtia.resignFederationExecution(hla.rti.ResignAction.DeleteObjectsAndReleaseAttributes)
 
