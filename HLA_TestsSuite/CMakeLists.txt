@@ -195,7 +195,7 @@ HLATestsSuite_ADD_TEST(test_NotificationSwitches
 # ADD TEST Parse FOM file 
 #########################################################################                   
 HLATestsSuite_ADD_TEST(test_FOMParse
-                      FED_FILE TestFed.fed BuggyFed.fed Hierarchical.fed RPR-FOM.fed aviationsimnetV3.1.xml portico-testfom.fed
+                      FED_FILE TestFed.fed BuggyFed.fed Hierarchical.fed RPR-FOM.fed aviationsimnetV3.1.xml portico-testfom.fed LevelOne.fed
                       SOURCE_FILES test_FOMParse.cc test_FOMParse_cmdline.h test_FOMParse_cmdline.c
                       DTEST_SCRIPT dtest_test_FOMParse.py 
                       COMMENTS "A FOM parsing test"
