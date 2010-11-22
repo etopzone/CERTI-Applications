@@ -96,7 +96,7 @@ int TestFedAmb::execute(int argc, char** argv)
 
 	try {
 		///////////////////////////////////////////////
-		std::wcerr << L"Attempting to join non-existant Federation" << std::endl;
+		std::wcerr << L"Attempting to join non-existent Federation" << std::endl;
 		fedHandle = rtiAmb->joinFederationExecution(L"TestFederateName", L"TestFederationName", *this);
 		///////////////////////////////////////////////
 		std::wcerr << L"06N " << L"Fail: Could join federation that should not exist yet." << std::endl;
@@ -104,7 +104,7 @@ int TestFedAmb::execute(int argc, char** argv)
 	} catch (rti1516::FederationExecutionDoesNotExist &e)
 	{
 		// expected
-		std::wcerr << L"07E " << e.what() << L"(Pass: Could not join non-existant federation)" << std::endl;
+		std::wcerr << L"07E " << e.what() << L"(Pass: Could not join non-existent federation)" << std::endl;
 	} catch (rti1516::Exception &e)
 	{
 		std::wcerr << L"08N " << e.what() << std::endl;

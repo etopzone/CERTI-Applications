@@ -160,12 +160,12 @@ HLATestsSuite_ADD_TEST(test_TRTCCallbacks
                       FED_FILE test_TRTCCallbacks.fed
                       SOURCE_FILES test_TRTCCallbacks.cc
                       MORELIBS ${LIBHLA}
-                      DTEST_SCRIPT dtest_test_TRTCCallbacks.py dtest_test_TRTCCallbacks-withLateFederate.py                      
+                      DTEST_SCRIPT dtest_test_TRTCCallbacks.py dtest_test_TRTCCallbacks-withLateFederate.py
                       COMMENTS "Test HLA TimeRegulating and TimeConstrained Callbacks") 
                       
 #########################################################################
 # ADD TEST INTERACTIVE FEDERATE
-#########################################################################                   
+#########################################################################
 HLATestsSuite_ADD_TEST(Interactive_Federate 
                       FED_FILE Interactive_Federation.fed
                       SOURCE_FILES Interactive_Federate.cc
@@ -174,7 +174,7 @@ HLATestsSuite_ADD_TEST(Interactive_Federate
                       
 #########################################################################
 # ADD TEST INTERACTIVE FEDERATE 1516
-#########################################################################                   
+#########################################################################
 HLATestsSuite_ADD_TEST(Interactive_Federate1516 
                       FED_FILE Interactive_Federation.fed 01.xml Certi-Test-02.xml
                       SOURCE_FILES Interactive_Federate1516.cc
@@ -184,7 +184,7 @@ HLATestsSuite_ADD_TEST(Interactive_Federate1516
 
 #########################################################################
 # ADD TEST Notification SWITCH FEDERATE 
-#########################################################################                   
+#########################################################################
 HLATestsSuite_ADD_TEST(test_NotificationSwitches
                       FED_FILE test_NotificationSwitches.fed
                       SOURCE_FILES test_NotificationSwitches.cc
@@ -193,25 +193,26 @@ HLATestsSuite_ADD_TEST(test_NotificationSwitches
 
 #########################################################################
 # ADD TEST Parse FOM file 
-#########################################################################                   
+#########################################################################
 HLATestsSuite_ADD_TEST(test_FOMParse
                       FED_FILE TestFed.fed BuggyFed.fed Hierarchical.fed RPR-FOM.fed aviationsimnetV3.1.xml portico-testfom.fed LevelOne.fed
                       SOURCE_FILES test_FOMParse.cc test_FOMParse_cmdline.h test_FOMParse_cmdline.c
                       DTEST_SCRIPT dtest_test_FOMParse.py 
                       COMMENTS "A FOM parsing test"
-                      )                                                   
+                      )
 #########################################################################
 # IEEE-1516 unit and integration tests 
-#########################################################################                                         
+#########################################################################
 HLATestsSuite_ADD_TEST(01-FederationExecutionTest 
                       FED_FILE 01.xml 01.fed
-                      SOURCE_FILES  01-FederationExecutionTest.cc 01-FederationExecutionTest.hh ReturnCodes.hh
+                      SOURCE_FILES 01-FederationExecutionTest.cc 01-FederationExecutionTest.hh ReturnCodes.hh
+                      DTEST_SCRIPT dtest_1516_01-FederationExecutionTest.py
                       COMMENTS "01-FederationExecutionTest (1516)"
                       HLA1516)
                       
 HLATestsSuite_ADD_TEST(02-HandlesAndNamesTest 
                       FED_FILE Certi-Test-02.xml
-                      SOURCE_FILES  02-HandlesAndNamesTest.cc 02-HandlesAndNamesTest.hh ReturnCodes.hh
+                      SOURCE_FILES 02-HandlesAndNamesTest.cc 02-HandlesAndNamesTest.hh ReturnCodes.hh
                       COMMENTS "02-HandlesAndNamesTest (1516)"
                       HLA1516)
 
@@ -221,23 +222,23 @@ HLATestsSuite_ADD_TEST(03-PublishingTest
                       COMMENTS "03-PublishingTest (1516)"
                       HLA1516)
                       
-HLATestsSuite_ADD_TEST(04-NameReservation 
+HLATestsSuite_ADD_TEST(04-NameReservation
                       FED_FILE Certi-Test-04.xml
                       SOURCE_FILES  04-NameReservation.cc 04-NameReservation.hh ReturnCodes.hh
                       COMMENTS "04-NameReservation (1516)"
                       HLA1516)
 
-HLATestsSuite_ADD_TEST(05-ObjectManagementTest                       
+HLATestsSuite_ADD_TEST(05-ObjectManagementTest
                       SOURCE_FILES  05-ObjectManagementTest.cc 05-ObjectManagementTest.hh ReturnCodes.hh
                       COMMENTS "05-ObjectManagementTest (1516)"
                       HLA1516)
 
-HLATestsSuite_ADD_TEST(05-ObjectManagementCallbackTest                       
+HLATestsSuite_ADD_TEST(05-ObjectManagementCallbackTest
                       SOURCE_FILES  05-ObjectManagementCallbackTest.cc 05-ObjectManagementCallbackTest.hh ReturnCodes.hh
                       COMMENTS "05-ObjectManagementCallbackTest (1516)"
                       HLA1516)                      
                                            
-HLATestsSuite_ADD_TEST(06-TimeEncodingTest                       
+HLATestsSuite_ADD_TEST(06-TimeEncodingTest
                       SOURCE_FILES  06-TimeEncodingTest.cc 06-TimeEncodingTest.hh ReturnCodes.hh
                       COMMENTS "06-TimeEncodingTest (1516)"
                       HLA1516)
