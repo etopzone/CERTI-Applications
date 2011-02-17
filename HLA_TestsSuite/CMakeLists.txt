@@ -213,6 +213,7 @@ HLATestsSuite_ADD_TEST(01-FederationExecutionTest
 HLATestsSuite_ADD_TEST(02-HandlesAndNamesTest 
                       FED_FILE Certi-Test-02.xml
                       SOURCE_FILES 02-HandlesAndNamesTest.cc 02-HandlesAndNamesTest.hh ReturnCodes.hh
+                      DTEST_SCRIPT dtest_1516_02-HandlesAndNamesTest.py
                       COMMENTS "02-HandlesAndNamesTest (1516)"
                       HLA1516)
 
