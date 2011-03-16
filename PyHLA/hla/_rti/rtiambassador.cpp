@@ -11,7 +11,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  *
- * $Id: rtiambassador.cpp,v 1.6 2010/09/10 21:04:29 gotthardp Exp $
+ * $Id: rtiambassador.cpp,v 1.7 2011/03/16 16:36:13 erk Exp $
  */
 
 // note: you must include Python.h before any standard headers are included
@@ -702,7 +702,7 @@ rtia_sendInteraction(RTIAmbassadorObject *self, PyObject *args)
     const char *theTag;
     RTIfedTime theTime; // optional
 
-    if(!PyArg_ParseTuple(args, "O&O&s|d",
+    if(!PyArg_ParseTuple(args, "O&O&s|O&",
         RtiInteractionClassHandle_FromPython, &theInteraction,
         ParameterHandleValuePairSet_FromPython, &theParameters,
         &theTag,
@@ -3225,4 +3225,4 @@ RTIAmbassadorInitializer::on_init(PyObject* module)
     PyModule_AddObject(module, "RTIAmbassador", (PyObject *)&RTIAmbassadorObjectType);
 }
 
-// $Id: rtiambassador.cpp,v 1.6 2010/09/10 21:04:29 gotthardp Exp $
+// $Id: rtiambassador.cpp,v 1.7 2011/03/16 16:36:13 erk Exp $
