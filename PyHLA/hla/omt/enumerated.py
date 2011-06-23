@@ -11,7 +11,7 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # Lesser General Public License for more details.
 #
-# $Id: enumerated.py,v 1.2 2009/06/11 17:15:11 gotthardp Exp $
+# $Id: enumerated.py,v 1.3 2011/06/23 18:45:37 gotthardp Exp $
 
 # For example:
 # +------------+----------------+------------+--------+-----------+
@@ -41,7 +41,7 @@ class HLAenumerated:
         self.representation = representation
         self.enumerators = {}
         # initialize enumerators
-        for key in enumerators.keys():
+        for key in list(enumerators.keys()):
             self.enumerators[key] = HLAenumerator(typeName, key, enumerators[key])
 
     def __getattr__(self, name):
@@ -57,10 +57,10 @@ class HLAenumerated:
     def unpack(self, buffer, offset = 0):
         value, size = self.representation.unpack(buffer, offset)
         # find a corresponding enumerator
-        for name, enum in self.enumerators.items():
+        for name, enum in list(self.enumerators.items()):
             if enum == value:
                 return enum, size
         # if not found
         return value, size
 
-# $Id: enumerated.py,v 1.2 2009/06/11 17:15:11 gotthardp Exp $
+# $Id: enumerated.py,v 1.3 2011/06/23 18:45:37 gotthardp Exp $

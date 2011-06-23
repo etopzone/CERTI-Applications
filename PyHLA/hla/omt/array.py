@@ -11,10 +11,10 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # Lesser General Public License for more details.
 #
-# $Id: array.py,v 1.3 2008/11/06 08:12:18 gotthardp Exp $
+# $Id: array.py,v 1.4 2011/06/23 18:45:37 gotthardp Exp $
 
 from hla._omt import *
-from basic import *
+from .basic import *
 
 # For example:
 # +-------------+----------------+-------------+-----------------+-----------+
@@ -92,4 +92,4 @@ class HLAvariableArray:
 
         return value, size
 
-# $Id: array.py,v 1.3 2008/11/06 08:12:18 gotthardp Exp $
+# $Id: array.py,v 1.4 2011/06/23 18:45:37 gotthardp Exp $

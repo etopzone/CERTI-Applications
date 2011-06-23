@@ -18,30 +18,30 @@ class MyAmbassador(hla.rti.FederateAmbassador):
 
     # RTI callbacks
     def discoverObjectInstance(self, object, objectclass, name):
-        print "DISCOVER", name
+        print("DISCOVER", name)
         rtia.requestObjectAttributeValueUpdate(object,
             [self.textAttributeHandle, self.structAttributeHandle, self.fomAttributeHandle])
 
     def reflectAttributeValues(self, object, attributes, tag, order, transport, time=None, retraction=None):
         if self.textAttributeHandle in attributes:
-            print "REFLECT", attributes[self.textAttributeHandle]
+            print("REFLECT", attributes[self.textAttributeHandle])
 
         if self.structAttributeHandle in attributes:
             structValue = struct.unpack('hhl', attributes[self.structAttributeHandle])
-            print "REFLECT", structValue
+            print("REFLECT", structValue)
 
         if self.fomAttributeHandle in attributes:
             fomValue, size = fom.HLAfloat32BE.unpack(attributes[self.fomAttributeHandle])
-            print "REFLECT", fomValue
+            print("REFLECT", fomValue)
 
-print "Create ambassador"
+print("Create ambassador")
 rtia = hla.rti.RTIAmbassador()
 
 try:
     rtia.createFederationExecution("uav", "uav.fed")
-    print "Federation created."
+    print("Federation created.")
 except hla.rti.FederationExecutionAlreadyExists:
-    print "Federation already exists."
+    print("Federation already exists.")
 
 mya = MyAmbassador()
 rtia.joinFederationExecution("uav-receive", "uav", mya)
@@ -56,4 +56,4 @@ except KeyboardInterrupt:
 
 rtia.resignFederationExecution(hla.rti.ResignAction.DeleteObjectsAndReleaseAttributes)
 
-print "Done."
+print("Done.")

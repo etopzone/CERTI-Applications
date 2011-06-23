@@ -11,15 +11,15 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # Lesser General Public License for more details.
 #
-# $Id: __init__.py,v 1.5 2009/06/11 17:15:11 gotthardp Exp $
+# $Id: __init__.py,v 1.6 2011/06/23 18:45:37 gotthardp Exp $
 
 import types
 import xml.sax.handler
 
 from hla._omt import *
-from enumerated import HLAenumerated
-from array import HLAfixedArray, HLAvariableArray
-from record import HLAfixedRecord, HLAvariantRecord
+from .enumerated import HLAenumerated
+from .array import HLAfixedArray, HLAvariableArray
+from .record import HLAfixedRecord, HLAvariantRecord
 
 class TypeParser(xml.sax.handler.ContentHandler):
     def __init__(self):
@@ -42,7 +42,7 @@ class TypeParser(xml.sax.handler.ContentHandler):
         elif name == "enumerator":
             if not self.inEnumerated:
                 return
-    	    self.enumEnumerators += [(attributes["name"],int(attributes["values"]))]
+            self.enumEnumerators += [(attributes["name"],int(attributes["values"]))]
 
         elif name == "arrayData":
             # do not overwrite default datatypes
@@ -60,13 +60,13 @@ class TypeParser(xml.sax.handler.ContentHandler):
 
         elif name == "fixedRecordData":
             self.inFixedRecord = True
-    	    self.recordName = attributes["name"]
-    	    self.recordFields = []
+            self.recordName = attributes["name"]
+            self.recordFields = []
 
         elif name == "field":
             if not self.inFixedRecord:
                 return
-    	    self.recordFields += [(attributes["name"], HLAencoding(attributes["dataType"]))]
+            self.recordFields += [(attributes["name"], HLAencoding(attributes["dataType"]))]
 
         elif name == "variantRecordData":
             self.inVariantRecord = True
@@ -140,4 +140,4 @@ def HLAuse(filename):
     parser.setContentHandler(handler)
     parser.parse(filename)
 
-# $Id: __init__.py,v 1.5 2009/06/11 17:15:11 gotthardp Exp $
+# $Id: __init__.py,v 1.6 2011/06/23 18:45:37 gotthardp Exp $

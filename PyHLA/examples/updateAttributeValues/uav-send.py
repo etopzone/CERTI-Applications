@@ -22,20 +22,20 @@ class MyAmbassador(hla.rti.FederateAmbassador):
 
     # RTI callbacks
     def startRegistrationForObjectClass(*params):
-        print "START", params
+        print("START", params)
 
     def provideAttributeValueUpdate(*params):
-        print "PROVIDE UAV", params
+        print("PROVIDE UAV", params)
 
-print "Create ambassador"
+print("Create ambassador")
 rtia = hla.rti.RTIAmbassador()
-print rtia
+print(rtia)
 
 try:
     rtia.createFederationExecution("uav", "uav.fed")
-    print "Federation created."
+    print("Federation created.")
 except hla.rti.FederationExecutionAlreadyExists:
-    print "Federation already exists."
+    print("Federation already exists.")
 
 mya = MyAmbassador()
 rtia.joinFederationExecution("uav-send", "uav", mya)
@@ -57,4 +57,4 @@ mya.terminate()
 
 rtia.resignFederationExecution(hla.rti.ResignAction.DeleteObjectsAndReleaseAttributes)
 
-print "Done."
+print("Done.")
