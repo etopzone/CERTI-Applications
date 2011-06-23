@@ -11,7 +11,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  *
- * $Id: exceptions.h,v 1.3 2011/06/23 00:10:06 gotthardp Exp $
+ * $Id: exceptions.h,v 1.4 2011/06/23 00:36:04 gotthardp Exp $
  */
 
 #ifndef RTI_EXCEPTIONS_H
@@ -129,7 +129,7 @@ EXC SetFromPyException(PyObject *type)
     }
 
     PyObject *strvalue = PyObject_Str(value);
-    msg << ": " << PyUnicode_AsString(strvalue);
+    msg << ": " << PyUnicode_AsASCIIString(strvalue);
     Py_XDECREF(strvalue);
 
     Py_XDECREF(exception);
@@ -141,4 +141,4 @@ EXC SetFromPyException(PyObject *type)
 
 #endif // RTI_EXCEPTIONS_H
 
-// $Id: exceptions.h,v 1.3 2011/06/23 00:10:06 gotthardp Exp $
+// $Id: exceptions.h,v 1.4 2011/06/23 00:36:04 gotthardp Exp $

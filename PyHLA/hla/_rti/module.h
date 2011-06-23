@@ -11,7 +11,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  *
- * $Id: module.h,v 1.4 2011/06/23 00:10:08 gotthardp Exp $
+ * $Id: module.h,v 1.5 2011/06/23 00:36:04 gotthardp Exp $
  */
 
 #ifndef RTI_MODULE_H
@@ -26,7 +26,7 @@
 #define Py_TYPE(o) (((PyObject*)(o))->ob_type)
 #define PyBytes_AsString PyString_AsString
 #define PyBytes_FromStringAndSize PyString_FromStringAndSize
-#define PyUnicode_AsString PyString_AsString
+#define PyUnicode_AsASCIIString PyString_AsString
 #define PyUnicode_FromFormat PyString_FromFormat
 #define PyUnicode_FromString PyString_FromString
 #endif
@@ -71,4 +71,4 @@ public:
 
 #endif // RTI_MODULE_H
 
-// $Id: module.h,v 1.4 2011/06/23 00:10:08 gotthardp Exp $
+// $Id: module.h,v 1.5 2011/06/23 00:36:04 gotthardp Exp $
