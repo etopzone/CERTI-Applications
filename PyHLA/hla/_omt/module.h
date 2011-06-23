@@ -11,7 +11,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  *
- * $Id: module.h,v 1.2 2008/11/15 14:34:05 gotthardp Exp $
+ * $Id: module.h,v 1.3 2011/06/23 00:10:04 gotthardp Exp $
  */
 
 #ifndef OMT_MODULE_H
@@ -20,6 +20,11 @@
 #include <vector>
 
 #define MODULE_NAME "omt"
+
+#if PY_VERSION_HEX < 0x02060000
+// Python 2.5 compatibility macros
+#define PyBytes_FromStringAndSize PyString_FromStringAndSize
+#endif
 
 class OmtInitializer
 {
@@ -33,4 +38,4 @@ public:
 
 #endif // OMT_MODULE_H
 
-// $Id: module.h,v 1.2 2008/11/15 14:34:05 gotthardp Exp $
+// $Id: module.h,v 1.3 2011/06/23 00:10:04 gotthardp Exp $

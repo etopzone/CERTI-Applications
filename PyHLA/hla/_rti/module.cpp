@@ -11,7 +11,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  *
- * $Id: module.cpp,v 1.2 2008/11/15 14:34:06 gotthardp Exp $
+ * $Id: module.cpp,v 1.3 2011/06/23 00:10:07 gotthardp Exp $
  */
 
 // note: you must include Python.h before any standard headers are included
@@ -69,14 +69,38 @@ static PyMethodDef rti_methods[] = {
     {NULL, NULL, 0, NULL} // sentinel
 };
 
+static const char *rti_doc =
+    "Modeling and Simulation (M&S) High Level Architecture (HLA) -- Basic Federate Interface.";
+
+#if PY_MAJOR_VERSION >= 3
+static struct PyModuleDef rti_module =
+{
+    PyModuleDef_HEAD_INIT,
+    "_rti",       /* m_name */
+    rti_doc,      /* m_doc */
+    -1,           /* m_size */
+    rti_methods,  /* m_methods */
+};
+
+PyMODINIT_FUNC
+PyInit__rti(void)
+{
+    PyObject* module = PyModule_Create(&rti_module);
+
+    // call initializers
+    RtiInitializer::init(module);
+    return module;
+}
+
+#else
 PyMODINIT_FUNC
 init_rti(void)
 {
-    PyObject* module = Py_InitModule3("_rti", rti_methods,
-        "Modeling and Simulation (M&S) High Level Architecture (HLA) -- Basic Federate Interface.");
+    PyObject* module = Py_InitModule3("_rti", rti_methods, rti_doc);
 
     // call initializers
     RtiInitializer::init(module);
 }
+#endif
 
-// $Id: module.cpp,v 1.2 2008/11/15 14:34:06 gotthardp Exp $
+// $Id: module.cpp,v 1.3 2011/06/23 00:10:07 gotthardp Exp $

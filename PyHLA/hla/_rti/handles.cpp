@@ -11,7 +11,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  *
- * $Id: handles.cpp,v 1.5 2010/09/10 21:04:29 gotthardp Exp $
+ * $Id: handles.cpp,v 1.6 2011/06/23 00:10:07 gotthardp Exp $
  */
 
 // note: you must include Python.h before any standard headers are included
@@ -22,6 +22,12 @@
 #include <fedtime.hh>
 
 #include "handles.h"
+
+#if PY_VERSION_HEX < 0x02060000
+// Python 2.5 compatibility macros
+#define Py_TYPE(o) (((PyObject*)(o))->ob_type)
+#define PyBytes_FromStringAndSize PyString_FromStringAndSize
+#endif
 
 /* Numeric handles are represented by encapsulated integers.
  * These objects can be assigned and compared, but cannot be directly initialized
@@ -265,7 +271,7 @@ AttributeHandleValuePairSet_ToPython(RTI::AttributeHandleValuePairSet *value)
 
         RTI::ULong length;
         char* data = value->getValuePointer(i, length);
-        PyObject *atData = PyString_FromStringAndSize(data, length);
+        PyObject *atData = PyBytes_FromStringAndSize(data, length);
 
         PyDict_SetItem(result, atHandle, atData);
 
@@ -329,7 +335,7 @@ ParameterHandleValuePairSet_ToPython(RTI::ParameterHandleValuePairSet *value)
 
         RTI::ULong length;
         char* data = value->getValuePointer(i, length);
-        PyObject *atData = PyString_FromStringAndSize(data, length);
+        PyObject *atData = PyBytes_FromStringAndSize(data, length);
 
         PyDict_SetItem(result, atHandle, atData);
 
@@ -343,21 +349,14 @@ ParameterHandleValuePairSet_ToPython(RTI::ParameterHandleValuePairSet *value)
 static int
 ulonghandle_print(RtiULongHandleObject *v, FILE *fp, int flags)
 {
-    fprintf(fp, "<%s=%lu>", v->ob_type->tp_name, v->ob_ival);
+    fprintf(fp, "<%s=%lu>", Py_TYPE(v)->tp_name, v->ob_ival);
     return 0;
-}
-
-static int
-ulonghandle_compare(RtiULongHandleObject *v, RtiULongHandleObject *w)
-{
-    return (v->ob_ival < w->ob_ival) ? -1 :
-        (v->ob_ival > w->ob_ival) ? 1 : 0;
 }
 
 static PyObject *
 ulonghandle_repr(RtiULongHandleObject *v)
 {
-    return PyString_FromFormat("<%s=%lu>", v->ob_type->tp_name, v->ob_ival);
+    return PyUnicode_FromFormat("<%s=%lu>", Py_TYPE(v)->tp_name, v->ob_ival);
 }
 
 static long
@@ -368,9 +367,49 @@ ulonghandle_hash(RtiULongHandleObject *v)
     return (v->ob_ival >> __shift) | (v->ob_ival & ~0UL << __shift);
 }
 
+static PyObject *
+ulonghandle_richcompare(RtiULongHandleObject *v, RtiULongHandleObject *w, int op)
+{
+    int res;
+
+    switch(op)
+    {
+    case Py_LT:
+        res = v->ob_ival < w->ob_ival;
+        break;
+    case Py_LE:
+        res = v->ob_ival <= w->ob_ival;
+        break;
+    case Py_EQ:
+        res = v->ob_ival == w->ob_ival;
+        break;
+    case Py_NE:
+        res = v->ob_ival != w->ob_ival;
+        break;
+    case Py_GT:
+        res = v->ob_ival > w->ob_ival;
+        break;
+    case Py_GE:
+        res = v->ob_ival >= w->ob_ival;
+        break;
+    default:
+        PyErr_BadArgument();
+        return NULL;
+  }
+
+  if(res)
+      Py_RETURN_TRUE;
+  else
+      Py_RETURN_FALSE;
+}
+
 PyTypeObject RtiObjectClassHandleType = {
+#if PY_MAJOR_VERSION >= 3
+    PyVarObject_HEAD_INIT(NULL, 0)
+#else
     PyObject_HEAD_INIT(NULL)
     0,                         /* ob_size */
+#endif
     MODULE_NAME ".ObjectClassHandle", /* tp_name */
     sizeof(RtiULongHandleObject), /* tp_basicsize */
     0,                         /* tp_itemsize */
@@ -378,7 +417,7 @@ PyTypeObject RtiObjectClassHandleType = {
     (printfunc)ulonghandle_print, /* tp_print */
     0,                         /* tp_getattr */
     0,                         /* tp_setattr */
-    (cmpfunc)ulonghandle_compare, /* tp_compare */
+    0,                         /* tp_reserved */
     (reprfunc)ulonghandle_repr, /* tp_repr */
     0,                         /* tp_as_number */
     0,                         /* tp_as_sequence */
@@ -391,11 +430,18 @@ PyTypeObject RtiObjectClassHandleType = {
     0,                         /* tp_as_buffer */
     Py_TPFLAGS_DEFAULT,        /* tp_flags */
     "ObjectClassHandle",       /* tp_doc */
+    0,                         /* tp_traverse */
+    0,                         /* tp_clear */
+    (richcmpfunc)ulonghandle_richcompare, /* tp_richcompare */
 };
 
 PyTypeObject RtiInteractionClassHandleType = {
+#if PY_MAJOR_VERSION >= 3
+    PyVarObject_HEAD_INIT(NULL, 0)
+#else
     PyObject_HEAD_INIT(NULL)
     0,                         /* ob_size */
+#endif
     MODULE_NAME ".InteractionClassHandle", /* tp_name */
     sizeof(RtiULongHandleObject), /* tp_basicsize */
     0,                         /* tp_itemsize */
@@ -403,7 +449,7 @@ PyTypeObject RtiInteractionClassHandleType = {
     (printfunc)ulonghandle_print, /* tp_print */
     0,                         /* tp_getattr */
     0,                         /* tp_setattr */
-    (cmpfunc)ulonghandle_compare, /* tp_compare */
+    0,                         /* tp_reserved */
     (reprfunc)ulonghandle_repr, /* tp_repr */
     0,                         /* tp_as_number */
     0,                         /* tp_as_sequence */
@@ -416,11 +462,18 @@ PyTypeObject RtiInteractionClassHandleType = {
     0,                         /* tp_as_buffer */
     Py_TPFLAGS_DEFAULT,        /* tp_flags */
     "InteractionClassHandle",  /* tp_doc */
+    0,                         /* tp_traverse */
+    0,                         /* tp_clear */
+    (richcmpfunc)ulonghandle_richcompare, /* tp_richcompare */
 };
 
 PyTypeObject RtiAttributeHandleType = {
+#if PY_MAJOR_VERSION >= 3
+    PyVarObject_HEAD_INIT(NULL, 0)
+#else
     PyObject_HEAD_INIT(NULL)
     0,                         /* ob_size */
+#endif
     MODULE_NAME ".AttributeHandle", /* tp_name */
     sizeof(RtiULongHandleObject), /* tp_basicsize */
     0,                         /* tp_itemsize */
@@ -428,7 +481,7 @@ PyTypeObject RtiAttributeHandleType = {
     (printfunc)ulonghandle_print, /* tp_print */
     0,                         /* tp_getattr */
     0,                         /* tp_setattr */
-    (cmpfunc)ulonghandle_compare, /* tp_compare */
+    0,                         /* tp_reserved */
     (reprfunc)ulonghandle_repr, /* tp_repr */
     0,                         /* tp_as_number */
     0,                         /* tp_as_sequence */
@@ -441,11 +494,18 @@ PyTypeObject RtiAttributeHandleType = {
     0,                         /* tp_as_buffer */
     Py_TPFLAGS_DEFAULT,        /* tp_flags */
     "AttributeHandle",         /* tp_doc */
+    0,                         /* tp_traverse */
+    0,                         /* tp_clear */
+    (richcmpfunc)ulonghandle_richcompare, /* tp_richcompare */
 };
 
 PyTypeObject RtiParameterHandleType = {
+#if PY_MAJOR_VERSION >= 3
+    PyVarObject_HEAD_INIT(NULL, 0)
+#else
     PyObject_HEAD_INIT(NULL)
     0,                         /* ob_size */
+#endif
     MODULE_NAME ".ParameterHandle", /* tp_name */
     sizeof(RtiULongHandleObject), /* tp_basicsize */
     0,                         /* tp_itemsize */
@@ -453,7 +513,7 @@ PyTypeObject RtiParameterHandleType = {
     (printfunc)ulonghandle_print, /* tp_print */
     0,                         /* tp_getattr */
     0,                         /* tp_setattr */
-    (cmpfunc)ulonghandle_compare, /* tp_compare */
+    0,                         /* tp_reserved */
     (reprfunc)ulonghandle_repr, /* tp_repr */
     0,                         /* tp_as_number */
     0,                         /* tp_as_sequence */
@@ -466,11 +526,18 @@ PyTypeObject RtiParameterHandleType = {
     0,                         /* tp_as_buffer */
     Py_TPFLAGS_DEFAULT,        /* tp_flags */
     "ParameterHandle",         /* tp_doc */
+    0,                         /* tp_traverse */
+    0,                         /* tp_clear */
+    (richcmpfunc)ulonghandle_richcompare, /* tp_richcompare */
 };
 
 PyTypeObject RtiObjectHandleType = {
+#if PY_MAJOR_VERSION >= 3
+    PyVarObject_HEAD_INIT(NULL, 0)
+#else
     PyObject_HEAD_INIT(NULL)
     0,                         /* ob_size */
+#endif
     MODULE_NAME ".ObjectHandle", /* tp_name */
     sizeof(RtiULongHandleObject), /* tp_basicsize */
     0,                         /* tp_itemsize */
@@ -478,7 +545,7 @@ PyTypeObject RtiObjectHandleType = {
     (printfunc)ulonghandle_print, /* tp_print */
     0,                         /* tp_getattr */
     0,                         /* tp_setattr */
-    (cmpfunc)ulonghandle_compare, /* tp_compare */
+    0,                         /* tp_reserved */
     (reprfunc)ulonghandle_repr, /* tp_repr */
     0,                         /* tp_as_number */
     0,                         /* tp_as_sequence */
@@ -491,11 +558,18 @@ PyTypeObject RtiObjectHandleType = {
     0,                         /* tp_as_buffer */
     Py_TPFLAGS_DEFAULT,        /* tp_flags */
     "ClassHandle",             /* tp_doc */
+    0,                         /* tp_traverse */
+    0,                         /* tp_clear */
+    (richcmpfunc)ulonghandle_richcompare, /* tp_richcompare */
 };
 
 PyTypeObject RtiFederateHandleType = {
+#if PY_MAJOR_VERSION >= 3
+    PyVarObject_HEAD_INIT(NULL, 0)
+#else
     PyObject_HEAD_INIT(NULL)
     0,                         /* ob_size */
+#endif
     MODULE_NAME ".FederateHandle", /* tp_name */
     sizeof(RtiULongHandleObject), /* tp_basicsize */
     0,                         /* tp_itemsize */
@@ -503,7 +577,7 @@ PyTypeObject RtiFederateHandleType = {
     (printfunc)ulonghandle_print, /* tp_print */
     0,                         /* tp_getattr */
     0,                         /* tp_setattr */
-    (cmpfunc)ulonghandle_compare, /* tp_compare */
+    0,                         /* tp_reserved */
     (reprfunc)ulonghandle_repr, /* tp_repr */
     0,                         /* tp_as_number */
     0,                         /* tp_as_sequence */
@@ -516,11 +590,18 @@ PyTypeObject RtiFederateHandleType = {
     0,                         /* tp_as_buffer */
     Py_TPFLAGS_DEFAULT,        /* tp_flags */
     "FederateHandle",          /* tp_doc */
+    0,                         /* tp_traverse */
+    0,                         /* tp_clear */
+    (richcmpfunc)ulonghandle_richcompare, /* tp_richcompare */
 };
 
 PyTypeObject RtiOrderingHandleType = {
+#if PY_MAJOR_VERSION >= 3
+    PyVarObject_HEAD_INIT(NULL, 0)
+#else
     PyObject_HEAD_INIT(NULL)
     0,                         /* ob_size */
+#endif
     MODULE_NAME ".OrderingHandle", /* tp_name */
     sizeof(RtiULongHandleObject), /* tp_basicsize */
     0,                         /* tp_itemsize */
@@ -528,7 +609,7 @@ PyTypeObject RtiOrderingHandleType = {
     (printfunc)ulonghandle_print, /* tp_print */
     0,                         /* tp_getattr */
     0,                         /* tp_setattr */
-    (cmpfunc)ulonghandle_compare, /* tp_compare */
+    0,                         /* tp_reserved */
     (reprfunc)ulonghandle_repr, /* tp_repr */
     0,                         /* tp_as_number */
     0,                         /* tp_as_sequence */
@@ -541,11 +622,18 @@ PyTypeObject RtiOrderingHandleType = {
     0,                         /* tp_as_buffer */
     Py_TPFLAGS_DEFAULT,        /* tp_flags */
     "OrderingHandle",               /* tp_doc */
+    0,                         /* tp_traverse */
+    0,                         /* tp_clear */
+    (richcmpfunc)ulonghandle_richcompare, /* tp_richcompare */
 };
 
 PyTypeObject RtiTransportationHandleType = {
+#if PY_MAJOR_VERSION >= 3
+    PyVarObject_HEAD_INIT(NULL, 0)
+#else
     PyObject_HEAD_INIT(NULL)
     0,                         /* ob_size */
+#endif
     MODULE_NAME ".TransportationHandle", /* tp_name */
     sizeof(RtiULongHandleObject), /* tp_basicsize */
     0,                         /* tp_itemsize */
@@ -553,7 +641,7 @@ PyTypeObject RtiTransportationHandleType = {
     (printfunc)ulonghandle_print, /* tp_print */
     0,                         /* tp_getattr */
     0,                         /* tp_setattr */
-    (cmpfunc)ulonghandle_compare, /* tp_compare */
+    0,                         /* tp_reserved */
     (reprfunc)ulonghandle_repr, /* tp_repr */
     0,                         /* tp_as_number */
     0,                         /* tp_as_sequence */
@@ -566,29 +654,23 @@ PyTypeObject RtiTransportationHandleType = {
     0,                         /* tp_as_buffer */
     Py_TPFLAGS_DEFAULT,        /* tp_flags */
     "TransportationHandle",    /* tp_doc */
+    0,                         /* tp_traverse */
+    0,                         /* tp_clear */
+    (richcmpfunc)ulonghandle_richcompare, /* tp_richcompare */
 };
 
 static int
 EventRetractionHandle_print(EventRetractionHandleObject *v, FILE *fp, int flags)
 {
-    fprintf(fp, "<%s=%lu:%lu>", v->ob_type->tp_name,
+    fprintf(fp, "<%s=%lu:%lu>", Py_TYPE(v)->tp_name,
         v->ob_value.sendingFederate, v->ob_value.theSerialNumber);
     return 0;
-}
-
-static int
-EventRetractionHandle_compare(EventRetractionHandleObject *v, EventRetractionHandleObject *w)
-{
-    return v->ob_value.sendingFederate < w->ob_value.sendingFederate ? -1 :
-        v->ob_value.sendingFederate > w->ob_value.sendingFederate ? 1 :
-        v->ob_value.theSerialNumber < w->ob_value.theSerialNumber ? -1 :
-        v->ob_value.theSerialNumber > w->ob_value.theSerialNumber ? 1 : 0;
 }
 
 static PyObject *
 EventRetractionHandle_repr(EventRetractionHandleObject *v)
 {
-    return PyString_FromFormat("<%s=%lu:%lu>", v->ob_type->tp_name,
+    return PyUnicode_FromFormat("<%s=%lu:%lu>", Py_TYPE(v)->tp_name,
         v->ob_value.sendingFederate, v->ob_value.theSerialNumber);
 }
 
@@ -601,9 +683,59 @@ EventRetractionHandle_hash(EventRetractionHandleObject *v)
          | (v->ob_value.theSerialNumber >> __shift) | (v->ob_value.theSerialNumber & ~0UL << __shift);
 }
 
+static PyObject *
+EventRetractionHandle_richcompare(EventRetractionHandleObject *v, EventRetractionHandleObject *w, int op)
+{
+    int res;
+
+    switch(op)
+    {
+    case Py_LT:
+        res = v->ob_value.sendingFederate < w->ob_value.sendingFederate ||
+            (v->ob_value.sendingFederate == w->ob_value.sendingFederate &&
+                v->ob_value.theSerialNumber < w->ob_value.theSerialNumber);
+        break;
+    case Py_LE:
+        res = v->ob_value.sendingFederate < w->ob_value.sendingFederate ||
+            (v->ob_value.sendingFederate == w->ob_value.sendingFederate &&
+                v->ob_value.theSerialNumber <= w->ob_value.theSerialNumber);
+        break;
+    case Py_EQ:
+        res = v->ob_value.sendingFederate == w->ob_value.sendingFederate &&
+            v->ob_value.theSerialNumber == w->ob_value.theSerialNumber;
+        break;
+    case Py_NE:
+        res = v->ob_value.sendingFederate != w->ob_value.sendingFederate ||
+            v->ob_value.theSerialNumber != w->ob_value.theSerialNumber;
+        break;
+    case Py_GT:
+        res = v->ob_value.sendingFederate > w->ob_value.sendingFederate ||
+            (v->ob_value.sendingFederate == w->ob_value.sendingFederate &&
+                v->ob_value.theSerialNumber > w->ob_value.theSerialNumber);
+        break;
+    case Py_GE:
+        res = v->ob_value.sendingFederate > w->ob_value.sendingFederate ||
+            (v->ob_value.sendingFederate == w->ob_value.sendingFederate &&
+                v->ob_value.theSerialNumber >= w->ob_value.theSerialNumber);
+        break;
+    default:
+        PyErr_BadArgument();
+        return NULL;
+  }
+
+  if(res)
+      Py_RETURN_TRUE;
+  else
+      Py_RETURN_FALSE;
+}
+
 PyTypeObject EventRetractionHandleType = {
+#if PY_MAJOR_VERSION >= 3
+    PyVarObject_HEAD_INIT(NULL, 0)
+#else
     PyObject_HEAD_INIT(NULL)
     0,                         /* ob_size */
+#endif
     MODULE_NAME ".EventRetractionHandle", /* tp_name */
     sizeof(RtiULongHandleObject), /* tp_basicsize */
     0,                         /* tp_itemsize */
@@ -611,7 +743,7 @@ PyTypeObject EventRetractionHandleType = {
     (printfunc)EventRetractionHandle_print, /* tp_print */
     0,                         /* tp_getattr */
     0,                         /* tp_setattr */
-    (cmpfunc)EventRetractionHandle_compare, /* tp_compare */
+    0,                         /* tp_reserved */
     (reprfunc)EventRetractionHandle_repr, /* tp_repr */
     0,                         /* tp_as_number */
     0,                         /* tp_as_sequence */
@@ -624,6 +756,9 @@ PyTypeObject EventRetractionHandleType = {
     0,                         /* tp_as_buffer */
     Py_TPFLAGS_DEFAULT,        /* tp_flags */
     "EventRetractionHandle",   /* tp_doc */
+    0,                         /* tp_traverse */
+    0,                         /* tp_clear */
+    (richcmpfunc)EventRetractionHandle_richcompare, /* tp_richcompare */
 };
 
 int
@@ -667,21 +802,14 @@ RTIfedTime_FromPython(PyObject *value, RTIfedTime *result)
 static int
 RegionHandle_print(RegionHandleObject *v, FILE *fp, int flags)
 {
-    fprintf(fp, "<%s=%lu>", v->ob_type->tp_name, v->ob_handle);
+    fprintf(fp, "<%s=%lu>", Py_TYPE(v)->tp_name, v->ob_handle);
     return 0;
-}
-
-static int
-RegionHandle_compare(RegionHandleObject *v, RegionHandleObject *w)
-{
-    return (v->ob_handle < w->ob_handle) ? -1 :
-        (v->ob_handle > w->ob_handle) ? 1 : 0;
 }
 
 static PyObject *
 RegionHandle_repr(RegionHandleObject *v)
 {
-    return PyString_FromFormat("<%s=%lu>", v->ob_type->tp_name, v->ob_handle);
+    return PyUnicode_FromFormat("<%s=%lu>", Py_TYPE(v)->tp_name, v->ob_handle);
 }
 
 static long
@@ -692,9 +820,49 @@ RegionHandle_hash(RegionHandleObject *v)
     return (v->ob_handle >> __shift) | (v->ob_handle & ~0UL << __shift);
 }
 
+static PyObject *
+RegionHandle_richcompare(RegionHandleObject *v, RegionHandleObject *w, int op)
+{
+    int res;
+
+    switch(op)
+    {
+    case Py_LT:
+        res = v->ob_handle < w->ob_handle;
+        break;
+    case Py_LE:
+        res = v->ob_handle <= w->ob_handle;
+        break;
+    case Py_EQ:
+        res = v->ob_handle == w->ob_handle;
+        break;
+    case Py_NE:
+        res = v->ob_handle != w->ob_handle;
+        break;
+    case Py_GT:
+        res = v->ob_handle > w->ob_handle;
+        break;
+    case Py_GE:
+        res = v->ob_handle >= w->ob_handle;
+        break;
+    default:
+        PyErr_BadArgument();
+        return NULL;
+  }
+
+  if(res)
+      Py_RETURN_TRUE;
+  else
+      Py_RETURN_FALSE;
+}
+
 PyTypeObject RegionHandleType = {
+#if PY_MAJOR_VERSION >= 3
+    PyVarObject_HEAD_INIT(NULL, 0)
+#else
     PyObject_HEAD_INIT(NULL)
     0,                         /* ob_size */
+#endif
     MODULE_NAME ".RegionHandle", /* tp_name */
     sizeof(RtiULongHandleObject), /* tp_basicsize */
     0,                         /* tp_itemsize */
@@ -702,7 +870,7 @@ PyTypeObject RegionHandleType = {
     (printfunc)RegionHandle_print, /* tp_print */
     0,                         /* tp_getattr */
     0,                         /* tp_setattr */
-    (cmpfunc)RegionHandle_compare, /* tp_compare */
+    0,                         /* tp_reserved */
     (reprfunc)RegionHandle_repr, /* tp_repr */
     0,                         /* tp_as_number */
     0,                         /* tp_as_sequence */
@@ -715,6 +883,9 @@ PyTypeObject RegionHandleType = {
     0,                         /* tp_as_buffer */
     Py_TPFLAGS_DEFAULT,        /* tp_flags */
     "RegionHandle",            /* tp_doc */
+    0,                         /* tp_traverse */
+    0,                         /* tp_clear */
+    (richcmpfunc)RegionHandle_richcompare, /* tp_richcompare */
 };
 
 int
@@ -733,21 +904,14 @@ RegionHandle_FromPython(RegionHandleObject *value, RTI::Region **result)
 static int
 longhandle_print(RtiLongHandleObject *v, FILE *fp, int flags)
 {
-    fprintf(fp, "<%s=%li>", v->ob_type->tp_name, v->ob_ival);
+    fprintf(fp, "<%s=%li>", Py_TYPE(v)->tp_name, v->ob_ival);
     return 0;
-}
-
-static int
-longhandle_compare(RtiLongHandleObject *v, RtiLongHandleObject *w)
-{
-    return (v->ob_ival < w->ob_ival) ? -1 :
-        (v->ob_ival > w->ob_ival) ? 1 : 0;
 }
 
 static PyObject *
 longhandle_repr(RtiLongHandleObject *v)
 {
-    return PyString_FromFormat("<%s=%li>", v->ob_type->tp_name, v->ob_ival);
+    return PyUnicode_FromFormat("<%s=%li>", Py_TYPE(v)->tp_name, v->ob_ival);
 }
 
 static long
@@ -756,9 +920,49 @@ longhandle_hash(RtiLongHandleObject *v)
     return v->ob_ival;
 }
 
+static PyObject *
+longhandle_richcompare(RtiLongHandleObject *v, RtiLongHandleObject *w, int op)
+{
+    int res;
+
+    switch(op)
+    {
+    case Py_LT:
+        res = v->ob_ival < w->ob_ival;
+        break;
+    case Py_LE:
+        res = v->ob_ival <= w->ob_ival;
+        break;
+    case Py_EQ:
+        res = v->ob_ival == w->ob_ival;
+        break;
+    case Py_NE:
+        res = v->ob_ival != w->ob_ival;
+        break;
+    case Py_GT:
+        res = v->ob_ival > w->ob_ival;
+        break;
+    case Py_GE:
+        res = v->ob_ival >= w->ob_ival;
+        break;
+    default:
+        PyErr_BadArgument();
+        return NULL;
+  }
+
+  if(res)
+      Py_RETURN_TRUE;
+  else
+      Py_RETURN_FALSE;
+}
+
 PyTypeObject RtiSpaceHandleType = {
+#if PY_MAJOR_VERSION >= 3
+    PyVarObject_HEAD_INIT(NULL, 0)
+#else
     PyObject_HEAD_INIT(NULL)
     0,                         /* ob_size */
+#endif
     MODULE_NAME ".SpaceHandle", /* tp_name */
     sizeof(RtiLongHandleObject), /* tp_basicsize */
     0,                         /* tp_itemsize */
@@ -766,7 +970,7 @@ PyTypeObject RtiSpaceHandleType = {
     (printfunc)longhandle_print, /* tp_print */
     0,                         /* tp_getattr */
     0,                         /* tp_setattr */
-    (cmpfunc)longhandle_compare, /* tp_compare */
+    0,                         /* tp_reserved */
     (reprfunc)longhandle_repr, /* tp_repr */
     0,                         /* tp_as_number */
     0,                         /* tp_as_sequence */
@@ -779,6 +983,9 @@ PyTypeObject RtiSpaceHandleType = {
     0,                         /* tp_as_buffer */
     Py_TPFLAGS_DEFAULT,        /* tp_flags */
     "SpaceHandle",             /* tp_doc */
+    0,                         /* tp_traverse */
+    0,                         /* tp_clear */
+    (richcmpfunc)longhandle_richcompare, /* tp_richcompare */
 };
 
 int
@@ -807,8 +1014,12 @@ RtiSpaceHandle_ToPython(RTI::SpaceHandle *value)
 }
 
 PyTypeObject RtiDimensionHandleType = {
+#if PY_MAJOR_VERSION >= 3
+    PyVarObject_HEAD_INIT(NULL, 0)
+#else
     PyObject_HEAD_INIT(NULL)
     0,                         /* ob_size */
+#endif
     MODULE_NAME ".DimensionHandle", /* tp_name */
     sizeof(RtiULongHandleObject), /* tp_basicsize */
     0,                         /* tp_itemsize */
@@ -816,7 +1027,7 @@ PyTypeObject RtiDimensionHandleType = {
     (printfunc)ulonghandle_print, /* tp_print */
     0,                         /* tp_getattr */
     0,                         /* tp_setattr */
-    (cmpfunc)ulonghandle_compare, /* tp_compare */
+    0,                         /* tp_reserved */
     (reprfunc)ulonghandle_repr, /* tp_repr */
     0,                         /* tp_as_number */
     0,                         /* tp_as_sequence */
@@ -829,6 +1040,9 @@ PyTypeObject RtiDimensionHandleType = {
     0,                         /* tp_as_buffer */
     Py_TPFLAGS_DEFAULT,        /* tp_flags */
     "DimensionHandle",         /* tp_doc */
+    0,                         /* tp_traverse */
+    0,                         /* tp_clear */
+    (richcmpfunc)ulonghandle_richcompare, /* tp_richcompare */
 };
 
 int
@@ -929,4 +1143,4 @@ HandlesInitializer::on_init(PyObject* module)
     PyModule_AddObject(module, "DimensionHandle", (PyObject *)&RtiDimensionHandleType);
 }
 
-// $Id: handles.cpp,v 1.5 2010/09/10 21:04:29 gotthardp Exp $
+// $Id: handles.cpp,v 1.6 2011/06/23 00:10:07 gotthardp Exp $

@@ -11,7 +11,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  *
- * $Id: rtiambassador.cpp,v 1.7 2011/03/16 16:36:13 erk Exp $
+ * $Id: rtiambassador.cpp,v 1.8 2011/06/23 00:10:08 gotthardp Exp $
  */
 
 // note: you must include Python.h before any standard headers are included
@@ -64,7 +64,7 @@ rtia_dealloc(RTIAmbassadorObject *self)
     }
     CATCH_RTI_EXCEPTION2(RTI::Exception, rti_RTIInternalError)
 
-    self->ob_type->tp_free((PyObject *)self);
+    Py_TYPE(self)->tp_free((PyObject *)self);
 }
 
 // Federation Management Services
@@ -2159,7 +2159,7 @@ rtia_getObjectClassName(RTIAmbassadorObject *self, PyObject *args)
     try {
         char *theName = self->ob_rtia->getObjectClassName(theHandle);
 
-        PyObject *result = PyString_FromString(theName);
+        PyObject *result = PyUnicode_FromString(theName);
         delete[] theName;
 
         return result;
@@ -2213,7 +2213,7 @@ rtia_getAttributeName(RTIAmbassadorObject *self, PyObject *args)
     try {
         char *theName = self->ob_rtia->getAttributeName(theHandle, whichClass);
 
-        PyObject *result = PyString_FromString(theName);
+        PyObject *result = PyUnicode_FromString(theName);
         delete[] theName;
 
         return result;
@@ -2262,7 +2262,7 @@ rtia_getInteractionClassName(RTIAmbassadorObject *self, PyObject *args)
     try {
         char *theName = self->ob_rtia->getInteractionClassName(theHandle);
 
-        PyObject *result = PyString_FromString(theName);
+        PyObject *result = PyUnicode_FromString(theName);
         delete[] theName;
 
         return result;
@@ -2316,7 +2316,7 @@ rtia_getParameterName(RTIAmbassadorObject *self, PyObject *args)
     try {
         char *theName = self->ob_rtia->getParameterName(theHandle, whichClass);
 
-        PyObject *result = PyString_FromString(theName);
+        PyObject *result = PyUnicode_FromString(theName);
         delete[] theName;
 
         return result;
@@ -2365,7 +2365,7 @@ rtia_getObjectInstanceName(RTIAmbassadorObject *self, PyObject *args)
     try {
         char *theName = self->ob_rtia->getObjectInstanceName(theHandle);
 
-        PyObject *result = PyString_FromString(theName);
+        PyObject *result = PyUnicode_FromString(theName);
         delete[] theName;
 
         return result;
@@ -2413,7 +2413,7 @@ rtia_getRoutingSpaceName(RTIAmbassadorObject *self, PyObject *args)
     try {
         char *theName = self->ob_rtia->getRoutingSpaceName(theHandle);
 
-        PyObject *result = PyString_FromString(theName);
+        PyObject *result = PyUnicode_FromString(theName);
         delete[] theName;
 
         return result;
@@ -2467,7 +2467,7 @@ rtia_getDimensionName(RTIAmbassadorObject *self, PyObject *args)
     try {
         char *theName = self->ob_rtia->getDimensionName(theHandle, whichSpace);
 
-        PyObject *result = PyString_FromString(theName);
+        PyObject *result = PyUnicode_FromString(theName);
         delete[] theName;
 
         return result;
@@ -2588,7 +2588,7 @@ rtia_getTransportationName(RTIAmbassadorObject *self, PyObject *args)
     try {
         char *theName = self->ob_rtia->getTransportationName(theHandle);
 
-        PyObject *result = PyString_FromString(theName);
+        PyObject *result = PyUnicode_FromString(theName);
         delete[] theName;
 
         return result;
@@ -2636,7 +2636,7 @@ rtia_getOrderingName(RTIAmbassadorObject *self, PyObject *args)
     try {
         char *theName = self->ob_rtia->getOrderingName(theHandle);
 
-        PyObject *result = PyString_FromString(theName);
+        PyObject *result = PyUnicode_FromString(theName);
         delete[] theName;
 
         return result;
@@ -3165,8 +3165,12 @@ static PyMemberDef rtia_members[] =
 
 static PyTypeObject RTIAmbassadorObjectType =
 {
+#if PY_MAJOR_VERSION >= 3
+    PyVarObject_HEAD_INIT(NULL, 0)
+#else
     PyObject_HEAD_INIT(NULL)
     0,                         /* ob_size */
+#endif
     MODULE_NAME ".RTIAmbassador", /* tp_name */
     sizeof(RTIAmbassadorObject), /* tp_basicsize */
     0,                         /* tp_itemsize */
@@ -3174,7 +3178,7 @@ static PyTypeObject RTIAmbassadorObjectType =
     0,                         /* tp_print */
     0,                         /* tp_getattr */
     0,                         /* tp_setattr */
-    0,                         /* tp_compare */
+    0,                         /* tp_reserved */
     0,                         /* tp_repr */
     0,                         /* tp_as_number */
     0,                         /* tp_as_sequence */
@@ -3225,4 +3229,4 @@ RTIAmbassadorInitializer::on_init(PyObject* module)
     PyModule_AddObject(module, "RTIAmbassador", (PyObject *)&RTIAmbassadorObjectType);
 }
 
-// $Id: rtiambassador.cpp,v 1.7 2011/03/16 16:36:13 erk Exp $
+// $Id: rtiambassador.cpp,v 1.8 2011/06/23 00:10:08 gotthardp Exp $

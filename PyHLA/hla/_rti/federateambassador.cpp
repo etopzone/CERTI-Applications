@@ -11,7 +11,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  *
- * $Id: federateambassador.cpp,v 1.6 2010/10/01 19:56:39 gotthardp Exp $
+ * $Id: federateambassador.cpp,v 1.7 2011/06/23 00:10:07 gotthardp Exp $
  */
 
 // note: you must include Python.h before any standard headers are included
@@ -52,7 +52,7 @@ federate_dealloc(FederateAmbassadorObject* self)
 {
     delete self->ob_federate;
 
-    self->ob_type->tp_free((PyObject*)self);
+    Py_TYPE(self)->tp_free((PyObject*)self);
 }
 
 Py_FederateAmbassador::Py_FederateAmbassador(FederateAmbassadorObject *federate)
@@ -1117,8 +1117,12 @@ static PyMemberDef federate_members[] =
 
 PyTypeObject FederateAmbassadorObjectType =
 {
+#if PY_MAJOR_VERSION >= 3
+    PyVarObject_HEAD_INIT(NULL, 0)
+#else
     PyObject_HEAD_INIT(NULL)
     0,                         /* ob_size */
+#endif
     MODULE_NAME ".FederateAmbassador", /* tp_name */
     sizeof(FederateAmbassadorObject), /* tp_basicsize */
     0,                         /* tp_itemsize */
@@ -1126,7 +1130,7 @@ PyTypeObject FederateAmbassadorObjectType =
     0,                         /* tp_print */
     0,                         /* tp_getattr */
     0,                         /* tp_setattr */
-    0,                         /* tp_compare */
+    0,                         /* tp_reserved */
     0,                         /* tp_repr */
     0,                         /* tp_as_number */
     0,                         /* tp_as_sequence */
@@ -1177,4 +1181,4 @@ FederateAmbassadorInitializer::on_init(PyObject* module)
     PyModule_AddObject(module, "FederateAmbassador", (PyObject *)&FederateAmbassadorObjectType);
 }
 
-// $Id: federateambassador.cpp,v 1.6 2010/10/01 19:56:39 gotthardp Exp $
+// $Id: federateambassador.cpp,v 1.7 2011/06/23 00:10:07 gotthardp Exp $

@@ -11,7 +11,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  *
- * $Id: basicdata.cpp,v 1.6 2009/06/08 15:52:01 gotthardp Exp $
+ * $Id: basicdata.cpp,v 1.7 2011/06/23 00:10:03 gotthardp Exp $
  */
 
 // note: you must include Python.h before any standard headers are included
@@ -150,7 +150,7 @@ createObjectSizeTuple(PyObject *object, long int size)
 {
     return PyTuple_Pack(2,
         object,
-        PyInt_FromLong(size));
+        PyLong_FromLong(size));
 }
 
 /*
@@ -163,7 +163,7 @@ HLAinteger16BE_pack(PyObject *self, PyObject *args)
     if(!PyArg_ParseTuple(args, "h", &value))
         return NULL;
     int16_t buffer = BigEndian<int16_t>()(value);
-    return PyString_FromStringAndSize((const char *)&buffer, sizeof(int16_t));
+    return PyBytes_FromStringAndSize((const char *)&buffer, sizeof(int16_t));
 }
 
 static PyObject *
@@ -193,7 +193,7 @@ HLAinteger32BE_pack(PyObject *self, PyObject *args)
     if(!PyArg_ParseTuple(args, "l", &value))
         return NULL;
     int32_t buffer = BigEndian<int32_t>()(value);
-    return PyString_FromStringAndSize((const char *)&buffer, sizeof(int32_t));
+    return PyBytes_FromStringAndSize((const char *)&buffer, sizeof(int32_t));
 }
 
 static PyObject *
@@ -225,7 +225,7 @@ HLAinteger64BE_pack(PyObject *self, PyObject *args)
     if(!PyArg_ParseTuple(args, "L", &value))
         return NULL;
     int64_t buffer = BigEndian<int64_t>()(value);
-    return PyString_FromStringAndSize((const char *)&buffer, sizeof(int64_t));
+    return PyBytes_FromStringAndSize((const char *)&buffer, sizeof(int64_t));
 }
 
 static PyObject *
@@ -257,7 +257,7 @@ HLAfloat32BE_pack(PyObject *self, PyObject *args)
     if(!PyArg_ParseTuple(args, "f", &value))
         return NULL;
     float buffer = BigEndian<float>()(value);
-    return PyString_FromStringAndSize((const char *)&buffer, sizeof(float));
+    return PyBytes_FromStringAndSize((const char *)&buffer, sizeof(float));
 }
 
 static PyObject *
@@ -287,7 +287,7 @@ HLAfloat64BE_pack(PyObject *self, PyObject *args)
     if(!PyArg_ParseTuple(args, "d", &value))
         return NULL;
     double buffer = BigEndian<double>()(value);
-    return PyString_FromStringAndSize((const char *)&buffer, sizeof(double));
+    return PyBytes_FromStringAndSize((const char *)&buffer, sizeof(double));
 }
 
 static PyObject *
@@ -317,7 +317,7 @@ HLAinteger16LE_pack(PyObject *self, PyObject *args)
     if(!PyArg_ParseTuple(args, "h", &value))
         return NULL;
     int16_t buffer = LittleEndian<int16_t>()(value);
-    return PyString_FromStringAndSize((const char *)&buffer, sizeof(int16_t));
+    return PyBytes_FromStringAndSize((const char *)&buffer, sizeof(int16_t));
 }
 
 static PyObject *
@@ -347,7 +347,7 @@ HLAinteger32LE_pack(PyObject *self, PyObject *args)
     if(!PyArg_ParseTuple(args, "l", &value))
         return NULL;
     int32_t buffer = LittleEndian<int32_t>()(value);
-    return PyString_FromStringAndSize((const char *)&buffer, sizeof(int32_t));
+    return PyBytes_FromStringAndSize((const char *)&buffer, sizeof(int32_t));
 }
 
 static PyObject *
@@ -379,7 +379,7 @@ HLAinteger64LE_pack(PyObject *self, PyObject *args)
     if(!PyArg_ParseTuple(args, "L", &value))
         return NULL;
     int64_t buffer = LittleEndian<int64_t>()(value);
-    return PyString_FromStringAndSize((const char *)&buffer, sizeof(int64_t));
+    return PyBytes_FromStringAndSize((const char *)&buffer, sizeof(int64_t));
 }
 
 static PyObject *
@@ -411,7 +411,7 @@ HLAfloat32LE_pack(PyObject *self, PyObject *args)
     if(!PyArg_ParseTuple(args, "f", &value))
         return NULL;
     float buffer = LittleEndian<float>()(value);
-    return PyString_FromStringAndSize((const char *)&buffer, sizeof(float));
+    return PyBytes_FromStringAndSize((const char *)&buffer, sizeof(float));
 }
 
 static PyObject *
@@ -441,7 +441,7 @@ HLAfloat64LE_pack(PyObject *self, PyObject *args)
     if(!PyArg_ParseTuple(args, "d", &value))
         return NULL;
     double buffer = LittleEndian<double>()(value);
-    return PyString_FromStringAndSize((const char *)&buffer, sizeof(double));
+    return PyBytes_FromStringAndSize((const char *)&buffer, sizeof(double));
 }
 
 static PyObject *
@@ -470,7 +470,7 @@ HLAoctet_pack(PyObject *self, PyObject *args)
     char buffer;
     if(!PyArg_ParseTuple(args, "c", &buffer))
         return NULL;
-    return PyString_FromStringAndSize(&buffer, sizeof(char));
+    return PyBytes_FromStringAndSize(&buffer, sizeof(char));
 }
 
 static PyObject *
@@ -479,7 +479,7 @@ HLAoctet_unpack(PyObject *self, PyObject *args)
     const char *buffer = getUnpackBuffer<char>(args);
     if(buffer == NULL)
         return NULL;
-    return createObjectSizeTuple(PyString_FromStringAndSize(buffer, sizeof(char)), sizeof(char));
+    return createObjectSizeTuple(PyBytes_FromStringAndSize(buffer, sizeof(char)), sizeof(char));
 }
 
 static PyMethodDef HLAoctet_methods[] =
@@ -504,7 +504,7 @@ HLAASCIIstring_pack(PyObject *self, PyObject *args)
     *(int32_t *)buffer = BigEndian<int32_t>()(length);
     memcpy(buffer+sizeof(int32_t), value, length);
 
-    PyObject *result = PyString_FromStringAndSize(buffer, sizeof(int32_t)+length);
+    PyObject *result = PyBytes_FromStringAndSize(buffer, sizeof(int32_t)+length);
     free(buffer);
 
     return result;
@@ -525,7 +525,7 @@ HLAASCIIstring_unpack(PyObject *self, PyObject *args)
     }
 
     return createObjectSizeTuple(
-        PyString_FromStringAndSize((const char *)buffer+sizeof(int32_t), length),
+        PyBytes_FromStringAndSize((const char *)buffer+sizeof(int32_t), length),
         sizeof(int32_t)+length);
 }
 
@@ -546,7 +546,7 @@ Unsignedinteger16BE_pack(PyObject *self, PyObject *args)
     if(!PyArg_ParseTuple(args, "H", &value))
         return NULL;
     uint16_t buffer = BigEndian<uint16_t>()(value);
-    return PyString_FromStringAndSize((const char *)&buffer, sizeof(uint16_t));
+    return PyBytes_FromStringAndSize((const char *)&buffer, sizeof(uint16_t));
 }
 
 static PyObject *
@@ -576,7 +576,7 @@ Unsignedinteger32BE_pack(PyObject *self, PyObject *args)
     if(!PyArg_ParseTuple(args, "k", &value))
         return NULL;
     uint32_t buffer = BigEndian<uint32_t>()(value);
-    return PyString_FromStringAndSize((const char *)&buffer, sizeof(uint32_t));
+    return PyBytes_FromStringAndSize((const char *)&buffer, sizeof(uint32_t));
 }
 
 static PyObject *
@@ -608,7 +608,7 @@ Unsignedinteger64BE_pack(PyObject *self, PyObject *args)
     if(!PyArg_ParseTuple(args, "K", &value))
         return NULL;
     uint64_t buffer = BigEndian<uint64_t>()(value);
-    return PyString_FromStringAndSize((const char *)&buffer, sizeof(uint64_t));
+    return PyBytes_FromStringAndSize((const char *)&buffer, sizeof(uint64_t));
 }
 
 static PyObject *
@@ -666,8 +666,12 @@ static PyCodingDef basic_coding[] =
 
 PyTypeObject RtiCodingType =
 {
+#if PY_MAJOR_VERSION >= 3
+  PyVarObject_HEAD_INIT(NULL, 0)
+#else
   PyObject_HEAD_INIT(NULL)
   0,                         /* ob_size */
+#endif
   MODULE_NAME ".Coding",     /* tp_name */
   sizeof(RtiCoding),         /* tp_basicsize */
   0,                         /* tp_itemsize */
@@ -675,7 +679,7 @@ PyTypeObject RtiCodingType =
   0,                         /* tp_print */
   0,                         /* tp_getattr */
   0,                         /* tp_setattr */
-  0,                         /* tp_compare */
+  0,                         /* tp_reserved */
   0,                         /* tp_repr */
   0,                         /* tp_as_number */
   0,                         /* tp_as_sequence */
@@ -717,7 +721,7 @@ add_encoding(PyObject* dict, const char *name, long size, PyMethodDef *methods)
     if(result->ob_dict == NULL)
         return; // error occurred
 
-    PyObject* octetBoundary = PyInt_FromLong(size);
+    PyObject* octetBoundary = PyLong_FromLong(size);
     if(octetBoundary == NULL)
         return; // error occurred
     PyDict_SetItemString(result->ob_dict, "octetBoundary", octetBoundary);
@@ -761,4 +765,4 @@ BasicDataInitializer::on_init(PyObject *module)
         add_encoding(dict, pos->co_name, pos->co_size, pos->co_methods);
 }
 
-// $Id: basicdata.cpp,v 1.6 2009/06/08 15:52:01 gotthardp Exp $
+// $Id: basicdata.cpp,v 1.7 2011/06/23 00:10:03 gotthardp Exp $

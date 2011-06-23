@@ -11,7 +11,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  *
- * $Id: module.h,v 1.3 2008/11/15 14:34:06 gotthardp Exp $
+ * $Id: module.h,v 1.4 2011/06/23 00:10:08 gotthardp Exp $
  */
 
 #ifndef RTI_MODULE_H
@@ -20,6 +20,16 @@
 #include <vector>
 
 #define MODULE_NAME "rti"
+
+#if PY_VERSION_HEX < 0x02060000
+// Python 2.5 compatibility macros
+#define Py_TYPE(o) (((PyObject*)(o))->ob_type)
+#define PyBytes_AsString PyString_AsString
+#define PyBytes_FromStringAndSize PyString_FromStringAndSize
+#define PyUnicode_AsString PyString_AsString
+#define PyUnicode_FromFormat PyString_FromFormat
+#define PyUnicode_FromString PyString_FromString
+#endif
 
 template<typename T>
 class auto_arrayptr
@@ -61,4 +71,4 @@ public:
 
 #endif // RTI_MODULE_H
 
-// $Id: module.h,v 1.3 2008/11/15 14:34:06 gotthardp Exp $
+// $Id: module.h,v 1.4 2011/06/23 00:10:08 gotthardp Exp $
