@@ -78,4 +78,8 @@ SET(CPACK_SOURCE_IGNORE_FILES
 
 INCLUDE(CPack)
 
-# $Id: CMakeLists.txt,v 1.14 2011/03/16 12:33:34 erk Exp $
+### Uninstall ###
+configure_file("${CMAKE_HOME_DIRECTORY}/cmake_uninstall.cmake.in" "cmake_uninstall.cmake" IMMEDIATE @ONLY)
+add_custom_target(uninstall "${CMAKE_COMMAND}" -P "cmake_uninstall.cmake")
+
+# $Id: CMakeLists.txt,v 1.15 2011/07/26 10:15:21 erk Exp $
