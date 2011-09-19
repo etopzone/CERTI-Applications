@@ -43,11 +43,13 @@ rtia.joinFederationExecution("uav-send", "uav", mya)
 mya.initialize()
 
 try:
+    a= 3.14
     while(1):
+        a = a + 1.0
         rtia.updateAttributeValues(mya.myObject,
             {mya.textAttributeHandle:"text",
             mya.structAttributeHandle:struct.pack('hhl', 1, 2, 3),
-            mya.fomAttributeHandle:fom.HLAfloat32BE.pack(3.14)},
+            mya.fomAttributeHandle:fom.HLAfloat32BE.pack(a)},
             "update")
         rtia.tick(1.0, 1.0)
 except KeyboardInterrupt:

@@ -6,7 +6,7 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.6.2)
 SET(PACKAGE_NAME "PyHLA")
 SET(PACKAGE_VERSION_MAJOR "1")
 SET(PACKAGE_VERSION_MINOR "1")
-SET(PACKAGE_VERSION_PATCH "1cvs")
+SET(PACKAGE_VERSION_PATCH "1")
 SET(PACKAGE_VERSION "${PACKAGE_VERSION_MAJOR}.${PACKAGE_VERSION_MINOR}.${PACKAGE_VERSION_PATCH}")
   
 MESSAGE(STATUS "Configuring ${PACKAGE_NAME} version ${PACKAGE_VERSION}")
@@ -82,4 +82,4 @@ INCLUDE(CPack)
 configure_file("${CMAKE_HOME_DIRECTORY}/cmake_uninstall.cmake.in" "cmake_uninstall.cmake" IMMEDIATE @ONLY)
 add_custom_target(uninstall "${CMAKE_COMMAND}" -P "cmake_uninstall.cmake")
 
-# $Id: CMakeLists.txt,v 1.15 2011/07/26 10:15:21 erk Exp $
+# $Id: CMakeLists.txt,v 1.16 2011/09/19 12:57:04 erk Exp $
