@@ -11,7 +11,7 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # Lesser General Public License for more details.
 #
-# $Id: array.py,v 1.4 2011/06/23 18:45:37 gotthardp Exp $
+# $Id: array.py,v 1.5 2011/09/19 12:56:33 erk Exp $
 
 from hla._omt import *
 from .basic import *
@@ -37,12 +37,12 @@ class HLAfixedArray:
         return self.elementType.octetBoundary
 
     def pack(self, value):
-        buffer = ""
+        buffer = bytes()
         if(len(value) != self.cardinality):
             raise TypeError("expecting %i elements" % (self.cardinality))
 
         for element in value:
-            buffer += padding(len(buffer), self.elementType.octetBoundary)*'\0'
+            buffer += padding(len(buffer), self.elementType.octetBoundary) * bytes("\0", encoding='utf-8')
             buffer += self.elementType.pack(element)
 
         return buffer
@@ -74,7 +74,7 @@ class HLAvariableArray:
             raise TypeError("expecting %i elements" % (self.cardinality))
 
         for element in value:
-            buffer += padding(len(buffer), self.elementType.octetBoundary)*'\0'
+            buffer += padding(len(buffer), self.elementType.octetBoundary)* bytes("\0", encoding='utf-8')
             buffer += self.elementType.pack(element)
 
         return buffer
@@ -92,4 +92,4 @@ class HLAvariableArray:
 
         return value, size
 
-# $Id: array.py,v 1.4 2011/06/23 18:45:37 gotthardp Exp $
+# $Id: array.py,v 1.5 2011/09/19 12:56:33 erk Exp $

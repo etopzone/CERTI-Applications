@@ -11,7 +11,7 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # Lesser General Public License for more details.
 #
-# $Id: record.py,v 1.4 2011/06/23 18:45:37 gotthardp Exp $
+# $Id: record.py,v 1.5 2011/09/19 12:56:33 erk Exp $
 
 from hla._omt import *
 from .basic import *
@@ -44,9 +44,9 @@ class HLAfixedRecord:
         return self._octetBoundary
 
     def pack(self, value):
-        buffer = ""
+        buffer = bytes()
         for fieldName, fieldType in self.fields:
-            buffer += padding(len(buffer), fieldType.octetBoundary)*'\0'
+            buffer += padding(len(buffer), fieldType.octetBoundary) * bytes("\0", encoding='utf-8')
             buffer += fieldType.pack(value[fieldName])
         return buffer
 
@@ -102,10 +102,10 @@ class HLAvariantRecord:
         buffer = self.discriminantType.pack(value[self.discriminantName])
         fieldName, fieldType = self.getAlternative(value[self.discriminantName])
         if(fieldName != None):
-            buffer += padding(len(buffer), fieldType.octetBoundary)*'\0'
+            buffer += padding(len(buffer), fieldType.octetBoundary) *  bytes("\0", encoding='utf-8')
             buffer += fieldType.pack(value[fieldName])
         else:
-            buffer += padding(len(buffer), self.octetBoundary)*'\0'
+            buffer += padding(len(buffer), self.octetBoundary) *  bytes("\0", encoding='utf-8')
         return buffer
 
     def unpack(self, buffer, offset = 0):
@@ -121,4 +121,4 @@ class HLAvariantRecord:
             buffer += padding(len(buffer), self.octetBoundary)*'\0'
         return value, size
 
-# $Id: record.py,v 1.4 2011/06/23 18:45:37 gotthardp Exp $
+# $Id: record.py,v 1.5 2011/09/19 12:56:33 erk Exp $
