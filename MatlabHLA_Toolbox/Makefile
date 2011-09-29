@@ -29,7 +29,7 @@ BINS = rti.${MEXSUFFIX}
 all: ${BINS}
 
 rti.${MEXSUFFIX}: rti/rti.cpp
-	mex ${FLAGS} -o $@ $^ -lRTI-NG
+	mex ${FLAGS} -o $@ $^ -lRTI-NGd -lFedTimed
 
 install:
 	mkdir ./${TARGETDIR}; \
