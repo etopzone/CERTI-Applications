@@ -1,0 +1,56 @@
+(FED
+  (Federation Inheritance)
+  (FEDversion v1.3)
+  (spaces
+    (space cartesian3D
+      (dimension x)
+      (dimension y)
+      (dimension z)
+    )
+    (space cartesian4D
+       (dimension x)
+       (dimension y)
+       (dimension z)
+       (dimension time)
+    )
+  )
+  (objects
+    (class objectRoot
+      (attribute privilegeToDelete reliable timestamp)
+      (class RTIprivate)
+      (class NamedObject
+             (attribute name reliable timestamp)
+             (class KnownBall
+                    (attribute speed reliable timestamp)
+             )
+      );; object class named object
+      (class UnNamedObject
+             (class UnknownBall
+                    (attribute speed reliable timestamp)
+             )
+      );; object class unamed object
+    )
+  )
+  (interactions
+    (class interactionRoot reliable receive
+      (class RTIprivate reliable receive)
+      (class NamedInteraction reliable timestamp
+             (parameter name)
+             (class KnownEvent reliable receive
+                    (parameter id)
+             )
+      ) ;; interaction class named object
+      (class UnamedInteraction reliable timestamp
+            (class UnknownEvent reliable receive
+                    (parameter id)
+            )
+      )
+    )
+  )
+)
+
+
+
+
+
+

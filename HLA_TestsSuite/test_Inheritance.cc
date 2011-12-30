@@ -2,7 +2,7 @@
 #include <fedtime.hh>
 #include <NullFederateAmbassador.hh>
 
-#include "test_FOMParse_cmdline.h"
+#include "test_Inheritance_cmdline.h"
 
 #include <iostream>
 #include <sstream>
@@ -23,10 +23,10 @@ using std::cerr;
 using std::endl;
 using std::auto_ptr;
 /**
- * The ParseFederate inherit from the classical
+ * The InheritanceFederate inherit from the classical
  * NullFederateAmbassador.
  */
-class ParseFederate : public NullFederateAmbassador {
+class InheritanceFederate : public NullFederateAmbassador {
 
 private:
     string federationName;
@@ -39,7 +39,7 @@ private:
     bool                          verbose;
 
 public:
-    ParseFederate(std::string federationFile, std::string federationName, bool verbose=false) {
+    InheritanceFederate(std::string federationFile, std::string federationName, bool verbose=false) {
         this->verbose        = verbose;
         if (verbose) {
             cout << "federationFile = " << federationFile <<endl;
@@ -49,7 +49,7 @@ public:
         this->federationName = federationName;
     };
 
-    virtual ~ParseFederate() throw (RTI::FederateInternalError) {
+    virtual ~InheritanceFederate() throw (RTI::FederateInternalError) {
     };
 
     bool
@@ -199,6 +199,20 @@ public:
     } /* end of publish */
 
     bool
+    unpublish() {
+        bool retval = false;
+        return retval;
+    } /* end of unpublish */
+
+    void UAV() {
+
+    }
+
+    void SI() {
+
+    }
+
+    bool
     subscribe() {
         bool retval = false;
         // Add attribute handle to the attribute set
@@ -258,8 +272,40 @@ public:
         }
     } /* end of tickRTI(double,double) */
 
-protected:
+    virtual void reflectAttributeValues(RTI::ObjectHandle oh, const RTI::AttributeHandleValuePairSet &,
+                    const RTI::FedTime &t, const char *, RTI::EventRetractionHandle)
+    throw (RTI::ObjectNotKnown, RTI::AttributeNotKnown, RTI::FederateOwnsAttributes,
+           RTI::InvalidFederationTime, RTI::FederateInternalError) {
+        RTI::FedTime* ft = RTI::FedTimeFactory::makeZero();
+        *ft = t;
+        char cbuf[ft->getPrintableLength()];
+        ft->getPrintableString(&(cbuf[0]));
+        std::cout << "RAV(t=" << cbuf << ", OH="<< oh << ")" <<std::endl;
+    }
 
+    virtual void reflectAttributeValues(RTI::ObjectHandle oh, const RTI::AttributeHandleValuePairSet &, const char *)
+    throw (RTI::ObjectNotKnown, RTI::AttributeNotKnown, RTI::FederateOwnsAttributes,
+           RTI::FederateInternalError) {
+        std::cout << "RAV(OH="<< oh << ")" <<std::endl;;
+    }
+
+    virtual void receiveInteraction(RTI::InteractionClassHandle ich, const RTI::ParameterHandleValuePairSet &,
+                    const RTI::FedTime &t, const char *, RTI::EventRetractionHandle)
+    throw (RTI::InteractionClassNotKnown, RTI::InteractionParameterNotKnown, RTI::InvalidFederationTime,
+           RTI::FederateInternalError) {
+        RTI::FedTime* ft = RTI::FedTimeFactory::makeZero();
+        *ft = t;
+        char cbuf[ft->getPrintableLength()];
+        ft->getPrintableString(&(cbuf[0]));
+        std::cout << "RI(t=" << cbuf << ", ICH="<< ich << ")" <<std::endl;
+    }
+
+    virtual void receiveInteraction(RTI::InteractionClassHandle ich, const RTI::ParameterHandleValuePairSet &,
+                    const char *)
+    throw (RTI::InteractionClassNotKnown, RTI::InteractionParameterNotKnown, RTI::FederateInternalError) {
+        std::cout << "RI(ICH="<< ich << ")" <<std::endl;
+    }
+protected:
 
     RTI::RTIambassador myRTIamb;
 };
@@ -273,42 +319,48 @@ main(int argc, char **argv) {
     if (cmdline_parser(argc, argv, &args))
         exit(EXIT_FAILURE);
 
-    ParseFederate parseFederate(std::string(args.fedfile_arg),
+    InheritanceFederate InheritanceFederate(std::string(args.fedfile_arg),
             std::string(args.fedname_arg),args.verbose_flag);
 
-    status &= parseFederate.create();
+    status &= InheritanceFederate.create();
 
     if (args.joinname_given) {
-        status &= parseFederate.join(std::string(args.joinname_arg));
+        status &= InheritanceFederate.join(std::string(args.joinname_arg));
     }
 
     if (args.joinname_given && args.objectclass_given) {
         if (args.attribute_given) {
-            status &= parseFederate.getObjectHandles(std::string(args.objectclass_arg),
+            status &= InheritanceFederate.getObjectHandles(std::string(args.objectclass_arg),
                     std::string(args.attribute_arg));
         } else {
-            status &= parseFederate.getObjectHandles(std::string(args.objectclass_arg),
+            status &= InheritanceFederate.getObjectHandles(std::string(args.objectclass_arg),
                     std::string(""));
         }
     }
 
     if (args.joinname_given && args.interaction_given) {
         if (args.parameter_given) {
-            status &= parseFederate.getInteractionHandles(std::string(args.interaction_arg),
+            status &= InheritanceFederate.getInteractionHandles(std::string(args.interaction_arg),
                     std::string(args.parameter_arg));
         } else {
-            status &= parseFederate.getInteractionHandles(std::string(args.interaction_arg),
+            status &= InheritanceFederate.getInteractionHandles(std::string(args.interaction_arg),
                     std::string(""));
         }
     }
 
-    parseFederate.tickRTI(1,2);
-
-    if (args.joinname_given) {
-        status &= parseFederate.resign();
+    for (int i=0; i< args.time_arg; ++i) {
+        if (!args.subscribe_flag) {
+           InheritanceFederate.UAV();
+           InheritanceFederate.SI();
+        }
+        InheritanceFederate.tickRTI(1,2);
     }
 
-    status &= parseFederate.destroy();
+    if (args.joinname_given) {
+        status &= InheritanceFederate.resign();
+    }
+
+    status &= InheritanceFederate.destroy();
     if (status) {
         cout << "GLOBAL SUCCESS." <<endl;
     } else {

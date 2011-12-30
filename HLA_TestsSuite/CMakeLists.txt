@@ -192,6 +192,15 @@ HLATestsSuite_ADD_TEST(test_NotificationSwitches
                       COMMENTS "A test for notification switches and services")
 
 #########################################################################
+# ADD TEST Inheritance 
+#########################################################################
+HLATestsSuite_ADD_TEST(test_Inheritance
+                      FED_FILE InheritanceTest.fed
+                      SOURCE_FILES test_Inheritance.cc test_Inheritance_cmdline.h test_Inheritance_cmdline.c
+                      COMMENTS "An HLA inheritance test"
+                      )
+
+#########################################################################
 # ADD TEST Parse FOM file 
 #########################################################################
 HLATestsSuite_ADD_TEST(test_FOMParse

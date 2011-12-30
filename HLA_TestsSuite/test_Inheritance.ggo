@@ -1,0 +1,22 @@
+# This is used by gengetopt to generate test_Inheritance command line parser
+# see http://www.gnu.org/software/gengetopt/gengetopt.html#Basic-Usage
+package		"Inheritance"
+version		"0.1"
+purpose		"test HLA interaction and object class inheritance"
+usage		"test_Inheritance [-v] -f <fedfile> -n <FederationName> -j <joinName> [-p] [-o <ObjectClassName> [-a <AttributeName>]] [-i <InteractionClassName> [-p <ParameterName]]"
+description	"A FOM parse test which is part of the CERTI HLA TestsSuite"
+
+# gengetopt options
+args "-F test_Inheritance_cmdline -G"
+
+# Options
+option "fedfile"      f "The FED file (XML or FED) to be used"                                          string required
+option "fedname"      n "The Federation name"                                                           string required
+option "joinname"     j "The federate name used to join the federation"                                 string optional
+option "subscribe"    s "subscribe mode, if present the federate will be a subscriber (otherwise publisher)" flag off 
+option "objectclass"  o "The object class for which you want to know the handle"                        string optional
+option "attribute"    a "The attribute name (needs -o) for which you want to know the handle"           string optional
+option "interaction"  i "The interaction class for which you want to know the handle"                   string optional
+option "parameter"    p "The parameter name (needs -i) for which you want to know the handle"           string optional
+option "verbose"      v "verbose mode"                                                                  flag   off
+option "time"         t "time to run"                                                                   int    default="10" optional
