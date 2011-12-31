@@ -38,6 +38,14 @@ private:
     RTI::ParameterHandle          parameterId;
     bool                          verbose;
 
+    void showRTIException(RTI::Exception& e, std::ostream& os, bool withEndl) {
+        os << "RTI::Exception<" << e._name <<"> ["
+             << (e._reason ? e._reason : "undefined") << "]";
+        if (withEndl) {
+            os << std::endl;
+        }
+    }
+
 public:
     InheritanceFederate(std::string federationFile, std::string federationName, bool verbose=false) {
         this->verbose        = verbose;
@@ -47,6 +55,10 @@ public:
         }
         this->federationFile = federationFile;
         this->federationName = federationName;
+        this->objectClassId      = 0;
+        this->attributeId        = 0;
+        this->interactionClassId = 0;
+        this->parameterId        = 0;
     };
 
     virtual ~InheritanceFederate() throw (RTI::FederateInternalError) {
@@ -64,7 +76,7 @@ public:
             }
             retval = true;
         } catch ( RTI::FederationExecutionAlreadyExists& e) {
-            cout << "--> Federation already created by another federate." << endl;
+            cout << "--> Federation already created [probably] by another federate." << endl;
         } catch ( RTI::Exception &e ) {
             cerr << "RTI exception: " << e._name << " ["
                     << (e._reason ? e._reason : "undefined") << "]." << endl;
@@ -195,55 +207,121 @@ public:
     bool
     publish() {
         bool retval = false;
+        if (interactionClassId>0) {
+            try {
+                myRTIamb.publishInteractionClass(interactionClassId);
+                retval = true;
+            } catch (RTI::Exception& e) {
+                cerr << "Unable to publishInteractionClass:";
+                showRTIException(e,cerr,true);
+            }
+        }
+        if ((objectClassId>0) & (attributeId>0)) {
+            try {
+                auto_ptr<RTI::AttributeHandleSet> attributes(RTI::AttributeHandleSetFactory::create(1));
+                attributes->add(attributeId);
+                myRTIamb.publishObjectClass(objectClassId,*attributes);
+                retval = true;
+            } catch (RTI::Exception& e) {
+                cerr << "Unable to publishObjectClass:";
+                showRTIException(e,cerr,true);
+                retval = false;
+            }
+        }
         return retval;
     } /* end of publish */
 
     bool
     unpublish() {
         bool retval = false;
+        if (interactionClassId>0) {
+            try {
+                myRTIamb.unpublishInteractionClass(interactionClassId);
+                retval = true;
+            } catch (RTI::Exception& e) {
+                cerr << "Unable to unpublishInteractionClass" << endl;
+            }
+        }
+        if ((objectClassId>0) & (attributeId>0)) {
+            try {
+                myRTIamb.unpublishObjectClass(objectClassId);
+                retval = true;
+            } catch (RTI::Exception& e) {
+                cerr << "Unable to unpublishObjectClass" << endl;
+                retval = false;
+            }
+        }
         return retval;
     } /* end of unpublish */
 
     void UAV() {
 
-    }
+    } /* end of UAV */
 
     void SI() {
-
-    }
+        auto_ptr<RTI::ParameterHandleValuePairSet> parameters(RTI::ParameterSetFactory::create(1));
+        /* parameters->add(parameterId,; */
+        try {
+            myRTIamb.sendInteraction(interactionClassId,*parameters,"");
+            if (verbose) {
+                cout << "SI<" << interactionClassId << ">" << endl;
+            }
+        } catch (RTI::Exception& e) {
+            cerr << "Unable to sendInteraction:";
+            showRTIException(e,cerr,true);
+        }
+    } /* end of SI */
 
     bool
     subscribe() {
         bool retval = false;
-        // Add attribute handle to the attribute set
-        // Before, we create the Set with one attribute
-        auto_ptr<RTI::AttributeHandleSet> attributes(RTI::AttributeHandleSetFactory::create(1));
-        attributes->add(attributeId);
-        try {
-            myRTIamb.subscribeObjectClassAttributes(objectClassId,*attributes);
-            retval = true;
-        } catch (RTI::Exception& e) {
-            cerr << "Unable to subscribe" << endl;
+        if (objectClassId>0) {
+            // Add attribute handle to the attribute set
+            // Before, we create the Set with one attribute
+            auto_ptr<RTI::AttributeHandleSet> attributes(RTI::AttributeHandleSetFactory::create(1));
+            attributes->add(attributeId);
+            try {
+                myRTIamb.subscribeObjectClassAttributes(objectClassId,*attributes);
+                retval = true;
+            } catch (RTI::Exception& e) {
+                cerr << "Unable to subscribeObjectClassAttributes:";
+                showRTIException(e,cerr,true);
+            }
+        }
+        if (interactionClassId>0) {
+            try {
+                myRTIamb.subscribeInteractionClass(interactionClassId);
+                retval = true;
+            } catch (RTI::Exception& e) {
+                cerr << "Unable to subscribeInteractionClass:";
+                showRTIException(e,cerr,true);
+                retval = false;
+            }
         }
         return retval;
     } /* end of subscribe */
 
     bool
-    unsubscribe(std::string className) {
+    unsubscribe() {
         bool retval = true;
-        RTI::ObjectClassHandle classId;
-
-        try {
-            classId = myRTIamb.getObjectClassHandle(className.c_str());
-        } catch (RTI::Exception& e) {
-            cerr << "Unable to obtain class handle for class <"<< className<<">" <<endl;
-            retval = false;
+        if (objectClassId>0) {
+            try {
+                myRTIamb.unsubscribeObjectClass(objectClassId);
+            } catch (RTI::Exception& e) {
+                cerr << "Unable to unsubscribeObjectClass:";
+                showRTIException(e,cerr,true);
+                retval = false;
+            }
         }
-        try {
-            myRTIamb.unsubscribeObjectClass(classId);
-        } catch (RTI::Exception& e) {
-            cerr << "Unable to unsubscribe" << endl;
-            retval = false;
+        if (interactionClassId>0) {
+            try {
+                myRTIamb.unsubscribeInteractionClass(interactionClassId);
+                retval = true;
+            } catch (RTI::Exception& e) {
+                cerr << "Unable to unsubscribeInteractionClass:";
+                showRTIException(e,cerr,true);
+                retval = false;
+            }
         }
         return retval;
     } /* end of unsubscribe */
@@ -252,9 +330,11 @@ public:
     tickRTI() {
         try {
             myRTIamb.tick();
-        } catch ( RTI::Exception &e ) {
-            cerr << "RTI exception: " << e._name << " ["
-                    << (e._reason ? e._reason : "undefined") << "]." << endl;
+            if (verbose) {
+                cout << "tick()."<<endl;
+            }
+        } catch (RTI::Exception& e) {
+            showRTIException(e,cerr,true);
         } catch ( ... ) {
             cerr << "Error: unknown non-RTI exception." << endl;
         }
@@ -264,9 +344,11 @@ public:
     tickRTI(double min, double max) {
         try {
             myRTIamb.tick(min, max);
-        } catch ( RTI::Exception &e ) {
-            cerr << "RTI exception: " << e._name << " ["
-                    << (e._reason ? e._reason : "undefined") << "]." << endl;
+            if (verbose) {
+                cout << "tick("<< min <<","<<max<<")."<<endl;
+            }
+         } catch (RTI::Exception &e) {
+            showRTIException(e,cerr,true);
         } catch ( ... ) {
             cerr << "Error: unknown non-RTI exception." << endl;
         }
@@ -348,12 +430,29 @@ main(int argc, char **argv) {
         }
     }
 
+    /* subscribe or publish */
+    if (!args.subscribe_flag) {
+        cout << args.fedname_arg << " is a PUBLISHER" << endl;
+        InheritanceFederate.publish();
+    } else {
+        cout << args.fedname_arg << " is a SUBSCRIBER" << endl;
+        InheritanceFederate.subscribe();
+    }
+
+    /* main simulation loop */
     for (int i=0; i< args.time_arg; ++i) {
         if (!args.subscribe_flag) {
            InheritanceFederate.UAV();
            InheritanceFederate.SI();
         }
         InheritanceFederate.tickRTI(1,2);
+    }
+
+    /* un-subscribe or un-publish */
+    if (!args.subscribe_flag) {
+        InheritanceFederate.unpublish();
+    } else {
+        InheritanceFederate.unsubscribe();
     }
 
     if (args.joinname_given) {
