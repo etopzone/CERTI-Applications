@@ -278,7 +278,11 @@ void print_menu (void)
 		cout <<"\t4- Object Management"<< endl;
 		cout <<"\t5- Time Management\n"<< endl;
 		cout <<"votre choix : ";
-		cin >> choix;
+		if (!(cin >> choix)) {
+		    cin.clear();
+		    cin.ignore();
+		    choix = 10;
+		}
 		cout <<"\n\n-------------------------------------\n";
 
 		switch (choix)
@@ -338,6 +342,7 @@ void print_menu (void)
 
 		default :
 			cout <<"\tEntrée invalide\n"<< endl;
+			break;
 
 
 		}//fin switch
