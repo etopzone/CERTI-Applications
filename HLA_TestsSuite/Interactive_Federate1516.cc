@@ -375,7 +375,7 @@ void Federe_Interactif::callGetObjClassHandle()
 
 	catch (rti1516::Exception &e)
 	{
-		std::cout << "* Erreur" << std::endl;
+		std::wcout << L"Error:" << e.what() << std::endl;
 	}
 }
 
