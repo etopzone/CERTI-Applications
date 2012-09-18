@@ -6,6 +6,8 @@
     #include <algorithm>	
     #include <process.h>
     #define	sleep(a)	      Sleep(a * 1000)
+#else
+    #include <unistd.h>
 #endif
 
 class Create_Destroy : public RTI::RTIambassador, public NullFederateAmbassador

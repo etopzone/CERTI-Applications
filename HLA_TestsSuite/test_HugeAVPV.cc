@@ -8,11 +8,13 @@
 #include <string>
 #include <stdlib.h>
 
-#if defined(_WIN32)	
+#if defined(_WIN32)
     #include <windows.h>
-    #include <algorithm>	
+    #include <algorithm>
     #include <process.h>
     #define	sleep(a)	      Sleep(a * 1000)
+#else
+    #include <unistd.h>
 #endif
 
 using std::string;
