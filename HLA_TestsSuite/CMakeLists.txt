@@ -73,9 +73,21 @@ MESSAGE(STATUS "Configuring ${PACKAGE_NAME} version ${PACKAGE_VERSION}")
 # FIND RTI (CERTI, MAK, Pitch, ...)
 #########################################################################
 FIND_PACKAGE(RTI REQUIRED)
-INCLUDE_DIRECTORIES(${RTI_INCLUDE_DIR})
+include_directories(${RTI_INCLUDE_DIR} ${RTI1516_INCLUDE_DIR} ${RTI_INCLUDE_DIR}/..)
 ADD_DEFINITIONS(${RTI_DEFINITIONS})
-find_library(LIBHLA NAMES HLA HLAd)
+
+find_library(LIBHLA
+  NAMES HLA HLAd
+  PATHS $ENV{CERTI_HOME}
+  PATH_SUFFIXES lib Debug Release
+  DOC "The libHLA Library")
+  
+find_path(LIBHLA_INCLUDE_DIR
+   NAMES libhla.hh HHLAtypesIEEE1516.hh
+   PATHS $ENV{CERTI_HOME}
+   PATH_SUFFIXES libhla)
+   
+include_directories(${LIBHLA_INCLUDE_DIR})
 
 #########################################################################
 # CPack specific Configuration

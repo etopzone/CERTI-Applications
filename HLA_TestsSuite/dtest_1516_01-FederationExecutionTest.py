@@ -106,11 +106,11 @@ firstFederate.addRunStep("barrier","1516-01-FederationExecution Sequence starts.
 firstFederate.addRunStep("expectFromCommand",pattern="$")
 
 firstFederate.addRunStep("sendToCommand",string="\n")
-firstFederate.addRunStep("expectFromCommand",pattern="04E \(Pass: No federation to destroy\).*")
+firstFederate.addRunStep("expectFromCommand",pattern="04E .*: \(Pass: No federation to destroy\).*")
 firstFederate.addRunStep("ok",firstFederate.getFutureLastStepStatus,"No federation to destroy")
 
 firstFederate.addRunStep("sendToCommand",string="\n")
-firstFederate.addRunStep("expectFromCommand",pattern="07E \(Pass: Could not join non-existent federation\).*")
+firstFederate.addRunStep("expectFromCommand",pattern="07E .*: \(Pass: Could not join non-existent federation\).*")
 firstFederate.addRunStep("ok",firstFederate.getFutureLastStepStatus,"Could not join non-existent federation")
 
 firstFederate.addRunStep("sendToCommand",string="\n")
@@ -118,7 +118,7 @@ firstFederate.addRunStep("expectFromCommand",pattern="09E Pass: Created federati
 firstFederate.addRunStep("ok",firstFederate.getFutureLastStepStatus,"Created federation")
 firstFederate.addRunStep("expectFromCommand",pattern="11E Pass: Joined federation.*")
 firstFederate.addRunStep("ok",firstFederate.getFutureLastStepStatus,"Joined federation")
-firstFederate.addRunStep("expectFromCommand",pattern="14E \(Pass: Could not destroy federation while still joined\).*")
+firstFederate.addRunStep("expectFromCommand",pattern="14E .*: \(Pass: Could not destroy federation while still joined\).*")
 firstFederate.addRunStep("ok",firstFederate.getFutureLastStepStatus,"Could not destroy federation while still joined")
 firstFederate.addRunStep("expectFromCommand",pattern="16E Pass: Resigned from federation.*")
 firstFederate.addRunStep("ok",firstFederate.getFutureLastStepStatus,"Resigned from federation")
