@@ -251,11 +251,13 @@ HLATestsSuite_ADD_TEST(04-NameReservation
                       HLA1516)
 
 HLATestsSuite_ADD_TEST(05-ObjectManagementTest
+		      FED_FILE Certi-Test-05.xml
                       SOURCE_FILES  05-ObjectManagementTest.cc 05-ObjectManagementTest.hh ReturnCodes.hh
                       COMMENTS "05-ObjectManagementTest (1516)"
                       HLA1516)
 
 HLATestsSuite_ADD_TEST(05-ObjectManagementCallbackTest
+		      FED_FILE Certi-Test-05.xml
                       SOURCE_FILES  05-ObjectManagementCallbackTest.cc 05-ObjectManagementCallbackTest.hh ReturnCodes.hh
                       COMMENTS "05-ObjectManagementCallbackTest (1516)"
                       HLA1516)                      
