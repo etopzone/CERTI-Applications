@@ -33,7 +33,14 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.4.4)
 # You should set CERTI_HOME env var to appropriate value
 # or put here the full path to the directory
 # containing FindCERTI.cmake
-SET(CMAKE_MODULE_PATH $ENV{CERTI_HOME}/share/scripts)
+IF ("$ENV{CERTI_HOME}" STRGREATER "")
+    FILE(TO_CMAKE_PATH "$ENV{CERTI_HOME}" CERTI_HOME_TEMP)
+    SET(CERTI_HOME ${CERTI_HOME_TEMP} CACHE PATH "The CERTI install directory")
+    LIST(APPEND CMAKE_MODULE_PATH "${CERTI_HOME}/share/scripts")
+
+ELSE ("$ENV{CERTI_HOME}" STRGREATER "")
+    LIST(APPEND CMAKE_MODULE_PATH "${CMAKE_INSTALL_PREFIX}/share/scripts")    
+ENDIF ("$ENV{CERTI_HOME}" STRGREATER "")
 
 # You should uncomment the following line
 # if you want VERBOSE build
@@ -122,7 +129,7 @@ SET(LIB_NAME F90HLA13Modules)
 SET(SRC_LIST constantsMod.f90 rtiSrvMod.f90 fedSrvMod.f90) 
 
 ADD_LIBRARY(${LIB_NAME} ${SRC_LIST})
-TARGET_LINK_LIBRARIES(${LIB_NAME} $ENV{PWD}/libF90HLA13CERTIWrap.so)
+TARGET_LINK_LIBRARIES(${LIB_NAME} F90HLA13CERTIWrap)
 INSTALL(TARGETS ${LIB_NAME}
 	LIBRARY DESTINATION lib)
 INSTALL(FILES $ENV{PWD}/constantsmod.mod $ENV{PWD}/rtisrvmod.mod

@@ -29,30 +29,41 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.4.4)
 # if you want VERBOSE build
 #SET(CMAKE_VERBOSE_MAKEFILE OFF)
 
-EXEC_PROGRAM(rm ARGS constantsMod.mod.proxy
-		     fedSrvMod.mod.proxy
-		     rtiSrvMod.mod.proxy)
+#EXEC_PROGRAM(rm ARGS constantsMod.mod.proxy
+#		     fedSrvMod.mod.proxy
+#		     rtiSrvMod.mod.proxy)
 
-EXEC_PROGRAM(touch ARGS constantsMod.mod.proxy
-			fedSrvMod.mod.proxy
-			rtiSrvMod.mod.proxy)
+#EXEC_PROGRAM(touch ARGS constantsMod.mod.proxy
+#			fedSrvMod.mod.proxy
+#			rtiSrvMod.mod.proxy)
 
-FIND_PATH(INC modF90)
-INCLUDE_DIRECTORIES(${INC}/modF90)
-FIND_LIBRARY(F90_LIB NAMES F90HLA13Modules)
+# Here you have to make sure that the paths with libF90HLA13 are corrects
+# for me it is: /home/j.chaudron/Dev/CERTI_APPS/applications/F90HLA/libF90HLA13_install/include
+# then before execution 
+# export LD_LIBRARY_PATH=/home/j.chaudron/Dev/CERTI_APPS/applications/F90HLA/libF90HLA13_install/lib:${LD_LIBRARY_PATH}
+#IF (!F90HLA_DIR)
+SET(F90HLA_DIR /home/j.chaudron/Dev/CERTI_APPS/applications/F90HLA/libF90HLA13_install/)
+#ENDIF (!F90HLA_DIR)
+INCLUDE_DIRECTORIES(${F90HLA_DIR}/include/modF90)
+INCLUDE_DIRECTORIES(${F90HLA_DIR}/lib)
+# Here you have to make sure that the paths with libF90HLA13 are corrects
+FIND_LIBRARY(F90HLA_LIB libF90HLA13Modules.so ${F90HLA_DIR}/lib)
+MESSAGE(STATUS "F90HLA_LIB : ${F90HLA_LIB}")
+FIND_LIBRARY(F90CERTIWRAP_LIB libF90HLA13CERTIWrap.so ${F90HLA_DIR}/lib)
+MESSAGE(STATUS "F90CERTIWRAP_LIB : ${F90CERTIWRAP_LIB}")
 
 ###################################
 # Setup Control Federate
 ###################################
 SET(EXE_NAME F90controllerFederate)
-SET(SRC_LIST TwoLevelController/controllerFederate/fedSrvMod.f90
-    TwoLevelController/controllerFederate/controllerFederate_woTime.f90)
+SET(SRC_LIST ${CMAKE_SOURCE_DIR}/TwoLevelController/controllerFederate/fedSrvMod.f90
+    ${CMAKE_SOURCE_DIR}/TwoLevelController/controllerFederate/controllerFederate_woTime.f90)
 
 ###################################
 # Generic CMake library target
 ###################################
 ADD_EXECUTABLE(${EXE_NAME} ${SRC_LIST})
-TARGET_LINK_LIBRARIES (${EXE_NAME} ${F90_LIB})
+TARGET_LINK_LIBRARIES (${EXE_NAME} ${F90HLA_LIB} ${F90CERTIWRAP_LIB})
 INSTALL(TARGETS ${EXE_NAME} 
         RUNTIME DESTINATION bin)
 
@@ -60,14 +71,14 @@ INSTALL(TARGETS ${EXE_NAME}
 # Setup Control Federate with time
 ###################################
 SET(EXE_NAME F90TMcontrollerFederate)
-SET(SRC_LIST TwoLevelController/controllerFederate/fedSrvMod.f90
-    TwoLevelController/controllerFederate/controllerFederate_wTime.f90)
+SET(SRC_LIST ${CMAKE_SOURCE_DIR}/TwoLevelController/controllerFederate/fedSrvMod.f90
+    ${CMAKE_SOURCE_DIR}/TwoLevelController/controllerFederate/controllerFederate_wTime.f90)
 
 ###################################
 # Generic CMake library target
 ###################################
 ADD_EXECUTABLE(${EXE_NAME} ${SRC_LIST})
-TARGET_LINK_LIBRARIES (${EXE_NAME} ${F90_LIB})
+TARGET_LINK_LIBRARIES (${EXE_NAME} ${F90HLA_LIB} ${F90CERTIWRAP_LIB})
 INSTALL(TARGETS ${EXE_NAME} 
         RUNTIME DESTINATION bin)
 
@@ -76,14 +87,14 @@ INSTALL(TARGETS ${EXE_NAME}
 # Setup Process Federate
 ###################################
 SET(EXE_NAME F90processFederate)
-SET(SRC_LIST TwoLevelController/processFederate/fedSrvMod.f90 
-    TwoLevelController/processFederate/processFederate_woTime.f90)
+SET(SRC_LIST ${CMAKE_SOURCE_DIR}/TwoLevelController/processFederate/fedSrvMod.f90 
+    ${CMAKE_SOURCE_DIR}/TwoLevelController/processFederate/processFederate_woTime.f90)
 
 ###################################
 # Generic CMake library target
 ###################################
 ADD_EXECUTABLE(${EXE_NAME} ${SRC_LIST})
-TARGET_LINK_LIBRARIES (${EXE_NAME} ${F90_LIB})
+TARGET_LINK_LIBRARIES (${EXE_NAME} ${F90HLA_LIB} ${F90CERTIWRAP_LIB})
 INSTALL(TARGETS ${EXE_NAME} 
         RUNTIME DESTINATION bin)
 
@@ -91,19 +102,19 @@ INSTALL(TARGETS ${EXE_NAME}
 # Setup Process Federate with time
 ###################################
 SET(EXE_NAME F90TMprocessFederate)
-SET(SRC_LIST TwoLevelController/processFederate/fedSrvMod.f90 
-    TwoLevelController/processFederate/processFederate_wTime.f90)
+SET(SRC_LIST ${CMAKE_SOURCE_DIR}/TwoLevelController/processFederate/fedSrvMod.f90 
+    ${CMAKE_SOURCE_DIR}/TwoLevelController/processFederate/processFederate_wTime.f90)
 
 ###################################
 # Generic CMake library target
 ###################################
 ADD_EXECUTABLE(${EXE_NAME} ${SRC_LIST})
-TARGET_LINK_LIBRARIES (${EXE_NAME} ${F90_LIB})
+TARGET_LINK_LIBRARIES (${EXE_NAME} ${F90HLA_LIB} ${F90CERTIWRAP_LIB})
 INSTALL(TARGETS ${EXE_NAME} 
         RUNTIME DESTINATION bin)
 
 INSTALL(FILES  
-  TwoLevelController/F90TwoLevelController.fed
+  ${CMAKE_SOURCE_DIR}/TwoLevelController/F90TwoLevelController.fed
   DESTINATION share/federations)
 
 
